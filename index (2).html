@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Recatch (리캐치) - 우대정보 레이아웃 및 라이트모드 수정</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    borderRadius: {
+                        'oneui': '28px',
+                        'oneui-sm': '18px'
+                    },
+                    fontFamily: {
+                        sans: ['Pretendard', 'Samsung One', '-apple-system', 'Roboto', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        body {
+            font-family: 'Pretendard', 'Samsung One', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .phone-container {
+            width: 100%;
+            max-width: 430px;
+            height: 100dvh;
+            max-height: 100dvh;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        @media (min-width: 640px) {
+            .phone-container {
+                height: 900px;
+                max-height: 95vh;
+                border-radius: 48px;
+                box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 12px #1e293b;
+            }
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .oneui-shadow {
+            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.25);
+        }
+
+        .tab-active {
+            color: #3b82f6 !important;
+            font-weight: 700;
+        }
+        .tab-active i {
+            transform: translateY(-2px);
+            transition: transform 0.2s ease;
+        }
+
+        @keyframes pageEnter {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-page-enter {
+            animation: pageEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .hover-scale {
+            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
+        }
+        .hover-scale:hover {
+            transform: translateY(-2px);
+        }
+        .hover-scale:active {
+            transform: scale(0.98);
+        }
+
+        /* 신규 아이템 등장 모션 */
+        @keyframes newItemSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(-18px) scale(0.94);
+            }
+            50% {
+                box-shadow: 0 0 18px rgba(59, 130, 246, 0.6);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .animate-new-item {
+            animation: newItemSlide 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-0 sm:p-4 selection:bg-blue-500 selection:text-white overflow-hidden">
+
+    <!-- Galaxy Device Mockup Container -->
+    <div id="phoneApp" class="phone-container bg-slate-950 relative flex flex-col overflow-hidden sm:border border-slate-800">
+
+        <!-- Galaxy Status Bar (Top) -->
+        <div id="statusBar" class="w-full bg-slate-950 text-slate-300 px-6 pt-3 pb-1 flex justify-between items-center text-xs font-semibold z-50 shrink-0 select-none">
+            <span id="statusBarClock">16:10</span>
+            <div class="w-4 h-4 bg-black rounded-full border border-slate-800 shadow-inner"></div>
+            <div class="flex items-center gap-2 text-[11px]">
+                <i class="fa-solid fa-wifi"></i>
+                <i class="fa-solid fa-signal"></i>
+                <div class="flex items-center gap-1">
+                    <span>95%</span>
+                    <i class="fa-solid fa-battery-full text-xs text-emerald-400"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Galaxy App Header -->
+        <header id="appHeader" class="bg-slate-950/90 backdrop-blur-md px-6 py-3 flex items-center justify-between border-b border-slate-800/60 z-40 shrink-0">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-slate-900 overflow-hidden border border-slate-700/60 shadow-md flex items-center justify-center p-0.5">
+                    <img src="Logo.png" alt="Recatch Logo" class="w-full h-full object-cover rounded-lg" onerror="this.src='https://placehold.co/100x100/1e293b/60a5fa?text=R'"/>
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <span id="brandName" class="font-extrabold text-base tracking-tight text-white">Recatch</span>
+                        <span class="px-1.5 py-0.2 text-[9px] font-bold bg-blue-500/20 text-blue-400 rounded-md border border-blue-500/30">BETA</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center gap-2">
+                <span id="detectStatusBadge" class="text-[10px] text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/20 font-bold flex items-center gap-1.5">
+                    <span id="detectPulseDot" class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> <span id="detectStatusTxt">5초  대기</span>
+                </span>
+                <button onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-amber-400 flex items-center justify-center transition active:scale-90 border border-slate-700/50">
+                    <i id="themeIcon" class="fa-solid fa-sun text-xs"></i>
+                </button>
+                <button onclick="openSettingsModal()" class="w-8 h-8 rounded-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white flex items-center justify-center font-bold text-xs shadow transition cursor-pointer">
+                    유
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Scrollable Content Area -->
+        <main class="flex-1 overflow-y-auto no-scrollbar p-5 space-y-5 pb-28">
+
+            <!-- TAB 1: HOME PAGE -->
+            <div id="page-home" class="space-y-5 transition-all duration-300 animate-page-enter">
+                
+                <!-- BANNER CAROUSEL -->
+                <div class="relative overflow-hidden rounded-oneui shadow-xl group hover-scale">
+                    <div id="bannerTrack" class="flex transition-transform duration-500 ease-out w-full">
+                        <div class="w-full shrink-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-slate-800 p-5 text-white relative">
+                            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+                            <span class="text-[11px] font-semibold bg-white/20 px-2.5 py-1 rounded-full backdrop-blur-md">✨ 초개인화 결제 알림 분석</span>
+                            <h2 class="text-xl font-black tracking-tight mt-2.5 leading-snug">
+                                유리캐 님,<br/>이번 달 <span class="text-cyan-300 underline decoration-cyan-400/50">되찾은 혜택</span>을 확인해보세요!
+                            </h2>
+                            <p class="text-xs text-blue-100/80 mt-1">결제 알림 기반 실시간 혜택 재계산 솔루션</p>
+                        </div>
+                        <div class="w-full shrink-0 bg-gradient-to-br from-indigo-700 via-purple-700 to-slate-900 p-5 text-white relative">
+                            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-purple-400/20 rounded-full blur-xl pointer-events-none"></div>
+                            <span class="text-[11px] font-semibold bg-white/20 px-2.5 py-1 rounded-full backdrop-blur-md">📱 결제 알림 자동 파싱</span>
+                            <h2 class="text-xl font-black tracking-tight mt-2.5 leading-snug">
+                                문자 오면 끝!<br/><span class="text-purple-300 underline decoration-purple-400/50">놓친 할인 혜택</span>을 자동 탐지합니다
+                            </h2>
+                            <p class="text-xs text-purple-100/80 mt-1">결제 내역 속 숨은 카드·멤버십 할인 리캐치</p>
+                        </div>
+                        <div class="w-full shrink-0 bg-gradient-to-br from-teal-600 via-emerald-700 to-slate-900 p-5 text-white relative">
+                            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-400/20 rounded-full blur-xl pointer-events-none"></div>
+                            <span class="text-[11px] font-semibold bg-white/20 px-2.5 py-1 rounded-full backdrop-blur-md">💰 실시간 순절약 리포트</span>
+                            <h2 class="text-xl font-black tracking-tight mt-2.5 leading-snug">
+                                내가 아낀 진짜 내 돈,<br/>이번 달 순절약액 <span id="bannerNetText" class="text-emerald-300 underline decoration-emerald-400/50">138,800원</span>!
+                            </h2>
+                            <p class="text-xs text-emerald-100/80 mt-1">수수료 제외 내 통장에 진짜 남는 재결제 혜택</p>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-3 right-4 flex items-center gap-1.5 z-10 bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">
+                        <button onclick="goToSlide(0)" class="banner-dot w-2 h-2 rounded-full bg-white transition-all duration-300"></button>
+                        <button onclick="goToSlide(1)" class="banner-dot w-2 h-2 rounded-full bg-white/40 transition-all duration-300"></button>
+                        <button onclick="goToSlide(2)" class="banner-dot w-2 h-2 rounded-full bg-white/40 transition-all duration-300"></button>
+                    </div>
+                </div>
+
+                <!-- High-Contrast Summary Card -->
+                <div id="summaryCard" class="bg-slate-900 rounded-oneui p-5 border-2 border-blue-500/40 oneui-shadow space-y-4 hover-scale">
+                    <div id="summaryCardHeader" class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center border border-blue-500/30">
+                                <i class="fa-solid fa-coins text-base"></i>
+                            </div>
+                            <div>
+                                <p id="summaryCardLabel" class="text-xs font-bold text-slate-300">이번 달 되찾은 금액</p>
+                                <h3 id="homeTotalSavings" class="text-2xl font-black bg-gradient-to-r from-cyan-300 via-blue-400 to-white bg-clip-text text-transparent mt-0.5 tracking-tight">
+                                    ₩ 173,500
+                                </h3>
+                            </div>
+                        </div>
+                        <span class="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                            +24.5%
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <div id="feeBox" class="bg-slate-950/80 p-3.5 rounded-oneui-sm border border-slate-800">
+                            <p id="feeLabel" class="text-[11px] text-slate-400">예상 수수료 (20%)</p>
+                            <p id="homeFee" class="text-sm font-extrabold text-slate-200 mt-1">₩ 34,700</p>
+                        </div>
+                        <div id="netBox" class="bg-blue-950/60 p-3.5 rounded-oneui-sm border border-blue-500/40">
+                            <p id="netLabel" class="text-[11px] text-blue-400 font-bold">내게 남는 순절약액</p>
+                            <p id="homeNetSavings" class="text-base font-black text-cyan-300 mt-1">₩ 138,800</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Action Buttons -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="switchTab('wallet')" id="btnQuickWallet" class="bg-slate-900 hover:bg-slate-800 p-4 rounded-oneui-sm border border-slate-800 flex items-center gap-3 transition text-left hover-scale">
+                        <div class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-sm">
+                            <i class="fa-solid fa-credit-card"></i>
+                        </div>
+                        <div>
+                            <p id="txtWalletTitle" class="text-xs font-bold text-white">혜택 지갑 관리</p>
+                            <p id="txtWalletSub" class="text-[10px] text-slate-400">카드 4개 연동중</p>
+                        </div>
+                    </button>
+                    <button onclick="openSettingsModal()" id="btnQuickSettings" class="bg-slate-900 hover:bg-slate-800 p-4 rounded-oneui-sm border border-slate-800 flex items-center gap-3 transition text-left hover-scale">
+                        <div class="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm">
+                            <i class="fa-solid fa-gear"></i>
+                        </div>
+                        <div>
+                            <p id="txtSettingsTitle" class="text-xs font-bold text-white">환경설정</p>
+                            <p id="txtSettingsSub" class="text-[10px] text-slate-400">알림 및 데이터 설정</p>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Recent Transactions Section -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center px-1">
+                        <h3 id="recentSectionTitle" class="text-sm font-extrabold text-white">최근 혜택 리캐치 내역 (<span id="recentCount">8</span>건)</h3>
+                        <button onclick="switchTab('transactions')" class="text-xs text-blue-400 font-semibold hover:underline">
+                            전체보기 <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="homeRecentList" class="space-y-2.5">
+                        <!-- Dynamic Item Insertion -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: TRANSACTIONS PAGE -->
+            <div id="page-transactions" class="space-y-4 hidden transition-all duration-300">
+                <div>
+                    <h2 id="transactionsHeaderTitle" class="text-lg font-black text-white">결제 / 혜택 내역</h2>
+                    <p id="transactionsHeaderSub" class="text-xs text-slate-400">자동 감지된 결제건의 재결제 상태를 관리하세요.</p>
+                </div>
+
+                <div id="filterContainer" class="flex items-center gap-2 bg-slate-900 p-1 rounded-2xl border border-slate-800 text-xs font-semibold">
+                    <button onclick="filterTransactions('all')" id="btn-filter-all" class="filter-btn flex-1 py-2 rounded-xl bg-blue-600 text-white transition text-center">전체</button>
+                    <button onclick="filterTransactions('completed')" id="btn-filter-completed" class="filter-btn flex-1 py-2 rounded-xl text-slate-400 hover:text-white transition text-center">재결제 완료</button>
+                    <button onclick="filterTransactions('pending')" id="btn-filter-pending" class="filter-btn flex-1 py-2 rounded-xl text-slate-400 hover:text-white transition text-center">진행중</button>
+                </div>
+
+                <div id="fullTransactionsList" class="space-y-2.5">
+                    <!-- Dynamic Full List Items -->
+                </div>
+            </div>
+
+            <!-- TAB 3: WALLET PAGE (개편된 내 지갑) -->
+            <div id="page-wallet" class="space-y-4 hidden transition-all duration-300">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 id="walletHeaderTitle" class="text-lg font-black text-white">내 혜택 지갑</h2>
+                        <p id="walletHeaderSub" class="text-xs text-slate-400">내 우대 조건과 보유 카드를 관리합니다.</p>
+                    </div>
+                    <button onclick="openAddWalletModal()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white flex items-center gap-1.5 shadow transition active:scale-95">
+                        <i class="fa-solid fa-plus text-[10px]"></i> 카드 추가
+                    </button>
+                </div>
+
+                <!-- 1. 초개인화 우대 조건 (가로 3칸 - Grid 3컬럼 박스) -->
+                <div id="personalBenefitBox" class="bg-slate-900 rounded-oneui p-4 border border-slate-800 space-y-3 shadow-lg transition-colors">
+                    <div id="personalBenefitHeader" class="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
+                        <span class="text-xs font-extrabold text-blue-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-shield"></i> 초개인화 맞춤 우대 정보
+                        </span>
+                        <span class="text-[10px] text-slate-400">자동 검증 완료</span>
+                    </div>
+
+                    <!-- 가로 3칸 (3Columns Grid) -->
+                    <div class="grid grid-cols-3 gap-2 text-xs">
+                        <!-- 칸 1: 통신사 등급 -->
+                        <div id="benefitCard1" class="p-2.5 bg-slate-950/70 rounded-oneui-sm border border-slate-800/80 flex flex-col justify-between text-center items-center gap-1">
+                            <div class="w-7 h-7 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center font-black text-[10px]">
+                                SKT
+                            </div>
+                            <div>
+                                <p id="benefitLabel1" class="text-[9px] text-slate-400">통신사 등급</p>
+                                <p id="benefitTitle1" class="font-extrabold text-white text-[11px] mt-0.5">SKT VIP</p>
+                            </div>
+                            <span class="text-[8px] bg-red-500/10 text-red-400 px-1.5 py-0.5 rounded-md font-bold border border-red-500/20 mt-1">VIP 혜택</span>
+                        </div>
+
+                        <!-- 칸 2: 연령대 (청년 기준) -->
+                        <div id="benefitCard2" class="p-2.5 bg-slate-950/70 rounded-oneui-sm border border-slate-800/80 flex flex-col justify-between text-center items-center gap-1">
+                            <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black text-[10px]">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <p id="benefitLabel2" class="text-[9px] text-slate-400">연령대 (정부기준)</p>
+                                <p id="benefitTitle2" class="font-extrabold text-white text-[11px] mt-0.5">청년(만19-34세)</p>
+                            </div>
+                            <span class="text-[8px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded-md font-bold border border-emerald-500/20 mt-1">청년 우대</span>
+                        </div>
+
+                        <!-- 칸 3: 리캐치 등급 -->
+                        <div id="benefitCard3" class="p-2.5 bg-slate-950/70 rounded-oneui-sm border border-slate-800/80 flex flex-col justify-between text-center items-center gap-1">
+                            <div class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-black text-[10px]">
+                                <i class="fa-solid fa-crown"></i>
+                            </div>
+                            <div>
+                                <p id="benefitLabel3" class="text-[9px] text-slate-400">리캐치 등급</p>
+                                <p id="benefitTitle3" class="font-extrabold text-amber-400 text-[11px] mt-0.5">PLATINUM</p>
+                            </div>
+                            <span class="text-[8px] bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded-md font-bold border border-amber-500/20 mt-1">수수료 20%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 실물 체크카드 스와이프 박스 3개 -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center px-1">
+                        <h3 id="cardSectionTitle" class="text-xs font-bold text-slate-300">연동된 대표 체크카드 (3장)</h3>
+                        <span class="text-[10px] text-slate-500">좌우로 스크롤</span>
+                    </div>
+
+                    <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+                        <!-- 체크카드 1: KB국민 노리2 -->
+                        <div class="w-56 shrink-0 h-32 rounded-2xl bg-gradient-to-br from-amber-500 via-stone-700 to-slate-900 p-3.5 text-white flex flex-col justify-between shadow-lg relative overflow-hidden border border-amber-400/30 hover-scale">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-[9px] text-amber-200 font-bold">KB국민카드</p>
+                                    <h4 class="text-sm font-extrabold tracking-tight mt-0.5">nori2 체크</h4>
+                                </div>
+                                <i class="fa-solid fa-wifi text-xs text-amber-200 opacity-80"></i>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-6 h-4 bg-amber-300/80 rounded-sm"></div>
+                                <span class="text-[9px] font-mono tracking-widest text-slate-300">•••• 8821</span>
+                            </div>
+                            <div class="flex justify-between items-end text-[10px]">
+                                <span class="font-bold text-amber-200">CHECK</span>
+                                <span class="font-black italic tracking-widest text-white/90">VISA</span>
+                            </div>
+                        </div>
+
+                        <!-- 체크카드 2: 신한 Deep Dream -->
+                        <div class="w-56 shrink-0 h-32 rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-700 to-slate-900 p-3.5 text-white flex flex-col justify-between shadow-lg relative overflow-hidden border border-blue-400/30 hover-scale">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-[9px] text-blue-200 font-bold">신한카드</p>
+                                    <h4 class="text-sm font-extrabold tracking-tight mt-0.5">Deep Dream 체크</h4>
+                                </div>
+                                <i class="fa-solid fa-wifi text-xs text-blue-200 opacity-80"></i>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-6 h-4 bg-amber-300/80 rounded-sm"></div>
+                                <span class="text-[9px] font-mono tracking-widest text-slate-300">•••• 3041</span>
+                            </div>
+                            <div class="flex justify-between items-end text-[10px]">
+                                <span class="font-bold text-blue-200">CHECK</span>
+                                <span class="font-black italic tracking-widest text-white/90">Mastercard</span>
+                            </div>
+                        </div>
+
+                        <!-- 체크카드 3: 토스뱅크 체크카드 -->
+                        <div class="w-56 shrink-0 h-32 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-900 p-3.5 text-white flex flex-col justify-between shadow-lg relative overflow-hidden border border-cyan-400/30 hover-scale">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-[9px] text-cyan-200 font-bold">토스뱅크</p>
+                                    <h4 class="text-sm font-extrabold tracking-tight mt-0.5">토스뱅크 체크카드</h4>
+                                </div>
+                                <i class="fa-solid fa-wifi text-xs text-cyan-200 opacity-80"></i>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-6 h-4 bg-amber-300/80 rounded-sm"></div>
+                                <span class="text-[9px] font-mono tracking-widest text-slate-300">•••• 5912</span>
+                            </div>
+                            <div class="flex justify-between items-end text-[10px]">
+                                <span class="font-bold text-cyan-200">CHECK</span>
+                                <span class="font-black italic tracking-widest text-white/90">VISA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 기존 Wallet List (활성화 관리) -->
+                <div class="space-y-2">
+                    <h3 id="walletListTitle" class="text-xs font-bold text-slate-300 px-1">전체 연동 매칭 지갑</h3>
+                    <div id="fullWalletList" class="space-y-2.5">
+                        <!-- Dynamic Wallet Items -->
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+        <!-- Fixed Bottom Navigation Bar -->
+        <div id="bottomNav" class="absolute bottom-0 left-0 right-0 bg-slate-950/95 backdrop-blur-lg border-t border-slate-800/80 z-50">
+            <div id="tabGrid" class="grid grid-cols-3 py-2 px-3 border-b border-slate-900/80 text-center">
+                <button onclick="switchTab('home')" id="tab-home" class="nav-tab tab-active flex flex-col items-center gap-1 py-1 text-slate-400 transition">
+                    <i class="fa-solid fa-house text-lg"></i>
+                    <span class="text-[10px]">홈</span>
+                </button>
+                <button onclick="switchTab('transactions')" id="tab-transactions" class="nav-tab flex flex-col items-center gap-1 py-1 text-slate-400 transition">
+                    <i class="fa-solid fa-receipt text-lg"></i>
+                    <span class="text-[10px]">혜택/결제</span>
+                </button>
+                <button onclick="switchTab('wallet')" id="tab-wallet" class="nav-tab flex flex-col items-center gap-1 py-1 text-slate-400 transition">
+                    <i class="fa-solid fa-wallet text-lg"></i>
+                    <span class="text-[10px]">내 지갑</span>
+                </button>
+            </div>
+
+            <div id="androidNav" class="h-10 bg-black flex items-center justify-around text-slate-400 text-sm px-8 select-none">
+                <button onclick="simulateNavClick('Recent Apps')" class="w-12 h-full flex items-center justify-center hover:text-white transition active:scale-90">
+                    <i class="fa-solid fa-bars text-xs"></i>
+                </button>
+                <button onclick="switchTab('home')" class="w-12 h-full flex items-center justify-center hover:text-white transition active:scale-90">
+                    <i class="fa-regular fa-square text-xs rounded-sm"></i>
+                </button>
+                <button onclick="simulateNavClick('Back')" class="w-12 h-full flex items-center justify-center hover:text-white transition active:scale-90">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let transactions = [
+            { id: 1, merchant: "무신사 스토어", date: "2026.10.05", originalAmount: 220000, savedAmount: 58500, card: "KB국민 노리2 체크", status: "재결제 완료", icon: "fa-bag-shopping" },
+            { id: 2, merchant: "쿠팡 와우 결제", date: "2026.10.04", originalAmount: 180000, savedAmount: 35000, card: "신한카드 Deep Dream", status: "재결제 완료", icon: "fa-cart-shopping" },
+            { id: 3, merchant: "배달의민족", date: "2026.10.03", originalAmount: 65000, savedAmount: 18000, card: "네이버플러스 멤버십", status: "진행중", icon: "fa-utensils" },
+            { id: 4, merchant: "올리브영 명동점", date: "2026.10.02", originalAmount: 120000, savedAmount: 24000, card: "KB국민 노리2 체크", status: "재결제 완료", icon: "fa-store" },
+            { id: 5, merchant: "스타벅스 강남역점", date: "2026.10.01", originalAmount: 25000, savedAmount: 8500, card: "카카오페이 포인트", status: "재결제 완료", icon: "fa-mug-hot" },
+            { id: 6, merchant: "넷플릭스 4K 프리미엄", date: "2026.09.29", originalAmount: 17000, savedAmount: 5500, card: "신한카드 Deep Dream", status: "재결제 완료", icon: "fa-tv" },
+            { id: 7, merchant: "CGV 영화예매", date: "2026.09.27", originalAmount: 32000, savedAmount: 14000, card: "KB국민 노리2 체크", status: "진행중", icon: "fa-film" },
+            { id: 8, merchant: "GS25 편의점", date: "2026.09.25", originalAmount: 18000, savedAmount: 10000, card: "네이버플러스 멤버십", status: "재결제 완료", icon: "fa-basket-shopping" },
+        ];
+
+        let walletItems = [
+            { id: 1, name: "KB국민 노리2 체크", type: "신용/체크카드", active: true, icon: "fa-credit-card", color: "from-amber-500 to-amber-600" },
+            { id: 2, name: "신한카드 Deep Dream", type: "신용/체크카드", active: true, icon: "fa-credit-card", color: "from-blue-500 to-indigo-600" },
+            { id: 3, name: "네이버플러스 멤버십", type: "구독 멤버십", active: true, icon: "fa-bolt", color: "from-emerald-500 to-teal-600" },
+            { id: 4, name: "카카오페이 포인트", type: "간편결제", active: false, icon: "fa-wallet", color: "from-yellow-400 to-amber-500" },
+        ];
+
+        const randomMerchants = [
+            { name: "올리브영 강남중앙점", icon: "fa-store" },
+            { name: "배달의민족 B마트", icon: "fa-utensils" },
+            { name: "스타벅스 역삼역점", icon: "fa-mug-hot" },
+            { name: "무신사 스탠다드 홍대", icon: "fa-shirt" },
+            { name: "쿠팡 로켓와우 결제", icon: "fa-cart-shopping" },
+            { name: "다이소 신촌점", icon: "fa-basket-shopping" },
+            { name: "네이버 스마트스토어", icon: "fa-bag-shopping" },
+            { name: "CGV 영화예매", icon: "fa-film" }
+        ];
+
+        const randomCards = [
+            "KB국민 노리2 체크",
+            "신한카드 Deep Dream",
+            "네이버플러스 멤버십",
+            "카카오페이 포인트"
+        ];
+
+        const targetCount = Math.floor(Math.random() * 2) + 2;
+        let addedCount = 0;
+        let additionTimer = null;
+
+        let activeTab = 'home';
+        let currentFilter = 'all';
+        let isDarkMode = true;
+        let currentSlide = 0;
+        let slideInterval = null;
+
+        window.onload = function() {
+            updateClock();
+            setInterval(updateClock, 1000);
+            renderApp();
+            startBannerAutoSlide();
+
+            document.getElementById('detectStatusTxt').innerText = `자동 감지중 (0/${targetCount})`;
+
+            additionTimer = setInterval(() => {
+                addRandomTransaction();
+            }, 5000);
+        };
+
+        function addRandomTransaction() {
+            if (addedCount >= targetCount) {
+                clearInterval(additionTimer);
+                const badge = document.getElementById('detectStatusBadge');
+                const pulse = document.getElementById('detectPulseDot');
+                const txt = document.getElementById('detectStatusTxt');
+                if (txt) txt.innerText = `감지 완료 (${addedCount}/${targetCount})`;
+                if (pulse) pulse.className = "w-2 h-2 rounded-full bg-emerald-400";
+                if (badge) badge.className = "text-[10px] text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 font-bold flex items-center gap-1.5";
+                return;
+            }
+
+            const merchantObj = randomMerchants[Math.floor(Math.random() * randomMerchants.length)];
+            const cardName = randomCards[Math.floor(Math.random() * randomCards.length)];
+
+            const origAmount = Math.floor(Math.random() * 14 + 1) * 10000 + (Math.floor(Math.random() * 10) * 1000);
+            const discountRate = (Math.floor(Math.random() * 20) + 15) / 100;
+            const savedAmt = Math.floor((origAmount * discountRate) / 100) * 100;
+
+            transactions.forEach(t => t.isNew = false);
+
+            const newItem = {
+                id: Date.now(),
+                merchant: `${merchantObj.name}`,
+                date: "방금 전",
+                originalAmount: origAmount,
+                savedAmount: savedAmt,
+                card: cardName,
+                status: "진행중",
+                icon: merchantObj.icon,
+                isNew: true
+            };
+
+            transactions.unshift(newItem);
+            addedCount++;
+
+            const txt = document.getElementById('detectStatusTxt');
+            if (txt) txt.innerText = `자동 감지중 (${addedCount}/${targetCount})`;
+
+            renderApp();
+        }
+
+        function startBannerAutoSlide() {
+            if (slideInterval) clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                currentSlide = (currentSlide + 1) % 3;
+                updateSlidePosition();
+            }, 3000);
+        }
+
+        function updateSlidePosition() {
+            const track = document.getElementById('bannerTrack');
+            const dots = document.querySelectorAll('.banner-dot');
+            if (track) {
+                track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            }
+            dots.forEach((dot, index) => {
+                dot.className = index === currentSlide 
+                    ? "banner-dot w-4 h-2 rounded-full bg-white transition-all duration-300"
+                    : "banner-dot w-2 h-2 rounded-full bg-white/40 transition-all duration-300";
+            });
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('statusBarClock').innerText = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        }
+
+        // 라이트 모드 & 다크 모드 완벽 지원 토글 함수
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            const app = document.getElementById('phoneApp');
+            const themeIcon = document.getElementById('themeIcon');
+            const homeTotalSavings = document.getElementById('homeTotalSavings');
+
+            if (isDarkMode) {
+                app.className = "phone-container bg-slate-950 relative flex flex-col overflow-hidden sm:border border-slate-800 text-slate-100";
+                themeIcon.className = "fa-solid fa-sun text-xs text-amber-400";
+
+                document.getElementById('statusBar').className = "w-full bg-slate-950 text-slate-300 px-6 pt-3 pb-1 flex justify-between items-center text-xs font-semibold z-50 shrink-0 select-none";
+                document.getElementById('appHeader').className = "bg-slate-950/90 backdrop-blur-md px-6 py-3 flex items-center justify-between border-b border-slate-800/60 z-40 shrink-0";
+                document.getElementById('brandName').className = "font-extrabold text-base tracking-tight text-white";
+
+                document.getElementById('summaryCard').className = "bg-slate-900 rounded-oneui p-5 border-2 border-blue-500/40 oneui-shadow space-y-4 hover-scale";
+                document.getElementById('summaryCardHeader').className = "flex justify-between items-center border-b border-slate-800 pb-3";
+                document.getElementById('summaryCardLabel').className = "text-xs font-bold text-slate-300";
+
+                homeTotalSavings.className = "text-2xl font-black bg-gradient-to-r from-cyan-300 via-blue-400 to-white bg-clip-text text-transparent mt-0.5 tracking-tight";
+
+                document.getElementById('feeBox').className = "bg-slate-950/80 p-3.5 rounded-oneui-sm border border-slate-800";
+                document.getElementById('feeLabel').className = "text-[11px] text-slate-400";
+                document.getElementById('homeFee').className = "text-sm font-extrabold text-slate-200 mt-1";
+                document.getElementById('netBox').className = "bg-blue-950/60 p-3.5 rounded-oneui-sm border border-blue-500/40";
+                document.getElementById('netLabel').className = "text-[11px] text-blue-400 font-bold";
+                document.getElementById('homeNetSavings').className = "text-base font-black text-cyan-300 mt-1";
+
+                document.getElementById('btnQuickWallet').className = "bg-slate-900 hover:bg-slate-800 p-4 rounded-oneui-sm border border-slate-800 flex items-center gap-3 transition text-left hover-scale";
+                document.getElementById('txtWalletTitle').className = "text-xs font-bold text-white";
+                document.getElementById('btnQuickSettings').className = "bg-slate-900 hover:bg-slate-800 p-4 rounded-oneui-sm border border-slate-800 flex items-center gap-3 transition text-left hover-scale";
+                document.getElementById('txtSettingsTitle').className = "text-xs font-bold text-white";
+
+                document.getElementById('recentSectionTitle').className = "text-sm font-extrabold text-white";
+                document.getElementById('transactionsHeaderTitle').className = "text-lg font-black text-white";
+                document.getElementById('walletHeaderTitle').className = "text-lg font-black text-white";
+                document.getElementById('filterContainer').className = "flex items-center gap-2 bg-slate-900 p-1 rounded-2xl border border-slate-800 text-xs font-semibold";
+
+                document.getElementById('bottomNav').className = "absolute bottom-0 left-0 right-0 bg-slate-950/95 backdrop-blur-lg border-t border-slate-800/80 z-50";
+                document.getElementById('androidNav').className = "h-10 bg-black flex items-center justify-around text-slate-400 text-sm px-8 select-none";
+
+                // 내 지갑 (TAB 3) 다크모드 스타일
+                document.getElementById('personalBenefitBox').className = "bg-slate-900 rounded-oneui p-4 border border-slate-800 space-y-3 shadow-lg transition-colors";
+                document.getElementById('personalBenefitHeader').className = "flex items-center justify-between border-b border-slate-800/80 pb-2.5";
+                
+                ['1','2','3'].forEach(num => {
+                    document.getElementById(`benefitCard${num}`).className = "p-2.5 bg-slate-950/70 rounded-oneui-sm border border-slate-800/80 flex flex-col justify-between text-center items-center gap-1";
+                    document.getElementById(`benefitLabel${num}`).className = "text-[9px] text-slate-400";
+                    if(num !== '3') document.getElementById(`benefitTitle${num}`).className = "font-extrabold text-white text-[11px] mt-0.5";
+                });
+                document.getElementById('cardSectionTitle').className = "text-xs font-bold text-slate-300";
+                document.getElementById('walletListTitle').className = "text-xs font-bold text-slate-300 px-1";
+
+            } else {
+                app.className = "phone-container bg-slate-50 relative flex flex-col overflow-hidden sm:border border-slate-300 text-slate-800";
+                themeIcon.className = "fa-solid fa-moon text-xs text-indigo-600";
+
+                document.getElementById('statusBar').className = "w-full bg-slate-100 text-slate-700 px-6 pt-3 pb-1 flex justify-between items-center text-xs font-semibold z-50 shrink-0 select-none";
+                document.getElementById('appHeader').className = "bg-white/90 backdrop-blur-md px-6 py-3 flex items-center justify-between border-b border-slate-200 z-40 shrink-0";
+                document.getElementById('brandName').className = "font-extrabold text-base tracking-tight text-slate-900";
+
+                document.getElementById('summaryCard').className = "bg-white rounded-oneui p-5 border-2 border-blue-500/30 oneui-shadow space-y-4 shadow-slate-200 hover-scale";
+                document.getElementById('summaryCardHeader').className = "flex justify-between items-center border-b border-slate-100 pb-3";
+                document.getElementById('summaryCardLabel').className = "text-xs font-bold text-slate-500";
+
+                homeTotalSavings.className = "text-2xl font-black text-blue-700 mt-0.5 tracking-tight";
+
+                document.getElementById('feeBox').className = "bg-slate-100/80 p-3.5 rounded-oneui-sm border border-slate-200";
+                document.getElementById('feeLabel').className = "text-[11px] text-slate-500";
+                document.getElementById('homeFee').className = "text-sm font-extrabold text-slate-800 mt-1";
+                document.getElementById('netBox').className = "bg-blue-50 p-3.5 rounded-oneui-sm border border-blue-200";
+                document.getElementById('netLabel').className = "text-[11px] text-blue-700 font-bold";
+                document.getElementById('homeNetSavings').className = "text-base font-black text-blue-900 mt-1";
+
+                document.getElementById('btnQuickWallet').className = "bg-white hover:bg-slate-100 p-4 rounded-oneui-sm border border-slate-200 flex items-center gap-3 transition text-left shadow-sm hover-scale";
+                document.getElementById('txtWalletTitle').className = "text-xs font-bold text-slate-800";
+                document.getElementById('btnQuickSettings').className = "bg-white hover:bg-slate-100 p-4 rounded-oneui-sm border border-slate-200 flex items-center gap-3 transition text-left shadow-sm hover-scale";
+                document.getElementById('txtSettingsTitle').className = "text-xs font-bold text-slate-800";
+
+                document.getElementById('recentSectionTitle').className = "text-sm font-extrabold text-slate-800";
+                document.getElementById('transactionsHeaderTitle').className = "text-lg font-black text-slate-900";
+                document.getElementById('walletHeaderTitle').className = "text-lg font-black text-slate-900";
+                document.getElementById('filterContainer').className = "flex items-center gap-2 bg-slate-100 p-1 rounded-2xl border border-slate-200 text-xs font-semibold";
+
+                document.getElementById('bottomNav').className = "absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-slate-200 z-50";
+                document.getElementById('androidNav').className = "h-10 bg-slate-100 flex items-center justify-around text-slate-400 text-sm px-8 select-none border-t border-slate-200";
+
+                // 내 지갑 (TAB 3) 라이트모드 스타일
+                document.getElementById('personalBenefitBox').className = "bg-white rounded-oneui p-4 border border-slate-200 space-y-3 shadow-md transition-colors";
+                document.getElementById('personalBenefitHeader').className = "flex items-center justify-between border-b border-slate-100 pb-2.5";
+                
+                ['1','2','3'].forEach(num => {
+                    document.getElementById(`benefitCard${num}`).className = "p-2.5 bg-slate-50 rounded-oneui-sm border border-slate-200 flex flex-col justify-between text-center items-center gap-1";
+                    document.getElementById(`benefitLabel${num}`).className = "text-[9px] text-slate-500";
+                    if(num !== '3') document.getElementById(`benefitTitle${num}`).className = "font-extrabold text-slate-800 text-[11px] mt-0.5";
+                });
+                document.getElementById('cardSectionTitle').className = "text-xs font-bold text-slate-700";
+                document.getElementById('walletListTitle').className = "text-xs font-bold text-slate-700 px-1";
+            }
+
+            renderApp();
+        }
+
+        function switchTab(tabName) {
+            activeTab = tabName;
+            ['home', 'transactions', 'wallet'].forEach(tab => {
+                const page = document.getElementById(`page-${tab}`);
+                page.classList.add('hidden');
+                page.classList.remove('animate-page-enter');
+            });
+
+            const targetPage = document.getElementById(`page-${tabName}`);
+            targetPage.classList.remove('hidden');
+            void targetPage.offsetWidth; 
+            targetPage.classList.add('animate-page-enter');
+
+            document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('tab-active'));
+            document.getElementById(`tab-${tabName}`).classList.add('tab-active');
+        }
+
+        function renderApp() {
+            renderDashboardSummary();
+            renderRecentTransactionsHome();
+            renderFullTransactionsList();
+            renderWalletList();
+        }
+
+        function renderDashboardSummary() {
+            const totalSavings = transactions.reduce((sum, item) => sum + item.savedAmount, 0);
+            const fee = Math.round(totalSavings * 0.20);
+            const netSavings = totalSavings - fee;
+
+            document.getElementById('homeTotalSavings').innerText = `₩ ${totalSavings.toLocaleString()}`;
+            document.getElementById('homeFee').innerText = `₩ ${fee.toLocaleString()}`;
+            document.getElementById('homeNetSavings').innerText = `₩ ${netSavings.toLocaleString()}`;
+            
+            const bannerNetText = document.getElementById('bannerNetText');
+            if(bannerNetText) bannerNetText.innerText = `${netSavings.toLocaleString()}원`;
+
+            const countElem = document.getElementById('recentCount');
+            if(countElem) countElem.innerText = transactions.length;
+        }
+
+        function renderRecentTransactionsHome() {
+            const container = document.getElementById('homeRecentList');
+            container.innerHTML = '';
+
+            const bgClass = isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+            const txtMain = isDarkMode ? 'text-white' : 'text-slate-800';
+
+            transactions.forEach((item) => {
+                const isCompleted = item.status === '재결제 완료';
+                const statusBadge = isCompleted 
+                    ? '<span class="text-[9px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 font-bold">완료</span>' 
+                    : '<span class="text-[9px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20 font-bold">진행중</span>';
+
+                const animClass = item.isNew ? 'animate-new-item border-blue-500/80 bg-blue-950/40 shadow-lg shadow-blue-500/10' : '';
+
+                const html = `
+                    <div class="p-3.5 rounded-oneui-sm border ${bgClass} ${animClass} flex items-center justify-between transition hover-scale">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-slate-800 text-blue-400 flex items-center justify-center text-xs">
+                                <i class="fa-solid ${item.icon || 'fa-bag-shopping'}"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-1.5">
+                                    <h4 class="font-bold text-xs ${txtMain}">${item.merchant}</h4>
+                                    ${statusBadge}
+                                </div>
+                                <p class="text-[10px] text-slate-400 mt-0.5">${item.card}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-black text-emerald-400">+${item.savedAmount.toLocaleString()}원</p>
+                            <p class="text-[9px] text-slate-500 line-through">${item.originalAmount.toLocaleString()}원</p>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function renderFullTransactionsList() {
+            const container = document.getElementById('fullTransactionsList');
+            if(!container) return;
+            container.innerHTML = '';
+
+            const bgClass = isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+            const txtMain = isDarkMode ? 'text-white' : 'text-slate-800';
+
+            transactions.forEach((item) => {
+                const isCompleted = item.status === '재결제 완료';
+                const statusBadgeClass = isCompleted ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+
+                const html = `
+                    <div class="p-4 rounded-oneui-sm border ${bgClass} space-y-2 hover-scale">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h4 class="font-bold text-sm ${txtMain}">${item.merchant}</h4>
+                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-bold border ${statusBadgeClass}">${item.status}</span>
+                                </div>
+                                <p class="text-[10px] text-slate-400 mt-0.5">${item.date} • ${item.card}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-black text-emerald-400">+${item.savedAmount.toLocaleString()}원</span>
+                                <p class="text-[10px] text-slate-500 line-through">원래 ${item.originalAmount.toLocaleString()}원</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function renderWalletList() {
+            const container = document.getElementById('fullWalletList');
+            if(!container) return;
+            container.innerHTML = '';
+            const bgClass = isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+            const txtMain = isDarkMode ? 'text-white' : 'text-slate-800';
+
+            walletItems.forEach(item => {
+                const html = `
+                    <div class="p-3.5 rounded-oneui-sm border ${bgClass} flex items-center justify-between hover-scale">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr ${item.color} text-white flex items-center justify-center text-xs shadow-md">
+                                <i class="fa-solid ${item.icon}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xs ${txtMain}">${item.name}</h4>
+                                <p class="text-[10px] text-slate-400">${item.type}</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" ${item.active ? 'checked' : ''} onchange="toggleWalletActive(${item.id})" class="sr-only peer">
+                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function toggleWalletActive(id) {
+            walletItems = walletItems.map(w => w.id === id ? { ...w, active: !w.active } : w);
+        }
+    </script>
+</body>
+</html>
