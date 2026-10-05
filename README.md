@@ -37,3 +37,11 @@
 ---
 
 ## 🔄 How It Works
+1. 결제 완료 ──► 2. 1초 내 혜택 분석 ──► 3. 푸시 알림 발송 ──► 4. 바코드 팝업 ──► 5. 취소 후 재결제
+
+---
+
+## 🛠️ Tech Stack
+* **Language & Framework:** Flutter / React Native, Node.js / Python
+* **Core Engine:** Real-time Notification Parsing Engine, Rule-based Matching Engine[cite: 5]
+* **AI & Hardware:** Receipt OCR, NFC Proximity Detection Module[cite: 6, 8]
