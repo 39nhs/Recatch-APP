@@ -2,7 +2,7 @@
 <html lang="ko" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Recatch (리캐치) - 자동 배너 슬라이더 추가</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -36,12 +36,21 @@
 
         /* Phone Screen Shell styling */
         .phone-container {
+            width: 100%;
             max-width: 430px;
-            height: 900px;
-            max-height: 95vh;
-            border-radius: 48px;
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 12px #1e293b;
+            height: 100dvh; /* 모바일 실제 높이에 동적 맞춤 */
+            max-height: 100dvh;
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* PC 이상 화면에서만 스마트폰 목업 형태 적용 */
+        @media (min-width: 640px) {
+            .phone-container {
+                height: 900px;
+                max-height: 95vh;
+                border-radius: 48px;
+                box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 12px #1e293b;
+            }
         }
 
         /* Scrollbar styling */
@@ -68,10 +77,10 @@
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-0 md:p-4 selection:bg-blue-500 selection:text-white">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-0 sm:p-4 selection:bg-blue-500 selection:text-white overflow-hidden">
 
     <!-- Galaxy Device Mockup Container -->
-    <div id="phoneApp" class="phone-container w-full bg-slate-950 relative flex flex-col overflow-hidden border border-slate-800">
+    <div id="phoneApp" class="phone-container bg-slate-950 relative flex flex-col overflow-hidden sm:border border-slate-800">
 
         <!-- Galaxy Status Bar (Top) -->
         <div id="statusBar" class="w-full bg-slate-950 text-slate-300 px-6 pt-3 pb-1 flex justify-between items-center text-xs font-semibold z-50 shrink-0 select-none">
@@ -504,7 +513,7 @@
             const homeTotalSavings = document.getElementById('homeTotalSavings');
 
             if (isDarkMode) {
-                app.className = "phone-container w-full bg-slate-950 relative flex flex-col overflow-hidden border border-slate-800 text-slate-100";
+                app.className = "phone-container bg-slate-950 relative flex flex-col overflow-hidden sm:border border-slate-800 text-slate-100";
                 themeIcon.className = "fa-solid fa-sun text-xs text-amber-400";
                 
                 document.getElementById('statusBar').className = "w-full bg-slate-950 text-slate-300 px-6 pt-3 pb-1 flex justify-between items-center text-xs font-semibold z-50 shrink-0 select-none";
@@ -537,7 +546,7 @@
                 document.getElementById('bottomNav').className = "absolute bottom-0 left-0 right-0 bg-slate-950/95 backdrop-blur-lg border-t border-slate-800/80 z-50";
                 document.getElementById('androidNav').className = "h-10 bg-black flex items-center justify-around text-slate-400 text-sm px-8 select-none";
             } else {
-                app.className = "phone-container w-full bg-slate-50 relative flex flex-col overflow-hidden border border-slate-300 text-slate-800";
+                app.className = "phone-container bg-slate-50 relative flex flex-col overflow-hidden sm:border border-slate-300 text-slate-800";
                 themeIcon.className = "fa-solid fa-moon text-xs text-indigo-600";
 
                 document.getElementById('statusBar').className = "w-full bg-slate-100 text-slate-700 px-6 pt-3 pb-1 flex justify-between items-center text-xs font-semibold z-50 shrink-0 select-none";
