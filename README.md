@@ -5,6 +5,8 @@
 [![Recatch Introduction Video](https://img.youtube.com/vi/UQjN98hyi2g/maxresdefault.jpg)](https://youtube.com/shorts/UQjN98hyi2g)
 ▲ **위 이미지를 클릭하면 소개 영상(YouTube Shorts)으로 이동합니다.**[cite: 9]
 
+https://seungbeenyoo.github.io/recatch-app/
+
 <br/>
 
 <p align="left">
