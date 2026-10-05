@@ -25,4 +25,13 @@
 
 ---
 
-## 🔄 How It Works
+## 🛠️ Tech Stack
+
+* **Language & Framework:** Flutter / React Native, Node.js / Python
+* **Core Engine:** Real-time Notification Parsing Engine, Rule-based Matching Engine
+* **AI & Hardware:** Receipt OCR, NFC Proximity Detection Module
+
+---
+
+## 🎬 Media
+* 📺 [Recatch 소개 영상 (YouTube Shorts)](https://youtube.com/shorts/UQjN98hyi2g)
