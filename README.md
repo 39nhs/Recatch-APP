@@ -97,7 +97,6 @@
 <hr>
 
 <h2>⚠️ Known Limitations & Roadmap (한계점 및 해결 방안)</h2>
-
 <blockquote>
   <i>프로토타입(MVP) 단계에서 도출된 기술적/비즈니스적 한계점과 이를 단계적으로 극복하기 위한 로드맵입니다.</i>
 </blockquote>
