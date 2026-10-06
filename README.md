@@ -6,14 +6,6 @@
 
   <br>
 
-  <p>
-    <img src="https://img.shields.io/badge/Service-Recatch-blue?style=for-the-badge" alt="Service"/>
-    <img src="https://img.shields.io/badge/Domain-Fintech%20%2F%20AI-green?style=for-the-badge" alt="Domain"/>
-    <img src="https://img.shields.io/badge/Platform-Mobile-orange?style=for-the-badge" alt="Platform"/>
-  </p>
-
-  <br>
-
   <a href="https://seungbeenyoo.github.io/Recatch-APP/">
     <img src="https://api.microlink.io?url=https%3A%2F%2Fseungbeenyoo.github.io%2FRecatch-APP%2F&screenshot=true&meta=false&embed=screenshot.url" alt="Recatch Interactive Demo Page" width="100%">
   </a>
@@ -25,6 +17,14 @@
     <img src="https://img.youtube.com/vi/UQjN98hyi2g/maxresdefault.jpg" alt="Recatch Introduction Video" width="100%">
   </a>
   <p>▲ <b>위 이미지를 클릭하면 <u>[소개 영상(YouTube Shorts)]</u>으로 이동합니다.</b></p>
+
+  <br>
+
+  <p>
+    <img src="https://img.shields.io/badge/Service-Recatch-blue?style=for-the-badge" alt="Service"/>
+    <img src="https://img.shields.io/badge/Domain-Fintech%20%2F%20AI-green?style=for-the-badge" alt="Domain"/>
+    <img src="https://img.shields.io/badge/Platform-Mobile-orange?style=for-the-badge" alt="Platform"/>
+  </p>
 
 </div>
 
@@ -104,7 +104,7 @@
 
 <br>
 
-<h3>1. [Data / API] 카드사별 혜택 데이터의 비표준화 및 수집 한계</h3>
+<h4>1. [Data / API] 카드사별 혜택 데이터의 비표준화 및 수집 한계</h4>
 <ul>
   <li><b><code>현상 (Problem)</code></b>: 카드사마다 혜택 표기 방식(전월 실적 조건, 할인 한도, 제외 가맹점 등)이 상이하여 자동화된 데이터 구조화가 어려움.</li>
   <li><b><code>원인 (Root Cause)</code></b>: 표준화된 카드 혜택 공공 API의 부재 및 카드 상품 약관 웹페이지 구조의 빈번한 변경.</li>
@@ -118,7 +118,7 @@
 
 <hr>
 
-<h3>2. [Business Logic] 재결제 시 전월 실적 변동 위험성</h3>
+<h4>2. [Business Logic] 재결제 시 전월 실적 변동 위험성</h4>
 <ul>
   <li><b><code>현상 (Problem)</code></b>: 기존 결제건을 취소하고 타 카드로 재결제할 경우, 기존 카드의 전월 실적 미달로 인한 2차 혜택 손실 발생 가능.</li>
   <li><b><code>원인 (Root Cause)</code></b>: 마이데이터 연동 전 단계에서는 사용자의 실시간 카드별 월 누적 실적 데이터를 완벽히 추적하기 어려움.</li>
@@ -132,7 +132,7 @@
 
 <hr>
 
-<h3>3. [UX / System] 알림 수신 후 사용자 재결제 이행률 (Drop-off Rate)</h3>
+<h4>3. [UX / System] 알림 수신 후 사용자 재결제 이행률 (Drop-off Rate)</h4>
 <ul>
   <li><b><code>현상 (Problem)</code></b>: 오프라인 매장 결제 직후 알림을 받더라도, 사용자가 매장에 다시 방문하여 결제를 취소/재결제할 유인이 떨어짐.</li>
   <li><b><code>원인 (Root Cause)</code></b>: 재결제 과정에서의 물리적/시간적 번거로움.</li>
@@ -146,7 +146,7 @@
 
 <hr>
 
-<h3>4. [Monetization] 리캐치 앱 없이도 적용 가능한 기본 할인에 대한 수수료 부과 문제</h3>
+<h4>4. [Monetization] 리캐치 앱 없이도 적용 가능한 기본 할인에 대한 수수료 부과 문제</h4>
 <ul>
   <li><b><code>현상 (Problem)</code></b>: 사용자가 리캐치 앱의 추천이나 가이드 없이도 원래 받을 수 있었던 기본 할인(카드사 자체 기본 혜택, 매장 자동 할인 등)까지 리캐치가 창출한 성과로 인식되어 수수료가 부과될 경우 사용자 반발 발생.</li>
   <li><b><code>원인 (Root Cause)</code></b>: '사용자의 기존 결제 혜택'과 '리캐치 재결제 알림을 통해 추가로 얻은 순수 혜택 차액'을 명확히 구분하여 정산하는 로직의 미비.</li>
@@ -160,7 +160,7 @@
 
 <hr>
 
-<h3>5. [Platform / OS] OS별 내역 수집 방식 차이 (Android 알림파싱 vs iOS CODEF API 비용)</h3>
+<h4>5. [Platform / OS] OS별 내역 수집 방식 차이 (Android 알림파싱 vs iOS CODEF API 비용)</h4>
 <ul>
   <li><b><code>현상 (Problem)</code></b>: 안드로이드와 iOS의 결제 내역 감지 구현 방식 차이로 인해 유저 경험의 불균형 및 운영 비용 부담 발생.</li>
   <li><b><code>원인 (Root Cause)</code></b>:
