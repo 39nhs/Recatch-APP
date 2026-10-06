@@ -1,0 +1,1191 @@
+<!DOCTYPE html><html class="" lang="ko"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<title>Recatch (리캐치) - 프리미엄 핀테크</title>
+<!-- Tailwind CSS with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef6ff',
+                            100: '#d9eaff',
+                            400: '#38bdf8',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            cyan: '#00F0FF',
+                            neon: '#38bdf8',
+                            accent: '#6366f1'
+                        },
+                        night: {
+                            base: '#0B0F19',
+                            card: '#111827',
+                            surface: '#182234',
+                            border: 'rgba(255, 255, 255, 0.08)',
+                            glow: 'rgba(37, 99, 235, 0.15)'
+                        }
+                    },
+                    borderRadius: {
+                        'oneui': '26px',
+                        'oneui-sm': '16px',
+                        'oneui-card': '22px'
+                    },
+                    fontFamily: {
+                        sans: ['Pretendard', 'Samsung One', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'glass-dark': '0 8px 32px 0 rgba(0, 0, 0, 0.45)',
+                        'glass-light': '0 10px 30px -5px rgba(37, 99, 235, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04)',
+                        'neon-blue': '0 0 25px -4px rgba(0, 240, 255, 0.35)',
+                        'card-light': '0 12px 28px -4px rgba(27, 43, 75, 0.06), 0 2px 6px 0 rgba(0, 0, 0, 0.02)'
+                    }
+                }
+            }
+        }
+    </script>
+<!-- FontAwesome Icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        .phone-container {
+            width: 100%;
+            max-width: 420px;
+            height: 100dvh;
+            max-height: 100dvh;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @media (min-width: 640px) {
+            .phone-container {
+                height: 890px;
+                max-height: 94vh;
+                border-radius: 44px;
+                box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8), 0 0 0 10px #1e293b;
+            }
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .card-scroll-container {
+            display: flex;
+            overflow-x: auto !important;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
+            touch-action: pan-x;
+            scroll-behavior: smooth;
+        }
+        .card-scroll-item {
+            scroll-snap-align: center;
+            flex-shrink: 0;
+        }
+        @keyframes pageEnter {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.99);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .animate-page-enter {
+            animation: pageEnter 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .hover-scale {
+            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .hover-scale:active {
+            transform: scale(0.975);
+        }
+        @keyframes newItemSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(-16px) scale(0.95);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .animate-new-item {
+            animation: newItemSlide 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        /* Glassmorphism Classes */
+        .glass-panel-dark {
+            background: rgba(17, 24, 39, 0.72);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-panel-light {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+        /* Custom barcode pattern simulator */
+        .barcode-bars {
+            background: repeating-linear-gradient(90deg, 
+                currentColor 0, currentColor 2px, 
+                transparent 2px, transparent 4px, 
+                currentColor 4px, currentColor 7px,
+                transparent 7px, transparent 9px,
+                currentColor 9px, currentColor 10px,
+                transparent 10px, transparent 13px,
+                currentColor 13px, currentColor 17px,
+                transparent 17px, transparent 19px,
+                currentColor 19px, currentColor 20px,
+                transparent 20px, transparent 23px
+            );
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen flex items-center justify-center p-0 sm:p-4 selection:bg-brand-500 selection:text-white transition-colors duration-300">
+<!-- Mobile Frame Outer Container -->
+<div class="phone-container bg-slate-50 dark:bg-[#0B0F19] text-slate-900 dark:text-slate-100 relative flex flex-col overflow-hidden sm:border border-slate-200 dark:border-slate-800/80 shadow-2xl transition-all duration-300" id="phoneApp">
+<!-- Galaxy Status Bar -->
+<div class="w-full bg-slate-50/90 dark:bg-[#0B0F19]/90 backdrop-blur-md text-slate-700 dark:text-slate-300 px-6 pt-3 pb-1 flex justify-between items-center text-xs font-semibold z-50 shrink-0 select-none" id="statusBar">
+<span class="font-medium tracking-tight" id="statusBarClock">17:33</span>
+<!-- Punch Hole Camera Pin -->
+<div class="w-3.5 h-3.5 bg-black rounded-full border border-slate-700/60 shadow-inner flex items-center justify-center">
+<div class="w-1 h-1 bg-cyan-900 rounded-full"></div>
+</div>
+<div class="flex items-center gap-2 text-[11px]">
+<i class="fa-solid fa-wifi text-[10px]"></i>
+<i class="fa-solid fa-signal text-[10px]"></i>
+<div class="flex items-center gap-1">
+<span class="text-[10px] font-mono">95%</span>
+<i class="fa-solid fa-battery-full text-xs text-emerald-500 dark:text-emerald-400"></i>
+</div>
+</div>
+</div>
+<!-- Galaxy App Header -->
+<header class="bg-white/85 dark:bg-[#0B0F19]/80 backdrop-blur-lg px-5 py-3 flex items-center justify-between border-b border-slate-200/80 dark:border-white/[0.07] z-40 shrink-0 transition-colors duration-300" id="appHeader">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-[1.5px] shadow-lg shadow-blue-500/25 flex items-center justify-center">
+<div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center text-white font-black text-sm tracking-tight">
+                        R
+                    </div>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-extrabold text-[17px] tracking-tight bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 dark:from-white dark:via-blue-100 dark:to-cyan-300 bg-clip-text text-transparent" id="brandName">Recatch</span>
+<span class="px-1.5 py-0.5 text-[9px] font-black tracking-wider bg-blue-600/10 dark:bg-cyan-400/15 text-blue-600 dark:text-cyan-300 rounded-full border border-blue-500/20 dark:border-cyan-400/30">PRO</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<!-- Live Detection Badge -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/25 dark:border-cyan-400/30 text-cyan-700 dark:text-cyan-300 text-[10px] font-medium shadow-sm" id="detectStatusBadge">
+<span class="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-ping" id="detectPulseDot"></span>
+<span id="detectStatusTxt" class="">알림 자동 감지 중</span>
+</div>
+<!-- Theme Toggle Button -->
+<button aria-label="테마 전환" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-amber-500 dark:text-amber-400 flex items-center justify-center transition-all active:scale-90 border border-slate-200 dark:border-white/10 shadow-sm" onclick="toggleTheme()">
+<i class="fa-solid fa-moon text-xs" id="themeIcon"></i>
+</button>
+<!-- Profile Modal Opener -->
+<button class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 active:scale-95 text-white flex items-center justify-center font-bold text-xs shadow-md shadow-blue-600/30 transition cursor-pointer ring-2 ring-blue-500/20" onclick="openSettingsModal()">
+                    유
+                </button>
+</div>
+</header>
+<!-- Main Scrollable Content Area -->
+<main class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4 pb-24">
+<!-- TAB 1: HOME PAGE -->
+<div class="space-y-4 transition-all duration-300 animate-page-enter" id="page-home">
+<!-- 1. Interactive Banner Carousel (3 slides) -->
+<div class="relative overflow-hidden rounded-oneui shadow-xl group border border-slate-200/80 dark:border-white/10">
+<div class="flex transition-transform duration-500 ease-out w-full" id="bannerTrack" style="transform: translateX(-200%);">
+<!-- Banner Slide 1 -->
+<div class="w-full shrink-0 bg-gradient-to-br from-blue-700 via-indigo-700 to-slate-900 p-5 text-white relative flex flex-col justify-between min-h-[148px]">
+<div class="absolute -right-6 -bottom-6 w-36 h-36 bg-cyan-400/20 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="text-[10px] font-bold tracking-wide uppercase bg-white/20 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/20">✨ 실시간 알림 가로채기</span>
+<span class="text-[10px] text-white/60 font-medium">1 / 3</span>
+</div>
+<div class="my-2">
+<h2 class="text-[18px] font-black tracking-tight leading-snug">
+                                    유리캐 님,<br>이번 달 <span class="text-cyan-300 font-extrabold underline decoration-cyan-400 decoration-2 underline-offset-4">34,500원</span> 되찾았습니다!
+                                </h2>
+<p class="text-[11px] text-blue-100/80 mt-1">놓칠 뻔한 카드별 최대 적립률을 실시간 보정했어요</p>
+</div>
+<div class="flex items-center gap-1.5 text-[11px] font-semibold text-cyan-200">
+<span class="">정산 수수료 안내 보기</span>
+<i class="fa-solid fa-arrow-right text-[10px]"></i>
+</div>
+</div>
+<!-- Banner Slide 2 -->
+<div class="w-full shrink-0 bg-gradient-to-br from-indigo-800 via-purple-800 to-slate-950 p-5 text-white relative flex flex-col justify-between min-h-[148px]">
+<div class="absolute -right-6 -bottom-6 w-36 h-36 bg-pink-500/20 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="text-[10px] font-bold tracking-wide uppercase bg-white/20 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/20">💳 우대 혜택 지갑 동기화</span>
+<span class="text-[10px] text-white/60 font-medium">2 / 3</span>
+</div>
+<div class="my-2">
+<h2 class="text-[18px] font-black tracking-tight leading-snug">
+                                    스타벅스 &amp; 편의점 혜택<br><span class="text-pink-300 font-extrabold">최대 20% 환급 패스</span> 활성화
+                                </h2>
+<p class="text-[11px] text-purple-200/80 mt-1">자주 쓰는 멤버십 바코드를 지갑에 등록하세요</p>
+</div>
+<div class="flex items-center gap-1.5 text-[11px] font-semibold text-pink-200">
+<span onclick="switchTab('wallet')" class="">지갑 바로가기</span>
+<i class="fa-solid fa-arrow-right text-[10px]"></i>
+</div>
+</div>
+<!-- Banner Slide 3 -->
+<div class="w-full shrink-0 bg-gradient-to-br from-emerald-800 via-teal-900 to-slate-950 p-5 text-white relative flex flex-col justify-between min-h-[148px]">
+<div class="absolute -right-6 -bottom-6 w-36 h-36 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="text-[10px] font-bold tracking-wide uppercase bg-white/20 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/20">🚀 수수료 0원 프로모션</span>
+<span class="text-[10px] text-white/60 font-medium">3 / 3</span>
+</div>
+<div class="my-2">
+<h2 class="text-[18px] font-black tracking-tight leading-snug">
+                                    친구 초대하고 30일간<br><span class="text-emerald-300 font-extrabold">되찾은 금액 100%</span> 전액 수령
+                                </h2>
+<p class="text-[11px] text-teal-100/80 mt-1">친구 1명 가입 시 정산 수수료 20% 전액 면제 쿠폰 지급</p>
+</div>
+<div class="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-200">
+<span class="">초대 링크 복사하기</span>
+<i class="fa-solid fa-copy text-[10px]"></i>
+</div>
+</div>
+</div>
+<!-- Carousel Indicator Dots -->
+<div class="absolute bottom-2.5 right-4 flex gap-1.5 z-10">
+<button class="w-1.5 h-1.5 rounded-full bg-white/40 transition-all duration-300" id="bannerDot0" onclick="setBannerSlide(0)"></button>
+<button class="w-1.5 h-1.5 rounded-full bg-white/40 transition-all duration-300" id="bannerDot1" onclick="setBannerSlide(1)"></button>
+<button class="w-3 h-1.5 rounded-full bg-white transition-all duration-300" id="bannerDot2" onclick="setBannerSlide(2)"></button>
+</div>
+</div>
+<!-- 2. Main Value Highlight Card (이번 달 되찾은 금액 대형 하이라이트) -->
+<div class="cursor-pointer group relative overflow-hidden rounded-oneui bg-white dark:bg-gradient-to-b dark:from-[#131d31] dark:to-[#0f172a] p-5 border border-slate-200/90 dark:border-white/10 shadow-card-light dark:shadow-glass-dark hover:border-blue-500/50 dark:hover:border-cyan-400/40 transition-all duration-300" onclick="openSettlementModal()">
+<div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 dark:bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-blue-600 dark:bg-cyan-400 shadow-sm shadow-blue-500"></span>
+<span class="text-xs font-bold text-slate-500 dark:text-slate-400 tracking-wide uppercase">2025년 5월 누적 정산 현황</span>
+</div>
+<span class="text-[11px] font-bold text-blue-600 dark:text-cyan-300 bg-blue-50 dark:bg-cyan-400/10 px-2 py-0.5 rounded-full border border-blue-200 dark:border-cyan-400/20 group-hover:scale-105 transition-transform">
+                            정산 명세서 <i class="fa-solid fa-chevron-right text-[9px] ml-0.5"></i>
+</span>
+</div>
+<!-- Gross Amount -->
+<div class="space-y-1">
+<p class="text-xs text-slate-500 dark:text-slate-400">이번 달 총 되찾은 할인·적립 혜택</p>
+<div class="flex items-baseline gap-1.5">
+<span class="text-3xl font-black tracking-tight text-slate-900 dark:text-white font-mono">34,500</span>
+<span class="text-base font-bold text-slate-700 dark:text-slate-300">원</span>
+<span class="ml-2 text-xs font-semibold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                지난달 대비 +12,400원 ↑
+                            </span>
+</div>
+</div>
+<!-- Financial Division Grid (수수료 20% vs 내게 남는 순절약액) -->
+<div class="mt-4 pt-3.5 border-t border-slate-100 dark:border-white/10 grid grid-cols-2 gap-3">
+<div class="bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-white/5">
+<span class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
+                                리캐치 성공 수수료 (20%)
+                                <i class="fa-solid fa-circle-question text-[10px] text-slate-400"></i>
+</span>
+<p class="text-[15px] font-bold text-slate-800 dark:text-slate-200 mt-0.5 font-mono">6,900<span class="text-xs font-normal">원</span></p>
+</div>
+<div class="bg-blue-50/70 dark:bg-blue-950/40 p-2.5 rounded-xl border border-blue-100 dark:border-cyan-500/20">
+<span class="text-[11px] text-blue-700 dark:text-cyan-300 font-semibold flex items-center justify-between">
+                                내게 남는 순 절약액
+                                <i class="fa-solid fa-wallet text-[11px]"></i>
+</span>
+<p class="text-[15px] font-black text-blue-700 dark:text-cyan-300 mt-0.5 font-mono">27,600<span class="text-xs font-semibold">원</span></p>
+</div>
+</div>
+</div>
+<!-- 3. Quick Action Button Cards -->
+<div class="grid grid-cols-2 gap-3">
+<button class="hover-scale flex items-center justify-between p-3.5 rounded-oneui-card bg-white dark:bg-slate-900/80 border border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-glass-dark text-left" onclick="switchTab('wallet')">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-xl bg-blue-500/10 dark:bg-cyan-500/15 text-blue-600 dark:text-cyan-300 flex items-center justify-center text-sm">
+<i class="fa-solid fa-credit-card"></i>
+</div>
+<div>
+<h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">혜택 지갑 관리</h4>
+<p class="text-[10px] text-slate-500 dark:text-slate-400">보유 카드 3장 연동</p>
+</div>
+</div>
+<i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+</button>
+<button class="hover-scale flex items-center justify-between p-3.5 rounded-oneui-card bg-white dark:bg-slate-900/80 border border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-glass-dark text-left" onclick="openSettingsModal()">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-xl bg-indigo-500/10 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm">
+<i class="fa-solid fa-bell"></i>
+</div>
+<div>
+<h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">알림 권한 설정</h4>
+<p class="text-[10px] text-slate-500 dark:text-slate-400">실시간 감지 활성화</p>
+</div>
+</div>
+<i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+</button>
+</div>
+<!-- 4. Real-time Simulation Feed (최근 혜택 리캐치 내역 실시간 추가 시뮬레이션) -->
+<div class="rounded-oneui bg-white dark:bg-[#111827]/90 p-4 border border-slate-200/90 dark:border-white/10 shadow-sm">
+<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-white/5">
+<div class="flex items-center gap-2">
+<span class="text-xs font-extrabold text-slate-900 dark:text-white">실시간 리캐치 피드</span>
+<span class="text-[10px] px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full font-semibold border border-emerald-500/20">LIVE</span>
+</div>
+<button class="text-[11px] font-bold text-blue-600 dark:text-cyan-300 hover:underline flex items-center gap-1" onclick="simulateNewDetection()">
+<i class="fa-solid fa-rotate text-[10px]"></i> 결제 감지 테스트
+                        </button>
+</div>
+<!-- Dynamic List of Recatched Transactions -->
+<div class="space-y-2.5" id="detectionFeedList">
+<!-- Item 1 -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 hover:border-blue-400/40 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-sm">
+<i class="fa-solid fa-mug-saucer"></i>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<h5 class="text-xs font-bold text-slate-800 dark:text-slate-100">스타벅스 강남대로점</h5>
+<span class="text-[9px] bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 px-1.5 py-0.2 rounded font-medium">KB국민 톡톡</span>
+</div>
+<p class="text-[10px] text-slate-500 dark:text-slate-400">결제 11,200원 · 15:42</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">+2,240원</span>
+<p class="text-[9px] text-slate-400">20% 캐시백 적용</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 hover:border-blue-400/40 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-sm">
+<i class="fa-solid fa-store"></i>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<h5 class="text-xs font-bold text-slate-800 dark:text-slate-100">GS25 역삼하이츠점</h5>
+<span class="text-[9px] bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 px-1.5 py-0.2 rounded font-medium">신한 Mr.Life</span>
+</div>
+<p class="text-[10px] text-slate-500 dark:text-slate-400">결제 6,500원 · 13:10</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">+650원</span>
+<p class="text-[9px] text-slate-400">10% 편의점 할인</p>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 hover:border-blue-400/40 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm">
+<i class="fa-solid fa-cart-shopping"></i>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<h5 class="text-xs font-bold text-slate-800 dark:text-slate-100">쿠팡 로켓프레시</h5>
+<span class="text-[9px] bg-cyan-100 dark:bg-cyan-900/60 text-cyan-700 dark:text-cyan-300 px-1.5 py-0.2 rounded font-medium">현대 Zero Edition</span>
+</div>
+<p class="text-[10px] text-slate-500 dark:text-slate-400">결제 28,900원 · 어제</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">+1,445원</span>
+<p class="text-[9px] text-slate-400">5% 온라인 적립</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- TAB 2: HISTORY PAGE (혜택/결제 내역) -->
+<div class="space-y-4 animate-page-enter hidden" id="page-history">
+<div class="flex items-center justify-between">
+<div>
+<h2 class="text-lg font-black text-slate-900 dark:text-white">혜택 &amp; 결제 내역</h2>
+<p class="text-xs text-slate-500 dark:text-slate-400">알림 인식 기반으로 집계된 모든 내역</p>
+</div>
+<span class="text-xs font-semibold px-2.5 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-full font-mono">총 28건</span>
+</div>
+<!-- Filtering Pills -->
+<div class="flex gap-2 p-1 bg-slate-200/70 dark:bg-slate-800/80 rounded-xl">
+<button class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm transition" id="histFilter-all" onclick="filterHistory('all')">전체</button>
+<button class="flex-1 py-1.5 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 transition" id="histFilter-done" onclick="filterHistory('done')">적립 완료</button>
+<button class="flex-1 py-1.5 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 transition" id="histFilter-pending" onclick="filterHistory('pending')">진행 중</button>
+</div>
+<!-- History Item List -->
+<div class="space-y-3" id="historyItemList">
+<!-- Item 1 -->
+<div class="history-entry hist-done p-4 rounded-oneui-card bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col gap-2.5">
+<div class="flex justify-between items-start">
+<div>
+<span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">적립 확정</span>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white mt-1">배달의민족 (BBQ치킨)</h4>
+<p class="text-[11px] text-slate-400">2025.05.12 19:22 · 현대카드 M Edition3</p>
+</div>
+<div class="text-right">
+<span class="text-sm font-extrabold text-slate-900 dark:text-white font-mono">24,000원</span>
+<p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">+2,400원 리캐치</p>
+</div>
+</div>
+<div class="text-[10px] text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/60 p-2 rounded-lg flex justify-between">
+<span class="">수수료 정산(20%): 480원</span>
+<span class="font-bold text-blue-600 dark:text-cyan-400">내 순혜택: 1,920원</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="history-entry hist-done p-4 rounded-oneui-card bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col gap-2.5">
+<div class="flex justify-between items-start">
+<div>
+<span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">적립 확정</span>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white mt-1">CGV 용산아이파크몰</h4>
+<p class="text-[11px] text-slate-400">2025.05.10 14:15 · KB국민 톡톡D 카드</p>
+</div>
+<div class="text-right">
+<span class="text-sm font-extrabold text-slate-900 dark:text-white font-mono">30,000원</span>
+<p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">+6,000원 리캐치</p>
+</div>
+</div>
+<div class="text-[10px] text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/60 p-2 rounded-lg flex justify-between">
+<span class="">수수료 정산(20%): 1,200원</span>
+<span class="font-bold text-blue-600 dark:text-cyan-400">내 순혜택: 4,800원</span>
+</div>
+</div>
+<!-- Item 3 (Pending) -->
+<div class="history-entry hist-pending p-4 rounded-oneui-card bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col gap-2.5">
+<div class="flex justify-between items-start">
+<div>
+<span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">전표 매입 진행중</span>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white mt-1">올리브영 명동본점</h4>
+<p class="text-[11px] text-slate-400">2025.05.14 18:30 · 신한 Mr.Life</p>
+</div>
+<div class="text-right">
+<span class="text-sm font-extrabold text-slate-900 dark:text-white font-mono">45,600원</span>
+<p class="text-xs font-bold text-amber-500 font-mono mt-0.5">+4,560원 예정</p>
+</div>
+</div>
+<div class="text-[10px] text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/60 p-2 rounded-lg flex justify-between">
+<span class="">카드사 매출전표 최종 승인 후 확정됩니다.</span>
+<span class="text-amber-500 font-medium">검증 중 (D-1)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- TAB 3: ANALYTICS PAGE (소비 분석 통계 - NEW) -->
+<div class="space-y-4 animate-page-enter hidden" id="page-analytics">
+<div class="flex items-center justify-between">
+<div>
+<h2 class="text-lg font-black text-slate-900 dark:text-white">소비 분석 통계</h2>
+<p class="text-xs text-slate-500 dark:text-slate-400">AI 소비 패턴 및 리캐치 절감 리포트</p>
+</div>
+<span class="text-xs font-bold px-2.5 py-1 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 rounded-full font-mono">2025.05 기준</span>
+</div>
+<!-- 1. 월 소비 총액 & 절약률 요약 카드 -->
+<div class="rounded-oneui bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-5 border border-white/10 shadow-xl relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-36 h-36 bg-cyan-500/20 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex justify-between items-center mb-1 text-slate-400 text-xs">
+<span class="">이번 달 총 소비 금액</span>
+<span class="text-emerald-400 font-semibold flex items-center gap-1">
+<i class="fa-solid fa-arrow-trend-down text-[10px]"></i> 전월 대비 8.4% 절감
+</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-black tracking-tight font-mono text-white">1,248,000</span>
+<span class="text-sm font-bold text-slate-300">원</span>
+</div>
+<div class="mt-4 pt-3.5 border-t border-white/10 grid grid-cols-2 gap-3">
+<div class="bg-white/5 p-2.5 rounded-xl border border-white/10">
+<span class="text-[11px] text-slate-300 block">리캐치 순 절약액</span>
+<p class="text-[15px] font-black text-cyan-300 mt-0.5 font-mono">34,500<span class="text-xs font-normal">원</span></p>
+</div>
+<div class="bg-white/5 p-2.5 rounded-xl border border-white/10">
+<span class="text-[11px] text-slate-300 block">실질 체감 할인율</span>
+<p class="text-[15px] font-black text-emerald-400 mt-0.5 font-mono">13.9<span class="text-xs font-normal">% 절약</span></p>
+</div>
+</div>
+</div>
+<!-- 2. 카테고리별 소비 분석 차트 & 프로그레스 바 -->
+<div class="rounded-oneui bg-white dark:bg-[#111827] p-4 border border-slate-200/90 dark:border-white/10 shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<h3 class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+<i class="fa-solid fa-chart-pie text-cyan-500 text-xs"></i>
+카테고리별 지출 &amp; 혜택 비중
+</h3>
+<span class="text-[10px] text-slate-400">4개 주요 항목</span>
+</div>
+<!-- Multi-segment visual bar -->
+<div class="w-full h-3 rounded-full overflow-hidden flex bg-slate-100 dark:bg-slate-800">
+<div class="bg-blue-500 h-full" style="width: 42%" title="식비/카페 42%"></div>
+<div class="bg-cyan-400 h-full" style="width: 28%" title="온라인쇼핑 28%"></div>
+<div class="bg-indigo-500 h-full" style="width: 18%" title="문화/구독 18%"></div>
+<div class="bg-amber-400 h-full" style="width: 12%" title="편의점/생활 12%"></div>
+</div>
+<!-- Progress item breakdown -->
+<div class="space-y-2 pt-1 text-xs">
+<!-- Cat 1 -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+<span class="text-slate-700 dark:text-slate-300 font-medium">식비 · 카페</span>
+<span class="text-[10px] text-slate-400 font-mono">42%</span>
+</div>
+<div class="text-right">
+<span class="font-bold text-slate-900 dark:text-white font-mono">524,160원</span>
+<span class="text-[10px] text-emerald-500 dark:text-cyan-400 block font-mono font-medium">+15,800원 환급</span>
+</div>
+</div>
+<!-- Cat 2 -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+<span class="text-slate-700 dark:text-slate-300 font-medium">온라인 쇼핑</span>
+<span class="text-[10px] text-slate-400 font-mono">28%</span>
+</div>
+<div class="text-right">
+<span class="font-bold text-slate-900 dark:text-white font-mono">349,440원</span>
+<span class="text-[10px] text-emerald-500 dark:text-cyan-400 block font-mono font-medium">+10,200원 적립</span>
+</div>
+</div>
+<!-- Cat 3 -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+<span class="text-slate-700 dark:text-slate-300 font-medium">문화 · 구독</span>
+<span class="text-[10px] text-slate-400 font-mono">18%</span>
+</div>
+<div class="text-right">
+<span class="font-bold text-slate-900 dark:text-white font-mono">224,640원</span>
+<span class="text-[10px] text-emerald-500 dark:text-cyan-400 block font-mono font-medium">+6,000원 할인</span>
+</div>
+</div>
+<!-- Cat 4 -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+<span class="text-slate-700 dark:text-slate-300 font-medium">편의점 · 생활</span>
+<span class="text-[10px] text-slate-400 font-mono">12%</span>
+</div>
+<div class="text-right">
+<span class="font-bold text-slate-900 dark:text-white font-mono">149,760원</span>
+<span class="text-[10px] text-emerald-500 dark:text-cyan-400 block font-mono font-medium">+2,500원 할인</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 3. 효자 카드 TOP 3 랭킹 -->
+<div class="rounded-oneui bg-white dark:bg-[#111827] p-4 border border-slate-200/90 dark:border-white/10 shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<h3 class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+<i class="fa-solid fa-crown text-amber-400 text-xs"></i>
+이번 달 최대 혜택 효자 카드 TOP 3
+</h3>
+<span class="text-[10px] text-blue-600 dark:text-cyan-400 font-bold">총 34,500원</span>
+</div>
+<div class="space-y-2">
+<!-- Rank 1 -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5">
+<div class="flex items-center gap-2.5">
+<span class="w-5 h-5 rounded-full bg-amber-400/20 text-amber-500 font-black text-xs flex items-center justify-center font-mono">1</span>
+<div>
+<h4 class="text-xs font-bold text-slate-900 dark:text-white">KB국민 톡톡D 체크카드</h4>
+<p class="text-[10px] text-slate-500 dark:text-slate-400">스타벅스 20% · 간편결제 10% 집중</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-black text-emerald-600 dark:text-emerald-400 font-mono">+18,240원</span>
+<p class="text-[9px] text-slate-400">실적 충족 100%</p>
+</div>
+</div>
+<!-- Rank 2 -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5">
+<div class="flex items-center gap-2.5">
+<span class="w-5 h-5 rounded-full bg-slate-300/40 text-slate-600 dark:text-slate-300 font-black text-xs flex items-center justify-center font-mono">2</span>
+<div>
+<h4 class="text-xs font-bold text-slate-900 dark:text-white">신한 Mr.Life 신용카드</h4>
+<p class="text-[10px] text-slate-500 dark:text-slate-400">야간 편의점 10% · 병원/약국 할인</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-black text-emerald-600 dark:text-emerald-400 font-mono">+11,460원</span>
+<p class="text-[9px] text-slate-400">한도 82% 소진</p>
+</div>
+</div>
+<!-- Rank 3 -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5">
+<div class="flex items-center gap-2.5">
+<span class="w-5 h-5 rounded-full bg-amber-700/20 text-amber-700 dark:text-amber-400 font-black text-xs flex items-center justify-center font-mono">3</span>
+<div>
+<h4 class="text-xs font-bold text-slate-900 dark:text-white">현대카드 ZERO Edition2</h4>
+<p class="text-[10px] text-slate-500 dark:text-slate-400">쿠팡 &amp; 배달앱 무조건 0.7% 적립</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-black text-emerald-600 dark:text-emerald-400 font-mono">+4,800원</span>
+<p class="text-[9px] text-slate-400">무실적 기본형</p>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. 지출 피크 타임 및 AI 리캐치 어드바이스 -->
+<div class="rounded-oneui bg-gradient-to-br from-blue-50 to-indigo-50/80 dark:from-slate-900/90 dark:to-indigo-950/40 p-4 border border-blue-200/80 dark:border-cyan-500/20 shadow-sm space-y-2.5">
+<div class="flex items-center justify-between">
+<span class="text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-cyan-300 flex items-center gap-1.5">
+<i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+AI 스마트 리캐치 조언
+</span>
+<span class="text-[9px] px-2 py-0.5 bg-blue-600/10 dark:bg-cyan-400/15 text-blue-700 dark:text-cyan-300 rounded font-semibold">피크타임: 금요일 19~22시</span>
+</div>
+<p class="text-xs font-bold text-slate-900 dark:text-white leading-relaxed">
+"금요일 저녁 외식 결제 시 <span class="text-blue-600 dark:text-cyan-300 font-extrabold underline decoration-blue-400/40">T멤버십 + KB 톡톡 카드</span> 조합으로 결제하면 최대 15%를 더 아낄 수 있어요!"
+</p>
+<div class="flex items-center justify-between pt-1 border-t border-blue-200/40 dark:border-white/5 text-[11px] text-slate-500 dark:text-slate-400">
+<span class="">다음 주 예상 추가 절약액</span>
+<span class="font-bold text-blue-600 dark:text-cyan-400 font-mono">+6,200원 예상</span>
+</div>
+</div>
+</div>
+<!-- TAB 4: WALLET PAGE (내 혜택 지갑) -->
+<div class="space-y-4 animate-page-enter hidden" id="page-wallet">
+<div class="flex items-center justify-between">
+<div>
+<h2 class="text-lg font-black text-slate-900 dark:text-white">내 혜택 지갑</h2>
+<p class="text-xs text-slate-500 dark:text-slate-400">최대 할인 혜택 매칭 엔진 탑재</p>
+</div>
+<button class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1 shadow-sm" onclick="openCardAddModal()">
+<i class="fa-solid fa-plus text-[10px]"></i> 카드/바코드 추가
+                    </button>
+</div>
+<!-- 1. 초개인화 우대 정보 3칸 박스 -->
+<div class="grid grid-cols-3 gap-2">
+<div class="p-3 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200/90 dark:border-white/10 text-center shadow-sm">
+<div class="w-7 h-7 mx-auto rounded-full bg-blue-500/10 text-blue-600 dark:text-cyan-400 flex items-center justify-center text-xs mb-1.5">
+<i class="fa-solid fa-graduation-cap"></i>
+</div>
+<span class="text-[10px] text-slate-400 font-medium">신분 우대</span>
+<p class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-0.5">대학생/청년</p>
+<span class="text-[9px] text-blue-600 dark:text-cyan-400 font-semibold mt-1 block">교통 15%</span>
+</div>
+<div class="p-3 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200/90 dark:border-white/10 text-center shadow-sm">
+<div class="w-7 h-7 mx-auto rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs mb-1.5">
+<i class="fa-solid fa-tower-broadcast"></i>
+</div>
+<span class="text-[10px] text-slate-400 font-medium">통신사 멤버십</span>
+<p class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-0.5">SKT VIP</p>
+<span class="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1 block">편의점/베이커리</span>
+</div>
+<div class="p-3 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200/90 dark:border-white/10 text-center shadow-sm">
+<div class="w-7 h-7 mx-auto rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs mb-1.5">
+<i class="fa-solid fa-location-dot"></i>
+</div>
+<span class="text-[10px] text-slate-400 font-medium">주 활동 지역</span>
+<p class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-0.5">강남구/서초구</p>
+<span class="text-[9px] text-purple-600 dark:text-purple-400 font-semibold mt-1 block">로컬 가맹점</span>
+</div>
+</div>
+<!-- 2. 실물 체크카드 가로 스와이프 3장 -->
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-extrabold text-slate-800 dark:text-slate-200">연동 신용/체크카드 (3장)</span>
+<span class="text-[11px] text-slate-400">옆으로 스와이프 ↔</span>
+</div>
+<div class="card-scroll-container gap-3 pb-2 no-scrollbar">
+<!-- Card 1 -->
+<div class="card-scroll-item w-[280px] h-[165px] rounded-2xl bg-gradient-to-tr from-slate-900 via-indigo-950 to-blue-900 text-white p-4 flex flex-col justify-between shadow-lg relative overflow-hidden border border-white/15">
+<div class="absolute -right-10 -bottom-10 w-28 h-28 bg-blue-500/20 rounded-full blur-xl"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-[10px] tracking-wider text-blue-300 font-bold uppercase">KB Kookmin Bank</p>
+<h3 class="text-sm font-extrabold mt-0.5">톡톡 D 체크카드</h3>
+</div>
+<div class="w-7 h-5 bg-amber-400/80 rounded-md"></div>
+</div>
+<div>
+<p class="text-xs font-mono tracking-widest text-slate-300">•••• •••• •••• 9421</p>
+<div class="flex justify-between items-end mt-2">
+<div>
+<span class="text-[9px] text-slate-400 block uppercase">실적 충족 현황</span>
+<span class="text-[11px] font-bold text-cyan-300">30만원 충족 (최대 혜택 적용)</span>
+</div>
+<span class="text-[11px] font-bold text-white/90">유리캐</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="card-scroll-item w-[280px] h-[165px] rounded-2xl bg-gradient-to-tr from-purple-950 via-slate-900 to-pink-900 text-white p-4 flex flex-col justify-between shadow-lg relative overflow-hidden border border-white/15">
+<div class="absolute -right-10 -bottom-10 w-28 h-28 bg-pink-500/20 rounded-full blur-xl"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-[10px] tracking-wider text-pink-300 font-bold uppercase">Shinhan Card</p>
+<h3 class="text-sm font-extrabold mt-0.5">Mr.Life 신용카드</h3>
+</div>
+<div class="w-7 h-5 bg-amber-400/80 rounded-md"></div>
+</div>
+<div>
+<p class="text-xs font-mono tracking-widest text-slate-300">•••• •••• •••• 1083</p>
+<div class="flex justify-between items-end mt-2">
+<div>
+<span class="text-[9px] text-slate-400 block uppercase">편의점/마트 10%</span>
+<span class="text-[11px] font-bold text-pink-300">월 한도 잔여 8,200원</span>
+</div>
+<span class="text-[11px] font-bold text-white/90">유리캐</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="card-scroll-item w-[280px] h-[165px] rounded-2xl bg-gradient-to-tr from-cyan-950 via-slate-900 to-teal-900 text-white p-4 flex flex-col justify-between shadow-lg relative overflow-hidden border border-white/15">
+<div class="absolute -right-10 -bottom-10 w-28 h-28 bg-cyan-500/20 rounded-full blur-xl"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-[10px] tracking-wider text-cyan-300 font-bold uppercase">Hyundai Card</p>
+<h3 class="text-sm font-extrabold mt-0.5">ZERO Edition2 (할인형)</h3>
+</div>
+<div class="w-7 h-5 bg-amber-400/80 rounded-md"></div>
+</div>
+<div>
+<p class="text-xs font-mono tracking-widest text-slate-300">•••• •••• •••• 5530</p>
+<div class="flex justify-between items-end mt-2">
+<div>
+<span class="text-[9px] text-slate-400 block uppercase">무실적 기본할인</span>
+<span class="text-[11px] font-bold text-emerald-300">국내 전 가맹점 0.7%</span>
+</div>
+<span class="text-[11px] font-bold text-white/90">유리캐</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 3. 원클릭 현장결제 & 멤버십 바코드 가로 스와이프 3장 -->
+<div>
+<div class="flex items-center justify-between mb-2">
+<h3 class="text-xs font-extrabold text-slate-800 dark:text-slate-200 flex items-center gap-1.5" id="barcodeSectionTitle">
+<i class="fa-solid fa-barcode text-cyan-400"></i> 원클릭 현장결제 &amp; 멤버십 바코드
+</h3>
+<span class="text-[10px] text-blue-600 dark:text-cyan-400 font-medium">터치 시 확대</span>
+</div>
+<div class="card-scroll-container gap-3 pb-2 no-scrollbar">
+<!-- Card 1: SKT VIP 멤버십 -->
+<div class="card-scroll-item w-64 h-36 rounded-2xl bg-gradient-to-br from-red-600 via-rose-800 to-slate-950 p-3.5 text-white flex flex-col justify-between shadow-lg relative border border-red-500/40 hover-scale cursor-pointer" onclick="openBarcodeModal('T 멤버십 (SKT VIP)', 'SKT VIP', 'bg-red-500/20 text-red-400 border-red-500/30', '3921 - 8812 - 0049')">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-white text-red-600 font-black text-[9px]">SKT VIP</span>
+<span class="text-[10px] font-bold text-rose-200">T 멤버십 바코드</span>
+</div>
+<span class="text-[9px] text-red-300 font-bold bg-red-950/80 px-2 py-0.5 rounded-full border border-red-400/30">VIP 전용</span>
+</div>
+<div class="bg-black/30 backdrop-blur-sm p-2.5 rounded-xl flex items-center justify-center gap-2 my-1 border border-white/10">
+<i class="fa-solid fa-qrcode text-sm text-cyan-400"></i>
+<span class="text-xs font-bold text-white">터치하여 바코드 열기</span>
+</div>
+<div class="flex justify-between items-center text-[10px] text-rose-200/90 font-medium">
+<span class="">할인율 최대 20% 적용 중</span>
+<span class="font-bold underline">바코드 재발급</span>
+</div>
+</div>
+<!-- Card 2: 영남대학교 스마트 학생증 -->
+<div class="card-scroll-item w-64 h-36 rounded-2xl bg-gradient-to-br from-blue-700 via-sky-800 to-slate-950 p-3.5 text-white flex flex-col justify-between shadow-lg relative border border-blue-400/40 hover-scale cursor-pointer" onclick="openBarcodeModal('영남대학교 스마트 학생증', 'YU 학생증', 'bg-blue-500/20 text-blue-400 border-blue-500/30', '22110482 - YU - 2026')">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-blue-500 text-white font-black text-[9px]">YU 학생증</span>
+<span class="text-[10px] font-bold text-sky-200">영남대학교 스마트인증</span>
+</div>
+<span class="text-[9px] text-sky-300 font-bold bg-blue-950/80 px-2 py-0.5 rounded-full border border-blue-400/30">컴퓨터공학과</span>
+</div>
+<div class="bg-black/30 backdrop-blur-sm p-2.5 rounded-xl flex items-center justify-center gap-2 my-1 border border-white/10">
+<i class="fa-solid fa-qrcode text-sm text-cyan-400"></i>
+<span class="text-xs font-bold text-white">터치하여 바코드 열기</span>
+</div>
+<div class="flex justify-between items-center text-[10px] text-sky-200/90 font-medium">
+<span class="">대학생 특별 가맹점 자동 적립</span>
+<span class="font-bold underline">인증완료</span>
+</div>
+</div>
+<!-- Card 3: CJ ONE 통합 멤버십 -->
+<div class="card-scroll-item w-64 h-36 rounded-2xl bg-gradient-to-br from-amber-600 via-rose-700 to-slate-950 p-3.5 text-white flex flex-col justify-between shadow-lg relative border border-amber-500/40 hover-scale cursor-pointer" onclick="openBarcodeModal('CJ ONE 통합 멤버십', 'CJ ONE', 'bg-amber-500/20 text-amber-400 border-amber-500/30', '7012 - 4019 - 8820')">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-amber-400 text-slate-900 font-black text-[9px]">CJ ONE</span>
+<span class="text-[10px] font-bold text-amber-200">통합 포인트 멤버십</span>
+</div>
+<span class="text-[9px] text-amber-300 font-bold bg-amber-950/80 px-2 py-0.5 rounded-full border border-amber-400/30">올리브영·CGV</span>
+</div>
+<div class="bg-black/30 backdrop-blur-sm p-2.5 rounded-xl flex items-center justify-center gap-2 my-1 border border-white/10">
+<i class="fa-solid fa-qrcode text-sm text-cyan-400"></i>
+<span class="text-xs font-bold text-white">터치하여 바코드 열기</span>
+</div>
+<div class="flex justify-between items-center text-[10px] text-amber-200/90 font-medium">
+<span class="">보유 포인트: 14,250P</span>
+<span class="font-bold underline">포인트 적립</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. 전체 연동 매칭 지갑 스위치 토글 -->
+<div class="p-4 rounded-oneui-card bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-white/10 flex items-center justify-between">
+<div>
+<h4 class="text-xs font-bold text-slate-900 dark:text-white">스마트 결제 자동 매칭 엔진</h4>
+<p class="text-[11px] text-slate-500 dark:text-slate-400">결제 시점 위치와 가맹점에 맞는 최적 카드 추천</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" id="autoMatchToggle" type="checkbox">
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 dark:peer-checked:bg-cyan-500"></div>
+</label>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (4 Tabs: 홈, 내역분석, 소비분석, 혜택지갑) -->
+<nav class="absolute bottom-0 left-0 right-0 h-16 bg-white/90 dark:bg-[#0B0F19]/90 backdrop-blur-xl border-t border-slate-200/80 dark:border-white/10 flex items-center justify-around px-2 z-40">
+<button class="flex flex-col items-center gap-1 text-blue-600 dark:text-cyan-400 font-bold transition-all flex-1 py-1" id="tab-home" onclick="switchTab('home')">
+<i class="fa-solid fa-house-chimney text-base"></i>
+<span class="text-[10px]">홈</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-medium transition-all flex-1 py-1" id="tab-history" onclick="switchTab('history')">
+<i class="fa-solid fa-receipt text-base"></i>
+<span class="text-[10px]">내역</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-medium transition-all flex-1 py-1" id="tab-analytics" onclick="switchTab('analytics')">
+<i class="fa-solid fa-chart-pie text-base"></i>
+<span class="text-[10px]">소비분석</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-medium transition-all flex-1 py-1" id="tab-wallet" onclick="switchTab('wallet')">
+<i class="fa-solid fa-wallet text-base"></i>
+<span class="text-[10px]">혜택지갑</span>
+</button>
+</nav>
+<!-- Galaxy Gesture Navigation Pill Indicator -->
+<div class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-slate-300 dark:bg-slate-700 rounded-full pointer-events-none z-50"></div>
+<!-- ================= MODALS ================= -->
+<!-- MODAL 1: 대형 바코드 팝업 모달 -->
+<div class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" id="modalBarcode">
+<div class="w-full max-w-sm bg-white dark:bg-slate-900 rounded-t-[32px] sm:rounded-2xl p-6 border border-slate-200 dark:border-white/10 text-center animate-page-enter">
+<div class="flex justify-between items-center mb-4"><div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold border hidden" id="barcodeModalBadge"></span>
+<span class="text-sm font-extrabold text-slate-900 dark:text-white" id="barcodeModalTitle">T 멤버십 (SKT VIP)</span>
+</div>
+<button aria-label="닫기" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-xs" onclick="closeModal('modalBarcode')">
+<i class="fa-solid fa-xmark"></i>
+</button></div>
+<div class="bg-white p-4 rounded-xl border border-slate-300 shadow-inner my-2">
+<div class="h-20 barcode-bars w-full text-black"></div>
+<p class="text-sm font-mono tracking-widest text-slate-900 font-bold mt-3" id="barcodeModalNumber">7700-1923-8832-1049</p>
+</div>
+<div class="flex items-center justify-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-3">
+<i class="fa-solid fa-bolt"></i> 바코드 밝기 최대화 활성화됨
+                </div>
+<p class="text-[11px] text-slate-500 dark:text-slate-400 mt-2">가맹점 직원에게 위 바코드를 보여주시면 자동 적립됩니다.</p>
+<button class="w-full mt-4 py-3 bg-slate-900 dark:bg-slate-800 text-white font-bold rounded-xl text-xs" onclick="closeModal('modalBarcode')">
+                    닫기
+                </button>
+</div>
+</div>
+<!-- MODAL 2: 예상 수수료 정산 결제 모달 -->
+<div class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" id="modalSettlement">
+<div class="w-full max-w-sm bg-white dark:bg-[#111827] rounded-t-[32px] sm:rounded-2xl p-6 border border-slate-200 dark:border-white/10 text-left animate-page-enter">
+<div class="flex justify-between items-center mb-3">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-blue-600 dark:bg-cyan-400"></span>
+<h3 class="text-sm font-extrabold text-slate-900 dark:text-white">리캐치 정산 명세서</h3>
+</div>
+<button class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-xs" onclick="closeModal('modalSettlement')">
+<i class="fa-solid fa-xmark"></i>
+</button>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-4">리캐치는 실제로 사용자가 환급·할인받은 순이익에서만 사후 20% 성공 수수료를 정산합니다.</p>
+<div class="space-y-2.5 bg-slate-50 dark:bg-slate-900/70 p-3.5 rounded-xl border border-slate-200/80 dark:border-white/5 text-xs">
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span class="">5월 총 되찾은 금액</span>
+<span class="font-bold font-mono text-slate-900 dark:text-white">34,500 원</span>
+</div>
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span class="">성공 수수료율</span>
+<span class="font-bold text-blue-600 dark:text-cyan-400">20.0 %</span>
+</div>
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span class="">신규회원 첫달 할인 쿠폰</span>
+<span class="font-bold text-emerald-500 font-mono">-1,000 원</span>
+</div>
+<div class="border-t border-slate-200 dark:border-white/10 pt-2 flex justify-between items-baseline font-bold">
+<span class="text-slate-900 dark:text-white text-xs">최종 청구 예정 수수료</span>
+<span class="text-base font-black text-blue-600 dark:text-cyan-400 font-mono">5,900 원</span>
+</div>
+</div>
+<div class="mt-4 p-3 bg-blue-50 dark:bg-blue-950/40 rounded-xl border border-blue-100 dark:border-blue-900/40 text-[11px] text-blue-800 dark:text-blue-300">
+                    💡 결제 알림을 놓치지 않고 챙긴 순이익 <b>28,600원</b>이 사용자 계좌 및 카드 청구서에 보존되었습니다.
+                </div>
+<div class="flex gap-2 mt-5">
+<button class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs" onclick="closeModal('modalSettlement')">
+                        닫기
+                    </button>
+<button class="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/30" onclick="paySettlement()">
+                        자동 정산 승인
+                    </button>
+</div>
+</div>
+</div>
+<!-- MODAL 3: 환경설정 모달 -->
+<div class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" id="modalSettings">
+<div class="w-full max-w-sm bg-white dark:bg-[#111827] rounded-t-[32px] sm:rounded-2xl p-6 border border-slate-200 dark:border-white/10 text-left animate-page-enter">
+<div class="flex justify-between items-center mb-4">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">유</div>
+<div>
+<h3 class="text-xs font-bold text-slate-900 dark:text-white">유리캐 님 계정</h3>
+<p class="text-[10px] text-slate-400">recatch.user@example.com</p>
+</div>
+</div>
+<button class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-xs" onclick="closeModal('modalSettings')">
+<i class="fa-solid fa-xmark"></i>
+</button>
+</div>
+<div class="space-y-3 text-xs">
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-white/5">
+<span class="text-slate-700 dark:text-slate-300 font-medium">실시간 결제 푸시 감지</span>
+<input checked="" class="w-4 h-4 rounded text-blue-600" type="checkbox">
+</div>
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-white/5">
+<span class="text-slate-700 dark:text-slate-300 font-medium">최대 할인 혜택 음성 안내</span>
+<input class="w-4 h-4 rounded text-blue-600" type="checkbox">
+</div>
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-white/5">
+<span class="text-slate-700 dark:text-slate-300 font-medium">수수료 정산일 안내 알림</span>
+<input checked="" class="w-4 h-4 rounded text-blue-600" type="checkbox">
+</div>
+<div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-white/5 text-[11px] text-slate-400 flex justify-between">
+<span class="">앱 버전</span>
+<span class="font-mono text-slate-300">v2.4.0 (Fintech Pro)</span>
+</div>
+</div>
+<button class="w-full mt-4 py-2.5 bg-blue-600 text-white font-bold rounded-xl text-xs" onclick="closeModal('modalSettings')">
+                    설정 완료
+                </button>
+</div>
+</div>
+<!-- MODAL 4: 신규 카드/지갑 추가 모달 -->
+<div class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" id="modalAddCard">
+<div class="w-full max-w-sm bg-white dark:bg-[#111827] rounded-t-[32px] sm:rounded-2xl p-6 border border-slate-200 dark:border-white/10 text-left animate-page-enter">
+<div class="flex justify-between items-center mb-3">
+<h3 class="text-sm font-extrabold text-slate-900 dark:text-white">혜택 지갑 항목 등록</h3>
+<button class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-xs" onclick="closeModal('modalAddCard')">
+<i class="fa-solid fa-xmark"></i>
+</button>
+</div>
+<div class="space-y-3 text-xs">
+<div>
+<label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">항목 유형</label>
+<select class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs">
+<option>신용/체크카드 (결제 알림 연동)</option>
+<option>멤버십/바코드 적립권</option>
+<option>통신사 및 복지 우대 카드</option>
+</select>
+</div>
+<div>
+<label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">카드 또는 멤버십 명칭</label>
+<input class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs" placeholder="예: 우리 카드의정석, 스타벅스 e-Gift" type="text">
+</div>
+<div>
+<label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">카드 번호 또는 바코드 번호 (16자리)</label>
+<input class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono" placeholder="•••• •••• •••• ••••" type="text">
+</div>
+</div>
+<button class="w-full mt-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-md" onclick="addNewCardSubmit()">
+                    등록 완료
+                </button>
+</div>
+</div>
+</div>
+<!-- Interactive Scripts -->
+<script>
+        // 1. Theme Toggle (Dark / Light)
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                html.classList.add('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+        }
+
+        // 2. Banner Carousel Auto Slide & Manual Dots
+        let currentSlide = 0;
+        const totalSlides = 3;
+        function updateBannerUI() {
+            const track = document.getElementById('bannerTrack');
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.getElementById(`bannerDot${i}`);
+                if (dot) {
+                    if (i === currentSlide) {
+                        dot.className = 'w-3 h-1.5 rounded-full bg-white transition-all duration-300';
+                    } else {
+                        dot.className = 'w-1.5 h-1.5 rounded-full bg-white/40 transition-all duration-300';
+                    }
+                }
+            }
+        }
+        function setBannerSlide(index) {
+            currentSlide = index;
+            updateBannerUI();
+        }
+        // Auto banner change every 5 seconds
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateBannerUI();
+        }, 5000);
+
+        // 3. Tab Navigation (Home, History, Analytics, Wallet - 4 tabs)
+        function switchTab(tabName) {
+            const pages = ['home', 'history', 'analytics', 'wallet'];
+            pages.forEach(p => {
+                const pageEl = document.getElementById(`page-${p}`);
+                const tabEl = document.getElementById(`tab-${p}`);
+                if (pageEl && tabEl) {
+                    if (p === tabName) {
+                        pageEl.classList.remove('hidden');
+                        tabEl.className = 'flex flex-col items-center gap-1 text-blue-600 dark:text-cyan-400 font-bold transition-all flex-1 py-1';
+                    } else {
+                        pageEl.classList.add('hidden');
+                        tabEl.className = 'flex flex-col items-center gap-1 text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-medium transition-all flex-1 py-1';
+                    }
+                }
+            });
+        }
+
+        // 4. Modals Management
+        function openBarcodeModal(title, code) {
+            document.getElementById('barcodeModalTitle').innerText = title;
+            document.getElementById('barcodeModalNumber').innerText = code;
+            document.getElementById('modalBarcode').classList.remove('hidden');
+        }
+        function openSettlementModal() {
+            document.getElementById('modalSettlement').classList.remove('hidden');
+        }
+        function openSettingsModal() {
+            document.getElementById('modalSettings').classList.remove('hidden');
+        }
+        function openCardAddModal() {
+            document.getElementById('modalAddCard').classList.remove('hidden');
+        }
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function paySettlement() {
+            alert('🎉 정산 수수료 5,900원이 등록된 기본 결제 수단으로 정상 승인되었습니다.');
+            closeModal('modalSettlement');
+        }
+
+        function addNewCardSubmit() {
+            alert('💳 새 지갑 항목이 성공적으로 암호화 연동되었습니다.');
+            closeModal('modalAddCard');
+        }
+
+        // 5. History Filtering
+        function filterHistory(filterType) {
+            const filters = ['all', 'done', 'pending'];
+            filters.forEach(f => {
+                const btn = document.getElementById(`histFilter-${f}`);
+                if (f === filterType) {
+                    btn.className = 'flex-1 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm transition';
+                } else {
+                    btn.className = 'flex-1 py-1.5 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 transition';
+                }
+            });
+
+            const items = document.querySelectorAll('.history-entry');
+            items.forEach(item => {
+                if (filterType === 'all') {
+                    item.classList.remove('hidden');
+                } else if (filterType === 'done') {
+                    if (item.classList.contains('hist-done')) item.classList.remove('hidden');
+                    else item.classList.add('hidden');
+                } else if (filterType === 'pending') {
+                    if (item.classList.contains('hist-pending')) item.classList.remove('hidden');
+                    else item.classList.add('hidden');
+                }
+            });
+        }
+
+        // 6. Live Simulation Feed Trigger
+        const mockPlaces = [
+            { name: '투썸플레이스 테헤란점', card: '신한 Mr.Life', amt: '14,800', recatch: '+1,480', perk: '10% 커피 캐시백', icon: 'fa-mug-hot', color: 'rose' },
+            { name: '무신사 스탠다드 홍대점', card: '현대 카드ZERO', amt: '52,000', recatch: '+2,600', perk: '5% 패션 특화 적립', icon: 'fa-shirt', color: 'indigo' },
+            { name: '배달의민족 (도미노피자)', card: 'KB국민 톡톡', amt: '31,500', recatch: '+3,150', perk: '10% 외식 할인', icon: 'fa-pizza-slice', color: 'orange' }
+        ];
+        let mockIndex = 0;
+
+        function simulateNewDetection() {
+            const badge = document.getElementById('detectStatusBadge');
+            badge.classList.remove('hidden');
+            document.getElementById('detectStatusTxt').innerText = '실시간 결제 인식!';
+
+            const list = document.getElementById('detectionFeedList');
+            const data = mockPlaces[mockIndex % mockPlaces.length];
+            mockIndex++;
+
+            const newItem = document.createElement('div');
+            newItem.className = 'animate-new-item flex items-center justify-between p-3 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200 dark:border-cyan-400/40 transition-colors';
+            newItem.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-600 dark:text-cyan-300 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid ${data.icon}"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <h5 class="text-xs font-bold text-slate-900 dark:text-white">${data.name}</h5>
+                            <span class="text-[9px] bg-blue-100 dark:bg-cyan-900/60 text-blue-700 dark:text-cyan-300 px-1.5 py-0.2 rounded font-medium">${data.card}</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400">결제 ${data.amt}원 · 방금 전</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs font-extrabold text-blue-600 dark:text-cyan-300 font-mono">${data.recatch}원</span>
+                    <p class="text-[9px] text-slate-400">${data.perk}</p>
+                </div>
+            `;
+
+            list.insertBefore(newItem, list.firstChild);
+
+            setTimeout(() => {
+                document.getElementById('detectStatusTxt').innerText = '알림 자동 감지 중';
+            }, 3000);
+        }
+
+        // Live Clock Sync
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const el = document.getElementById('statusBarClock');
+            if (el) el.innerText = `${hours}:${minutes}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+
+
+</body></html>
