@@ -7,14 +7,14 @@
   <br>
 
   <a href="https://seungbeenyoo.github.io/Recatch-APP/">
-    <img src="https://api.microlink.io?url=https%3A%2F%2Fseungbeenyoo.github.io%2FRecatch-APP%2F&screenshot=true&meta=false&embed=screenshot.url" alt="Recatch Interactive Demo Page" width="100%">
+    <img src="https://api.microlink.io?url=https%3A%2F%2Fseungbeenyoo.github.io%2FRecatch-APP%2F&screenshot=true&meta=false&embed=screenshot.url" alt="Recatch Interactive Demo Page" width="100%" style="border-radius: 16px;">
   </a>
   <p>▲ <b>위 이미지를 클릭하면 실제 배포된 <u>[리캐치 웹사이트 데모]</u>로 이동합니다.</b></p>
 
   <br>
 
   <a href="https://youtube.com/shorts/UQjN98hyi2g">
-    <img src="https://img.youtube.com/vi/UQjN98hyi2g/maxresdefault.jpg" alt="Recatch Introduction Video" width="100%">
+    <img src="https://img.youtube.com/vi/UQjN98hyi2g/maxresdefault.jpg" alt="Recatch Introduction Video" width="100%" style="border-radius: 16px;">
   </a>
   <p>▲ <b>위 이미지를 클릭하면 <u>[소개 영상(YouTube Shorts)]</u>으로 이동합니다.</b></p>
 
