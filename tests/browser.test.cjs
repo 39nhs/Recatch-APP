@@ -64,12 +64,14 @@ async function add(page, name, number, type = 'membership') {
       assert.match(await page.locator('#bcount').innerText(), /2 \/ 3/); await visible(page, '#v-home');
       await page.locator('#v-home').evaluate(el => el.scrollTop = 0);
       await swipe(page, '.views', 1, true); await visible(page, '#v-history');
-      await swipe(page, '#chips', 1, true);
+      await swipe(page, '#histList', 1, true); await visible(page, '#v-history');
       assert.equal(await page.locator('#chips .on').getAttribute('data-f'), 'done');
       assert.equal(await page.locator('#histList .tx').count(), 4);
       await swipe(page, '#chips', 1); assert.equal(await page.locator('#chips .on').getAttribute('data-f'), 'pending');
-      await swipe(page, '#chips', 1, true); assert.equal(await page.locator('#histList .tx').count(), 1);
-      await swipe(page, '#chips', 1, true); assert.equal(await page.locator('#chips .on').getAttribute('data-f'), 'missed');
+      await swipe(page, '#histList', 1, true); assert.equal(await page.locator('#histList .tx').count(), 1);
+      await swipe(page, '#histList', 1, true); assert.equal(await page.locator('#chips .on').getAttribute('data-f'), 'missed');
+      await swipe(page, '#histList', 1, true); assert.equal(await page.locator('#chips .on').getAttribute('data-f'), 'missed'); await visible(page, '#v-history');
+      assert.equal(await page.locator('#histList .tx.open').count(), 0);
       await swipe(page, '.tabbar', 1, true); await visible(page, '#v-stats');
       await page.locator('#cats [data-category="dine"]').click();
       assert.match(await page.locator('#detailBody').innerText(), /빕스.*|11,100/); await close(page);
@@ -164,8 +166,22 @@ async function add(page, name, number, type = 'membership') {
     assert.equal(await animated.locator('#v-home').getAttribute('aria-hidden'), 'true');
     await animated.waitForFunction(() => document.querySelectorAll('.view:not([hidden])').length === 1 && !document.querySelector('#v-history').hidden);
     assert.equal(await animated.locator('.tabbar').evaluate(el => el.style.getPropertyValue('--tab-index')), '1');
-    // Swiping the history body now switches the whole page; filters remain on chips.
-    await swipe(animated, '#histList', 1, true); await visible(animated, '#v-stats');
+    // History rows and the filter strip switch only the small tabs, in both directions.
+    for (const [filter, count] of [['done', 4], ['pending', 1], ['missed', 1]]) {
+      await swipe(animated, '#histList', 1, true); await visible(animated, '#v-history');
+      assert.equal(await animated.locator('#chips .on').getAttribute('data-f'), filter);
+      assert.equal(await animated.locator('#histList .tx').count(), count);
+      assert.equal(await animated.locator('#histList .tx.open').count(), 0);
+    }
+    await swipe(animated, '#histList', -1); assert.equal(await animated.locator('#chips .on').getAttribute('data-f'), 'pending'); await visible(animated, '#v-history');
+    await swipe(animated, '#histList', -1, true); assert.equal(await animated.locator('#chips .on').getAttribute('data-f'), 'done');
+    await swipe(animated, '#histList', -1, true); assert.equal(await animated.locator('#chips .on').getAttribute('data-f'), 'all');
+    await swipe(animated, '#histList', -1, true); assert.equal(await animated.locator('#chips .on').getAttribute('data-f'), 'all'); await visible(animated, '#v-history');
+    const filterBox = await animated.locator('#chips').boundingBox(), filterY = filterBox.y + filterBox.height / 2;
+    await animated.mouse.move(150, filterY); await animated.mouse.down(); await animated.mouse.move(116, filterY, { steps: 5 }); await animated.mouse.up(); await animated.waitForTimeout(450);
+    assert.equal(await animated.locator('#chips .on').getAttribute('data-f'), 'done'); await visible(animated, '#v-history');
+    await animated.locator('#chips [data-f="all"]').click();
+    await swipe(animated, '.tabbar', 1, true); await visible(animated, '#v-stats');
     await swipe(animated, '.views', 1, true); await visible(animated, '#v-wallet');
     await swipe(animated, '.tabbar', -1, true); await visible(animated, '#v-stats');
     await swipe(animated, '.views', -1); await visible(animated, '#v-history');
