@@ -9,8 +9,8 @@ assert.equal(fs.readFileSync(path.join(root, 'index_V5.html'), 'utf8'), fs.readF
 const errors = [];
 const server = http.createServer((req, res) => {
   const requestPath = req.url.split('?')[0];
-  const file = requestPath === '/wallet-validation.js' ? 'wallet-validation.js' : requestPath === '/index_V5.html' ? 'index_V5.html' : 'index.html';
-  res.setHeader('Content-Type', file.endsWith('.js') ? 'text/javascript; charset=utf-8' : 'text/html; charset=utf-8');
+  const file = /^\/assets\/brands\/(kb-logo\.png|sh-logo\.png|hd-logo\.svg)$/.test(requestPath) ? requestPath.slice(1) : requestPath === '/wallet-validation.js' ? 'wallet-validation.js' : requestPath === '/index_V5.html' ? 'index_V5.html' : 'index.html';
+  res.setHeader('Content-Type', file.endsWith('.js') ? 'text/javascript; charset=utf-8' : file.endsWith('.png') ? 'image/png' : file.endsWith('.svg') ? 'image/svg+xml' : 'text/html; charset=utf-8');
   res.end(fs.readFileSync(path.join(root, file)));
 });
 const visible = async (page, selector) => assert.equal(await page.locator(selector).isVisible(), true, selector);
@@ -48,15 +48,26 @@ async function add(page, name, number, type = 'membership') {
       await page.route('https://fonts.googleapis.com/**', route => route.abort());
       await page.goto(url);
       await visible(page, '#v-home');
+      assert.equal(await page.locator('#heroTotal').innerText(), '203,500');
+      assert.equal(await page.locator('#lgFee').innerText(), '40,700');
+      assert.equal(await page.locator('#lgNet').innerText(), '162,800');
+      assert.ok(await page.locator('.hero').evaluate(el => el.scrollWidth <= el.clientWidth));
+      await page.waitForFunction(() => [...document.querySelectorAll('#homeCardRail img')].every(img => img.complete && img.naturalWidth > 0));
+      await page.locator('[data-open="stmt"]').click();
+      assert.equal(await page.locator('#stFee').innerText(), '40,700원');
+      assert.equal(await page.locator('#stCoupon').innerText(), '−1,000원');
+      assert.equal(await page.locator('#stFinal').innerText(), '39,700원'); await close(page);
+      if (width === 390 && process.env.QA_OUTPUT) { fs.mkdirSync(process.env.QA_OUTPUT, { recursive: true }); await page.screenshot({ path: path.join(process.env.QA_OUTPUT, 'hero-demo-dark.png') }); }
       assert.ok(await page.locator('.tabbar').evaluate(el => parseFloat(getComputedStyle(el, '::before').transitionDuration) < .001));
       assert.equal(await page.locator('#homeCardRail .home-card').count(), 3);
       assert.equal(await page.locator('#homeMembers .home-member').count(), 3);
       assert.equal(await page.locator('#homeRate').innerText(), '80%');
-      assert.equal(await page.locator('#homeMissed').innerText(), '1,960원');
+      assert.equal(await page.locator('#homeMissed').innerText(), '19,600원');
       await page.locator('#homeCardRail .home-card').nth(1).click(); await visible(page, '#sh-code'); assert.match(await page.locator('#cdTitle').innerText(), /Mr.Life/); await close(page); await visible(page, '#v-home');
       await page.locator('#homeMembers [data-m="0"]').click(); await visible(page, '#sh-pass'); await close(page); await visible(page, '#v-home');
-      await page.locator('#homeCategories [data-category="dine"]').click(); assert.match(await page.locator('#detailBody').innerText(), /11,100/); await close(page); await visible(page, '#v-home');
+      await page.locator('#homeCategories [data-category="dine"]').click(); assert.match(await page.locator('#detailBody').innerText(), /111,000/); await close(page); await visible(page, '#v-home');
       await page.locator('#homeBest').click(); assert.match(await page.locator('#detailTitle').innerText(), /SKT/); await close(page);
+      await page.locator('#demoCampusMap').scrollIntoViewIfNeeded(); await page.locator('#demoCampusMap [data-campus="0"] .map-pin').click(); assert.match(await page.locator('#detailBody').innerText(), /예시 안내 · 현장 검증 전/); await close(page);
       if (width === 390 && process.env.QA_OUTPUT) { fs.mkdirSync(process.env.QA_OUTPUT, { recursive: true }); await page.locator('.home-analysis').scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(process.env.QA_OUTPUT, 'home-analysis-dark.png') }); await page.locator('.home-wallet').scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(process.env.QA_OUTPUT, 'home-wallet-dark.png') }); }
       await page.locator('.detect-card h3').click();
       assert.equal(await page.locator('#flow').evaluate(el => el.classList.contains('on')), false);
@@ -69,12 +80,11 @@ async function add(page, name, number, type = 'membership') {
       assert.equal(await page.locator('#histList .tx').count(), 4);
       await swipe(page, '#chips', 1); assert.equal(await page.locator('#chips .on').getAttribute('data-f'), 'pending');
       await swipe(page, '#histList', 1, true); assert.equal(await page.locator('#histList .tx').count(), 1);
-      await swipe(page, '#histList', 1, true); assert.equal(await page.locator('#chips .on').getAttribute('data-f'), 'missed');
-      await swipe(page, '#histList', 1, true); assert.equal(await page.locator('#chips .on').getAttribute('data-f'), 'missed'); await visible(page, '#v-history');
+      assert.equal(await page.locator('#chips .on').getAttribute('data-f'), 'missed'); await visible(page, '#v-history');
       assert.equal(await page.locator('#histList .tx.open').count(), 0);
-      await swipe(page, '.tabbar', 1, true); await visible(page, '#v-stats');
+      await swipe(page, '#historySwipe', 1, true); await visible(page, '#v-stats');
       await page.locator('#cats [data-category="dine"]').click();
-      assert.match(await page.locator('#detailBody').innerText(), /빕스.*|11,100/); await close(page);
+      assert.match(await page.locator('#detailBody').innerText(), /빕스.*|111,000/); await close(page);
       await page.locator('#rank [data-benefit="kb"]').click();
       assert.equal(await page.locator('#detailBody [data-transaction]').count(), 2);
       await page.locator('#detailBody [data-transaction]').first().click();
@@ -82,6 +92,12 @@ async function add(page, name, number, type = 'membership') {
       await page.locator('#v-stats [data-insight="success"]').click(); assert.match(await page.locator('#detailBody').innerText(), /완료 4건/); await close(page);
       await page.locator('#trend [data-month="0"]').click(); assert.match(await page.locator('#detailBody').innerText(), /개별 결제 데이터/); await close(page);
       await swipe(page, '.tabbar', 1); await visible(page, '#v-wallet');
+      assert.equal(await page.locator('#cardMeta [data-card-saving]').innerText(), '86,000원');
+      assert.equal(await page.locator('#cardMeta [data-card-fee]').innerText(), '17,200원');
+      assert.equal(await page.locator('#cardMeta [data-card-net]').innerText(), '68,800원');
+      await page.locator('#cardMeta [data-card-history="0"]').click();
+      assert.equal(await page.locator('#detailBody [data-transaction]').count(), 2); await page.locator('#detailBody [data-transaction]').first().click();
+      assert.match(await page.locator('#detailBody').innerText(), /수수료 20%: 5,200원/); await close(page);
       assert.equal(await page.locator('#memList .mem').count(), 3);
       assert.equal(await page.locator('#memMore').isVisible(), false);
       await page.locator('#memList [data-m="0"]').click(); await swipe(page, '#passRail', 1, true);
@@ -173,10 +189,13 @@ async function add(page, name, number, type = 'membership') {
       assert.equal(await animated.locator('#histList .tx').count(), count);
       assert.equal(await animated.locator('#histList .tx.open').count(), 0);
     }
+    await swipe(animated, '#historySwipe', 1, true); await visible(animated, '#v-stats');
+    await animated.locator('.tabbar [data-tab="history"]').click(); await animated.waitForTimeout(300);
     await swipe(animated, '#histList', -1); assert.equal(await animated.locator('#chips .on').getAttribute('data-f'), 'pending'); await visible(animated, '#v-history');
     await swipe(animated, '#histList', -1, true); assert.equal(await animated.locator('#chips .on').getAttribute('data-f'), 'done');
     await swipe(animated, '#histList', -1, true); assert.equal(await animated.locator('#chips .on').getAttribute('data-f'), 'all');
-    await swipe(animated, '#histList', -1, true); assert.equal(await animated.locator('#chips .on').getAttribute('data-f'), 'all'); await visible(animated, '#v-history');
+    await swipe(animated, '#historySwipe', -1, true); await visible(animated, '#v-home');
+    await animated.locator('.tabbar [data-tab="history"]').click(); await animated.waitForTimeout(300);
     const filterBox = await animated.locator('#chips').boundingBox(), filterY = filterBox.y + filterBox.height / 2;
     await animated.mouse.move(150, filterY); await animated.mouse.down(); await animated.mouse.move(116, filterY, { steps: 5 }); await animated.mouse.up(); await animated.waitForTimeout(450);
     assert.equal(await animated.locator('#chips .on').getAttribute('data-f'), 'done'); await visible(animated, '#v-history');
@@ -208,6 +227,35 @@ async function add(page, name, number, type = 'membership') {
     await animated.locator('#collectionBody [data-m="3"]').click(); assert.match(await animated.locator('#passRail').innerText(), /홈에서 추가한 멤버십/); await close(animated);
     await animatedContext.close();
     console.log('PASS: animated drag previews, both directions, all four pages, short menu swipe, bounce-back, boundaries, rapid navigation and home wallet refresh');
+    // Empty filters retain a full-height gesture area, including blank space below the message.
+    for (const width of [390, 320]) {
+      const emptyContext = await browser.newContext({ viewport: { width, height: 844 }, hasTouch: true, isMobile: true, reducedMotion: 'reduce' });
+      const empty = await emptyContext.newPage(); empty.on('pageerror', e => errors.push(e.message));
+      await empty.route('https://fonts.googleapis.com/**', route => route.abort());
+      await empty.route('**/?empty=1', route => route.fulfill({ contentType: 'text/html', body: fs.readFileSync(path.join(root, 'index.html'), 'utf8').replace(/let TX=\[[\s\S]*?\];/, 'let TX=[];') }));
+      await empty.goto(`${url}?empty=1`); await empty.locator('.tabbar [data-tab="history"]').click();
+      assert.equal(await empty.locator('#histList').innerText(), '아무것도 없어요');
+      const area = await empty.locator('#historySwipe').boundingBox(), nav = await empty.locator('.tabbar').boundingBox();
+      assert.ok(area.height >= 260 && area.y + area.height >= nav.y - 40);
+      await swipe(empty, '#historySwipe', -1, true); await visible(empty, '#v-home');
+      await empty.locator('.tabbar [data-tab="history"]').click();
+      for (const filter of ['done', 'pending', 'missed']) { await swipe(empty, '#historySwipe', 1, true); assert.equal(await empty.locator('#chips .on').getAttribute('data-f'), filter); assert.equal(await empty.locator('#histList').innerText(), '아무것도 없어요'); }
+      if (width === 390 && process.env.QA_OUTPUT) await empty.screenshot({ path: path.join(process.env.QA_OUTPUT, 'history-empty-area.png') });
+      await swipe(empty, '#historySwipe', 1, true); await visible(empty, '#v-stats');
+      await emptyContext.close();
+    }
+    console.log('PASS: empty and blank-space swipes, full-height area and home/analysis edge transitions at both mobile widths');
+    // Very large demo totals still fit the receipt on a narrow screen.
+    const large = await browser.newPage({ viewport: { width: 320, height: 844 }, reducedMotion: 'reduce' });
+    large.on('pageerror', e => errors.push(e.message));
+    await large.route('https://fonts.googleapis.com/**', route => route.abort());
+    await large.route('**/?large=1', route => route.fulfill({ contentType: 'text/html', body: fs.readFileSync(path.join(root, 'index.html'), 'utf8').replace("cat:'cvs',amount:6500,save:650", "cat:'cvs',amount:987654320,save:98765432") }));
+    await large.goto(`${url}?large=1`); await large.waitForTimeout(50);
+    assert.equal(await large.locator('#homeCardRail .art-sh').evaluate(el => getComputedStyle(el).color), 'rgb(255, 255, 255)');
+    assert.ok(await large.locator('.hero').evaluate(el => el.scrollWidth <= el.clientWidth));
+    assert.ok(await large.locator('.hero-amt').evaluate(el => el.scrollWidth <= el.clientWidth));
+    if (process.env.QA_OUTPUT) await large.screenshot({ path: path.join(process.env.QA_OUTPUT, 'hero-large-total.png') });
+    await large.close();
     // Extra source categories and benefits keep the original 4/3 previews and expose all items.
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
     page.on('pageerror', e => errors.push(e.message));

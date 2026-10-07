@@ -81,10 +81,12 @@ svg{display:block}
 .hero{position:relative;padding-bottom:28px;border-radius:20px 20px 0 0;
   -webkit-mask:radial-gradient(circle 7px at 50% 100%,transparent 6.5px,#000 7px) 0 0/18px 100% repeat-x;
           mask:radial-gradient(circle 7px at 50% 100%,transparent 6.5px,#000 7px) 0 0/18px 100% repeat-x}
-.hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.hero-label{font-size:15px;font-weight:500;color:var(--ink-2)}
-.hero-amt{font-size:36px;font-weight:700;letter-spacing:-.035em;line-height:1.15;margin:4px 0 2px;display:flex;align-items:baseline;gap:2px}
-.hero-amt small{font-size:26px;font-weight:600}
+.hero{background:linear-gradient(145deg,var(--brand-soft),var(--card) 68%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--brand) 18%,transparent)}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hero-label{font-size:16px;font-weight:700;color:var(--ink)}
+.hero-note{display:block;margin-top:3px;font-size:11.5px;color:var(--ink-3)}
+.hero-amt{font-size:clamp(22px,calc(var(--hero-space,250px)/(var(--hero-digits,7)*.65)),54px);font-weight:700;letter-spacing:-.035em;line-height:1.15;margin:16px 0 6px;display:flex;align-items:baseline;gap:5px;white-space:nowrap;color:var(--brand-deep)}
+.hero-amt small{font-size:24px;font-weight:600;flex:none;color:var(--ink)}
 .hero-sub{font-size:13.5px;color:var(--ink-3)}
 .hero-sub b{color:var(--save);font-weight:600}
 .stamp{flex:none;margin-top:4px;border:2px solid var(--brand);color:var(--brand);border-radius:10px;padding:4px 9px;font-size:11.5px;font-weight:700;transform:rotate(-7deg);line-height:1.25;text-align:center}
@@ -92,7 +94,9 @@ svg{display:block}
 .ledger{margin-top:18px;display:grid;gap:8px;font-size:14px}
 .ledger .ln{display:flex;justify-content:space-between;gap:12px}
 .ledger .ln span:first-child{color:var(--ink-2)}
-.ledger .ln.total{border-top:1.5px dashed var(--line);padding-top:10px;margin-top:2px;font-weight:700;font-size:15.5px}
+.ledger .ln>span:last-child{white-space:nowrap;flex:none}
+.ledger .ln.total{border:0;padding:12px;margin-top:4px;font-weight:700;font-size:14px;background:var(--save-soft);border-radius:14px;display:grid;gap:3px}
+.ledger .ln.total .pos{font-size:25px;line-height:1.2}
 .ledger .ln.total span:first-child{color:var(--ink)}
 .hero-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
 .hero-btns .btn{height:46px;font-size:14.5px}
@@ -244,7 +248,8 @@ svg{display:block}
 .detail-summary p{margin:4px 0;color:var(--ink-2);font-size:14px}
 .home-wallet .rail{margin:8px 0;padding:4px 0;gap:8px}
 .home-wallet .rail>*{flex:0 0 48%;min-width:0;transform:none}
-.home-card{border-radius:13px;height:104px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;text-align:left}
+.home-card{border-radius:13px;height:104px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;color:#fff}
+.home-card.art-kb{color:#2A1606}
 .home-card b{font-size:13px;line-height:1.3;display:block}
 .home-card small{font-size:11px;opacity:.8}
 .home-card .mono{font-size:11px}
@@ -262,6 +267,21 @@ svg{display:block}
 .home-best{width:100%;text-align:left;border-top:1px solid var(--line);padding-top:10px;margin-top:6px;font-size:13px}
 .home-best small{display:block;color:var(--ink-3);margin-bottom:3px}
 .home-best span{display:flex;justify-content:space-between;gap:8px}
+.bank-logo{display:inline-block;height:27px;max-width:138px;width:auto;object-fit:contain;background:#fff;border-radius:5px;padding:4px 6px;vertical-align:middle}
+.home-card .bank-logo{height:22px;max-width:100%;padding:3px 5px;margin-bottom:3px}
+.brand-heading{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.card-accounting{border-top:1px solid var(--line);padding-top:12px;margin-top:4px;display:grid;gap:7px}
+.card-accounting h3{font-size:15px;margin:0}
+.view>.history-swipe-area{flex:1 0 auto;min-height:260px;touch-action:pan-y pinch-zoom}
+.history-swipe-area.empty{display:flex;flex-direction:column}
+.history-swipe-area.empty #histList{flex:1;display:grid;place-items:center;min-height:260px}
+.history-empty{color:var(--ink-3);text-align:center;margin:0;padding:24px}
+.campus-map{width:100%;height:auto;display:block;background:var(--well);border-radius:14px;margin:12px 0}
+.campus-map text{font-family:var(--f-body);font-size:12px;fill:var(--ink-2)}
+.campus-map [data-campus]{cursor:pointer}
+.campus-map .map-pin{fill:var(--brand);stroke:var(--card);stroke-width:3}
+.campus-badge{display:inline-block;padding:3px 7px;border-radius:6px;background:var(--well);font-size:11px;color:var(--ink-3)}
+.campus-link{display:block;text-align:center;text-decoration:none;color:var(--brand-deep);background:var(--brand-soft);padding:12px;border-radius:12px;font-size:13.5px;font-weight:600}
 .field select{min-height:50px;border-radius:13px;border:1px solid var(--line);background:var(--well);padding:0 12px;font:inherit;color:var(--ink);width:100%}
 .form-error{color:var(--miss);font-size:13.5px;margin:8px 0;min-height:20px}
 [aria-invalid="true"]{border-color:var(--miss)!important}
@@ -419,15 +439,16 @@ svg{display:block}
         <div class="hero-top">
           <div>
             <div class="hero-label">10월에 되찾은 돈</div>
-            <div class="hero-amt"><span id="heroTotal">0</span><small>원</small></div>
-            <div class="hero-sub" id="heroSub"></div>
+            <small class="hero-note">시연용 예시 · 수수료 차감 전</small>
           </div>
           <div class="stamp" aria-label="이번 달 재결제 횟수">재결제<span id="heroCount">0</span>회</div>
         </div>
+        <div class="hero-amt"><span id="heroTotal">0</span><small>원</small></div>
+        <div class="hero-sub" id="heroSub"></div>
         <div class="ledger">
           <div class="ln"><span>할인·적립으로 되찾은 돈</span><span><span id="lgRec">0</span>원</span></div>
-          <div class="ln"><span>리캐치 성공 수수료 20%</span><span>−<span id="lgFee">0</span>원</span></div>
-          <div class="ln total"><span>내 통장에 남은 돈</span><span class="pos"><span id="lgNet">0</span>원</span></div>
+          <div class="ln"><span>리캐치 성공 수수료 <span data-fee-rate></span></span><span>−<span id="lgFee">0</span>원</span></div>
+          <div class="ln total"><span>수수료 차감 후 남은 돈</span><span class="pos"><span id="lgNet">0</span>원</span></div>
         </div>
         <div class="hero-btns">
           <button class="btn btn-soft" data-open="stmt">정산 명세서</button>
@@ -451,8 +472,8 @@ svg{display:block}
           <button class="go" id="simCard">재결제 체험하기 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>
         </div>
         <div class="mphone" aria-hidden="true">
-          <div class="mnoti"><i></i><div>방금 결제한 13,000원<br><b>2,600원</b> 돌려받기</div></div>
-          <div class="mreceipt">STARBUCKS<br>아메리카노 ×2<br>치즈케이크 ×1<br><b>13,000</b></div>
+          <div class="mnoti"><i></i><div>방금 결제한 130,000원<br><b>26,000원</b> 돌려받기</div></div>
+          <div class="mreceipt">STARBUCKS<br>아메리카노 ×20<br>치즈케이크 ×10<br><b>130,000</b></div>
         </div>
       </div>
 
@@ -480,6 +501,25 @@ svg{display:block}
         <button class="todo" data-tab="stats"><div><b>금요일 저녁 외식은 SKT VIP 먼저</b><small>최근 놓친 혜택의 61%가 금요일 18~22시였어요</small></div><em>+6,200원</em></button>
       </div>
       <p class="note">예시 데이터로 보여드리는 화면이에요. 실제 금융 내역이 아니에요.</p>
+      <!-- 39nhs handoff: replace this schematic and #campusProofMedia with real pilot materials.
+           Required locations, photos, dates and source links are listed in "39nhs _handoff.md". -->
+      <section class="sec" aria-labelledby="campusTitle">
+        <div class="sec-h"><h2 id="campusTitle">영남대 주변 혜택 거점</h2><span class="campus-badge">예시 안내</span></div>
+        <p class="note" style="text-align:left">현장 검증 전 안내도예요. 위치·축척과 제휴 여부를 확정한 지도가 아니에요.</p>
+        <svg class="campus-map" id="demoCampusMap" viewBox="0 0 340 205" role="img" aria-label="영남대 주변 혜택 거점 예시 안내도, 축척 없음">
+          <rect x="220" y="20" width="105" height="135" rx="14" fill="var(--save-soft)"/>
+          <path d="M0 85h340M182 0v205" stroke="var(--line)" stroke-width="24"/>
+          <path d="M0 85h340M182 0v205" stroke="var(--card)" stroke-width="2" stroke-dasharray="7 5"/>
+          <text x="244" y="53">영남대학교</text><text x="23" y="66">대학로 일대</text>
+          <g data-campus="0" tabindex="0" role="button" aria-label="정문 일대 예시 거점 설명"><circle class="map-pin" cx="235" cy="85" r="13"/><text x="231" y="89" style="fill:var(--brand-ink);font-weight:700">1</text><text x="218" y="122">정문 일대</text></g>
+          <g data-campus="1" tabindex="0" role="button" aria-label="카페·식당 거리 예시 거점 설명"><circle class="map-pin" cx="105" cy="85" r="13"/><text x="101" y="89" style="fill:var(--brand-ink);font-weight:700">2</text><text x="55" y="122">카페·식당 거리</text></g>
+          <g data-campus="2" tabindex="0" role="button" aria-label="상권 연결 거점 예시 설명"><circle class="map-pin" cx="182" cy="160" r="13"/><text x="178" y="164" style="fill:var(--brand-ink);font-weight:700">3</text><text x="210" y="166">상권 연결 거점</text></g>
+          <text x="13" y="189" style="font-size:10px;fill:var(--ink-3)">개념도 · 축척 없음 · 현장 검증 자료 준비 중</text>
+        </svg>
+        <!-- Replace this slot with consented on-site photos and dated verification links. -->
+        <div id="campusProofMedia"><p class="note">현장 검증 사진과 제휴 확인 자료는 준비 중이에요.</p></div>
+        <a class="campus-link" href="https://www.google.com/maps/search/?api=1&amp;query=%EC%98%81%EB%82%A8%EB%8C%80%ED%95%99%EA%B5%90" target="_blank" rel="noopener noreferrer">실제 지도에서 영남대 찾기</a>
+      </section>
     </section>
 
     <!-- HISTORY -->
@@ -491,8 +531,8 @@ svg{display:block}
         <div><small>놓친 혜택</small><b style="color:var(--miss)" id="hsMissed">0</b></div>
       </div>
       <div class="chips" id="chips" role="tablist"></div>
-      <p class="note">필터·내역을 좌우로 밀면 작은 탭이 바뀌어요. 하단 메뉴를 밀면 큰 화면이 바뀌어요.</p>
-      <div class="sec" style="padding-block:10px" id="histList"></div>
+      <p class="note">필터·내역을 밀면 작은 탭이 바뀌어요. 전체에서 오른쪽은 홈, 놓친 혜택에서 왼쪽은 분석으로 이어져요.</p>
+      <div class="history-swipe-area" id="historySwipe"><div class="sec" style="padding-block:10px" id="histList"></div></div>
     </section>
 
     <!-- STATS -->
@@ -546,11 +586,11 @@ svg{display:block}
   <div class="sheet" id="sh-stmt" role="dialog" aria-label="정산 명세서">
     <div class="grab-zone" aria-hidden="true"><div class="grab"></div></div>
     <h3>10월 정산 명세서</h3>
-    <p class="lead">재결제로 실제 아낀 금액에서만 20%를 받아요. 아낀 게 없으면 수수료도 0원이에요.</p>
+    <p class="lead">재결제로 실제 아낀 금액에서만 <span data-fee-rate></span>를 받아요. 아낀 게 없으면 수수료도 0원이에요.</p>
     <div class="slipbox">
       <div class="ln"><span>되찾은 돈</span><span id="stRec"></span></div>
-      <div class="ln"><span>성공 수수료 20%</span><span id="stFee"></span></div>
-      <div class="ln"><span>첫 달 할인 쿠폰</span><span class="pos">−1,000원</span></div>
+      <div class="ln"><span>성공 수수료 <span data-fee-rate></span></span><span id="stFee"></span></div>
+      <div class="ln"><span>첫 달 할인 쿠폰</span><span class="pos" id="stCoupon"></span></div>
       <div class="ln total"><span>10월 31일 청구 예정</span><span id="stFinal"></span></div>
     </div>
     <p class="okline">수수료를 내고도 <b id="stNet"></b>이 남아요. 누적 수수료가 1만 원을 넘으면 그때 한 번에 청구해요.</p>
@@ -636,6 +676,11 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const won=n=>Math.round(n).toLocaleString('ko-KR');
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FEE=0.2;
+const feeRate=()=>Math.round(FEE*100)+'%';
+const feeFor=value=>Math.round(value*FEE);
+// Presentation-only amounts; not verified card product terms or real financial data.
+const DEMO_SCALE=10;
+$$('[data-fee-rate]').forEach(el=>el.textContent=feeRate());
 const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const PREVIEW={categories:4,benefits:3,cards:3,memberships:3};
 
@@ -652,16 +697,17 @@ let TX=[
  {id:5,store:'CGV 대구한일',cat:'film',amount:30000,save:6000,src:'KB 톡톡D 영화 20%',srcKey:'kb',status:'done',d:'10.04',t:'14:15'},
  {id:6,store:'맘스터치 영남대점',cat:'dine',amount:9800,save:1960,src:'SKT VIP 20% 할인',srcKey:'skt',status:'missed',d:'10.03',t:'12:20',note:'알림 후 2분이 지나 매장을 떠났어요'}
 ];
+TX=TX.map(x=>({...x,amount:x.amount*DEMO_SCALE,save:x.save*DEMO_SCALE}));
 const SRC={kb:['KB국민 톡톡D 체크','art-kb'],sh:['신한 Mr.Life 신용','art-sh'],skt:['SKT T멤버십 VIP','art-hd'],cj:['CJ ONE 멤버십','art-hd']};
-const PREV=[{m:'5월',v:9800},{m:'6월',v:13200},{m:'7월',v:15600},{m:'8월',v:18400},{m:'9월',v:22900}];
+const PREV=[{m:'5월',v:98000},{m:'6월',v:113200},{m:'7월',v:135600},{m:'8월',v:148400},{m:'9월',v:172900}];
 const SCEN=[
  {store:'스타벅스 영남대정문점',short:'스타벅스영남대',cat:'cafe',amount:13000,save:2600,src:'KB 톡톡D 20% 캐시백',srcKey:'kb',card:'KB국민체크(9421)',how:'KB 톡톡D 체크카드로 다시 결제',code:'9421 7730 0815 2604'},
  {store:'파리바게뜨 경산영대점',short:'파리바게뜨경산',cat:'bake',amount:18000,save:1800,src:'SKT VIP 10% 할인',srcKey:'skt',card:'현대카드(5530)',how:'T멤버십 바코드를 보여준 뒤 다시 결제',code:'7700 1923 8832 1049'},
  {store:'빕스 동대구역점',short:'빕스동대구',cat:'dine',amount:74000,save:11100,src:'SKT VIP 15% 할인',srcKey:'skt',card:'현대카드(5530)',how:'T멤버십 바코드를 보여준 뒤 다시 결제',code:'7700 1923 8832 1049'}
-];
+].map(x=>({...x,amount:x.amount*DEMO_SCALE,save:x.save*DEMO_SCALE}));
 let scenIdx=0,nextId=100;
 const CARDS=[
- {id:'kb',bank:'KB국민카드',name:'톡톡D 체크카드',last:'9421',art:'art-kb',need:300000,now:412000,perk:'스타벅스·영화 20% 캐시백',limit:'월 한도 20,000원 중 8,600원 사용'},
+ {id:'kb',bank:'KB국민카드',name:'톡톡D 체크카드',last:'9421',art:'art-kb',need:300000,now:412000,perk:'스타벅스·영화 20% 캐시백',limit:'데모 월 한도 100,000원 중 86,000원 사용'},
  {id:'sh',bank:'신한카드',name:'Mr.Life 신용카드',last:'1083',art:'art-sh',need:300000,now:268000,perk:'편의점·마트 10% 할인',limit:'실적 32,000원 남음 · 채우면 다음 달 적용'},
  {id:'hd',bank:'현대카드',name:'ZERO Edition2',last:'5530',art:'art-hd',need:0,now:0,perk:'국내 전 가맹점 0.7% 할인',limit:'실적 조건 없음'}
 ];
@@ -670,12 +716,14 @@ let MEMS=[
  {name:'CJ ONE',tier:'14,250P',sub:'올리브영·CGV·뚜레쥬르 적립',code:'8806 4410 2275 0193',m:['CJ','#6E3FA3'],extra:'보유 포인트 14,250P'},
  {name:'영남대 모바일 학생증',tier:'인증됨',sub:'대학가 제휴 가맹점 학생 할인',code:'2611 0420 5578',m:['YU','#1B4F9C'],extra:'2026년 2학기 재학 인증'}
 ];
+const BRAND_ASSETS={kb:'assets/brands/kb-logo.png',sh:'assets/brands/sh-logo.png',hd:'assets/brands/hd-logo.svg'};
+function bankLogo(c){return BRAND_ASSETS[c.id]?`<img class="bank-logo" src="${BRAND_ASSETS[c.id]}" alt="${esc(c.bank)} 로고">`:`<span>${esc(c.bank)}</span>`}
 
 /* ---------- utils ---------- */
 const shown=new WeakMap();
 function countTo(el,to){const from=shown.get(el)??0;shown.set(el,to);if(reduce||from===to){el.textContent=won(to);return}
   const t0=performance.now(),dur=800;(function f(n){const p=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-p,3);el.textContent=won(from+(to-from)*e);if(p<1)requestAnimationFrame(f)})(t0)}
-function totals(){const done=TX.filter(x=>x.status==='done');const rec=done.reduce((a,x)=>a+x.save,0);const fee=Math.round(rec*FEE);
+function totals(){const done=TX.filter(x=>x.status==='done');const rec=done.reduce((a,x)=>a+x.save,0);const fee=done.reduce((a,x)=>a+feeFor(x.save),0);
   return{rec,fee,net:rec-fee,count:done.length,pending:TX.filter(x=>x.status==='pending').reduce((a,x)=>a+x.save,0),
     missed:TX.filter(x=>x.status==='missed').reduce((a,x)=>a+x.save,0),missedN:TX.filter(x=>x.status==='missed').length}}
 function barcode(code,h=84){const d=code.replace(/\D/g,'');let x=6,bars='';const seq=[2,1,1,2];
@@ -715,16 +763,19 @@ function makeRail(rail,{prev,next,dots,onChange,onTap,tapAny=false}){
 /* ---------- home ---------- */
 const homeCardRail=makeRail($('#homeCardRail'),{onTap:i=>openCardCode(CARDS[i]),tapAny:true});
 $('#homeMembers').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b)openPasses(+b.dataset.m)});
+function fitHeroAmount(){const el=$('.hero-amt');if(el.clientWidth>0)el.style.setProperty('--hero-space',Math.max(1,el.clientWidth-34)+'px')}
+new ResizeObserver(fitHeroAmount).observe($('.hero-amt'));
 function rowHTML(x){
   const r=x.status==='missed'?`<b class="muted">${won(x.save)}원</b><small>놓침</small>`:x.status==='pending'?`<b>+${won(x.save)}원</b><small>확인 중</small>`:`<b class="pos">+${won(x.save)}원</b><small>${won(x.amount)}원 결제</small>`;
   return `<button class="row" data-id="${x.id}">${mark(x.store)}<span class="row-main"><b>${x.store}</b><small>${x.src}</small></span><span class="row-amt">${r}</span></button>`}
 function renderHome(flashId){
   const T=totals(),last=PREV[PREV.length-1].v;
   countTo($('#heroTotal'),T.rec);countTo($('#lgRec'),T.rec);countTo($('#lgFee'),T.fee);countTo($('#lgNet'),T.net);
+  $('.hero-amt').style.setProperty('--hero-digits',won(T.rec).length);fitHeroAmount();
   $('#heroCount').textContent=T.count;
-  $('#heroSub').innerHTML=T.rec>=last?`9월보다 <b>${won(T.rec-last)}원</b> 더 되찾았어요`:`확인 중인 ${won(T.pending)}원이 곧 더해져요`;
+  $('#heroSub').innerHTML=T.rec>=last?`9월보다 <b>${won(T.rec-last)}원</b> 더 되찾았어요`:`9월보다 ${won(last-T.rec)}원 적어요 · ${won(T.pending)}원 확인 중`;
   $('#homeFeed').innerHTML=TX.slice(0,4).map(rowHTML).join('');
-  $('#homeCardRail').innerHTML=CARDS.slice(0,PREVIEW.cards).map(c=>`<button class="home-card ${c.art}" aria-label="${esc(c.bank+' '+c.name)} 결제 바코드"><span><small>${esc(c.bank)}</small><b>${esc(c.name)}</b></span><span class="mono">•••• ${c.last} · 바코드</span></button>`).join('');
+  $('#homeCardRail').innerHTML=CARDS.slice(0,PREVIEW.cards).map(c=>`<button class="home-card ${c.art}" aria-label="${esc(c.bank+' '+c.name)} 결제 바코드"><span>${bankLogo(c)}<b>${esc(c.name)}</b></span><span class="mono">•••• ${c.last} · 바코드</span></button>`).join('');
   homeCardRail.refresh();showMore('homeCardsMore',CARDS.length,PREVIEW.cards);
   $('#homeMembers').innerHTML=MEMS.slice(0,PREVIEW.memberships).map((m,i)=>`<button class="home-member" data-m="${i}" aria-label="${esc(m.name)} 바코드"><span class="mark" style="--m:${m.m[1]}">${esc(m.m[0])}</span><b>${esc(m.name)}</b></button>`).join('');
   showMore('homeMembersMore',MEMS.length,PREVIEW.memberships);
@@ -762,13 +813,14 @@ function renderHistory(){
   const list=TX.filter(x=>filt==='all'||x.status===filt);let h='',ld='';
   list.forEach(x=>{
     if(x.d!==ld){const [m,d]=x.d.split('.');h+=`<div class="day">${+m}월 ${+d}일</div>`;ld=x.d}
-    const fee=Math.round(x.save*FEE);
-    const det=x.status==='done'?`<div class="ln"><span>결제 금액</span><span>${won(x.amount)}원</span></div><div class="ln"><span>${x.src}</span><span class="pos">−${won(x.save)}원</span></div><div class="ln"><span>리캐치 수수료 20%</span><span>${won(fee)}원</span></div><div class="ln total"><span>내 순절약</span><span class="pos">${won(x.save-fee)}원</span></div>`
+    const fee=feeFor(x.save);
+    const det=x.status==='done'?`<div class="ln"><span>결제 금액</span><span>${won(x.amount)}원</span></div><div class="ln"><span>${x.src}</span><span class="pos">−${won(x.save)}원</span></div><div class="ln"><span>리캐치 수수료 ${feeRate()}</span><span>${won(fee)}원</span></div><div class="ln total"><span>내 순절약</span><span class="pos">${won(x.save-fee)}원</span></div>`
       :x.status==='pending'?`<div class="ln"><span>결제 금액</span><span>${won(x.amount)}원</span></div><div class="ln"><span>예정 혜택</span><span>${won(x.save)}원</span></div><p>${x.note}</p>`
       :`<div class="ln"><span>받을 수 있었던 혜택</span><span>${won(x.save)}원</span></div><p>${x.note}. 놓친 혜택에는 수수료가 없어요.</p>`;
     const amt=x.status==='missed'?`<b class="muted">${won(x.save)}원</b>`:`<b class="${x.status==='done'?'pos':''}">+${won(x.save)}원</b>`;
     h+=`<div class="tx" data-id="${x.id}"><button class="row" aria-expanded="false">${mark(x.store)}<div class="row-main"><b>${x.store}</b><small>${x.t} · <span class="tag ${STAT[x.status][1]}">${STAT[x.status][0]}</span></small></div><div class="row-amt">${amt}<small>${won(x.amount)}원</small></div></button><div class="tx-d"><div><div class="slip">${det}</div></div></div></div>`});
-  $('#histList').innerHTML=h||'<p class="note" style="padding:20px 0">해당하는 내역이 없어요.</p>';
+  $('#histList').innerHTML=h||'<p class="history-empty">아무것도 없어요</p>';
+  $('#historySwipe').classList.toggle('empty',list.length===0);
 }
 $('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b)changeHistoryFilter(b.dataset.f)});
 $('#histList').addEventListener('click',e=>{const t=e.target.closest('.tx');if(!t)return;const o=t.classList.toggle('open');t.querySelector('.row').setAttribute('aria-expanded',o)});
@@ -779,7 +831,7 @@ function renderStats(){
   $('#rateVal').textContent=Math.round(rate*100)+'%';$('#rateSub').textContent=`알림 ${n}번 중 ${T.count}번 재결제`;
   requestAnimationFrame(()=>$('#rateBar').style.width=rate*100+'%');
   $('#missVal').textContent=won(T.missed)+'원';$('#missSub').textContent=`${T.missedN}건 · 수수료 없음`;
-  const data=[...PREV,{m:'10월',v:T.rec,cur:true}];const W=340,H=170,pt=24,pb=26,step=10000;
+  const data=[...PREV,{m:'10월',v:T.rec,cur:true}];const W=340,H=170,pt=24,pb=26,step=Math.max(1,10**Math.floor(Math.log10(Math.max(1,...data.map(d=>d.v))))/2);
   const top=Math.ceil(Math.max(...data.map(d=>d.v))*1.12/step)*step;const y=v=>pt+(H-pt-pb)*(1-v/top);const bw=W/data.length;
   let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:290px" role="img" aria-label="월별 되찾은 돈 막대 차트">`;
   for(let v=0;v<=top;v+=step)s+=`<line x1="0" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" ${v?'stroke-dasharray="3 4"':''}/>`;
@@ -807,7 +859,7 @@ function pat(id){
   return `<svg class="pat" viewBox="0 0 300 190" preserveAspectRatio="xMaxYMax slice" aria-hidden="true"><text x="292" y="186" text-anchor="end" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="120" fill="#fff" fill-opacity=".07">0</text></svg>`}
 const cardRail=makeRail($('#cardRail'),{prev:$('#cardPrev'),next:$('#cardNext'),dots:$('#cardDots'),onChange:i=>renderCardMeta(i),onTap:i=>openCardCode(CARDS[i])});
 function renderWallet(){
-  $('#cardRail').innerHTML=CARDS.slice(0,PREVIEW.cards).map(c=>`<div class="ccard ${c.art}" role="button" tabindex="0" aria-label="${esc(c.bank+' '+c.name)}, 누르면 결제 바코드">${pat(c.id)}<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="bank">${esc(c.bank)}</div><div class="cname">${esc(c.name)}</div></div><span class="ic"></span></div><div style="display:flex;justify-content:space-between;align-items:flex-end"><span class="cno">•••• ${c.last}</span><span style="font-size:12px;font-weight:600;opacity:.85">누르면 결제 바코드</span></div></div>`).join('');
+  $('#cardRail').innerHTML=CARDS.slice(0,PREVIEW.cards).map(c=>`<div class="ccard ${c.art}" role="button" tabindex="0" aria-label="${esc(c.bank+' '+c.name)}, 누르면 결제 바코드">${pat(c.id)}<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="bank">${bankLogo(c)}</div><div class="cname">${esc(c.name)}</div></div><span class="ic"></span></div><div style="display:flex;justify-content:space-between;align-items:flex-end"><span class="cno">•••• ${c.last}</span><span style="font-size:12px;font-weight:600;opacity:.85">누르면 결제 바코드</span></div></div>`).join('');
   cardRail.refresh();
   $('#memList').innerHTML=MEMS.slice(0,PREVIEW.memberships).map((m,i)=>membershipRow(m,i)).join('');
   showMore('memMore',MEMS.length,PREVIEW.memberships);
@@ -818,7 +870,7 @@ function renderCardMeta(i){const c=CARDS[i];if(!c)return;const p=c.need?Math.min
   $('#cardMeta').innerHTML=`<div class="sec-h" style="margin-bottom:2px"><h2>${esc(c.name)}</h2><button class="more" data-card-detail="${i}">상세 ${i+1} / ${CARDS.length}</button></div>
   <div class="ln"><span>주요 혜택</span><b style="text-align:right">${esc(c.perk)}</b></div>
   ${c.need?`<div class="ln"><span>전월 실적</span><span>${won(c.now)} / ${won(c.need)}원</span></div><div class="bar"><i class="${p>=1?'full':''}"></i></div>`:''}
-  <div class="ln"><span>${c.need&&p<1?'남은 조건':'상태'}</span><span style="color:${p>=1?'var(--save)':'var(--warn)'};font-weight:600;text-align:right">${c.limit}</span></div>`;
+  <div class="ln"><span>${c.need&&p<1?'남은 조건':'상태'}</span><span style="color:${p>=1?'var(--save)':'var(--warn)'};font-weight:600;text-align:right">${esc(c.limit)}</span></div>${cardAccountingHTML(c,i)}`;
   requestAnimationFrame(()=>{const b=$('#cardMeta .bar i');if(b)b.style.width=p*100+'%'})}
 let codeTimer=null;
 function openCardCode(c){
@@ -835,6 +887,7 @@ function openPasses(i){
 $('#memList').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b)openPasses(+b.dataset.m)});
 
 /* ---------- expanded lists and explanations ---------- */
+function cardAccountingHTML(c,i){const list=TX.filter(x=>x.status==='done'&&x.srcKey===c.id),rec=list.reduce((n,x)=>n+x.save,0),fee=list.reduce((n,x)=>n+feeFor(x.save),0);return `<div class="card-accounting slipbox"><h3>내 카드 혜택 내역</h3><div class="ln"><span>되찾은 돈 · ${list.length}건</span><b data-card-saving>${won(rec)}원</b></div><div class="ln"><span>리캐치 수수료 ${feeRate()}</span><span data-card-fee>${won(fee)}원</span></div><div class="ln total"><span>내 순절약</span><b class="pos" data-card-net>${won(rec-fee)}원</b></div>${list.length?`<button class="collection-more" data-card-history="${i}">이 카드의 혜택 내역 보기</button>`:'<p class="note">아직 이 카드로 되찾은 내역이 없어요.</p>'}</div>`}
 function showMore(id,count,limit){const b=$('#'+id);b.hidden=count<=limit;b.textContent=`전체보기 ${count}개 · +${Math.max(0,count-limit)}개`}
 function membershipRow(m,i){return `<button class="mem" data-m="${i}"><span class="mark" style="--m:${m.m[1]}">${esc(m.m[0])}</span><span class="row-main"><b>${esc(m.name)}</b><small>${esc(m.sub)}</small></span><span class="open">바코드</span></button>`}
 function transactionRows(list){return list.length?list.map(x=>`<button class="row" data-transaction="${x.id}">${mark(x.store)}<span class="row-main"><b>${esc(x.store)}</b><small>${x.d} ${x.t} · ${esc(x.src)}</small></span><span class="row-amt"><b class="${x.status==='done'?'pos':'muted'}">${won(x.save)}원</b><small>${STAT[x.status][0]}</small></span></button>`).join(''):'<p class="note">해당하는 결제 내역이 없어요.</p>'}
@@ -854,14 +907,15 @@ function openTransactions(title,list,explanation,collectionKind){
   detail(title,`<div class="detail-summary"><b>${list.length}건 · ${won(total)}원</b><p>${esc(explanation)}</p></div>${transactionRows(list)}${back}`);
 }
 document.addEventListener('click',e=>{
-  const b=e.target.closest('[data-collection],[data-category],[data-benefit],[data-card-detail],[data-card-code],[data-transaction],[data-insight]');if(!b)return;
+  const b=e.target.closest('[data-collection],[data-category],[data-benefit],[data-card-detail],[data-card-history],[data-card-code],[data-transaction],[data-insight]');if(!b)return;
   const d=b.dataset;
   if(d.collection)openCollection(d.collection);
   else if(d.category)openTransactions(CAT[d.category][0]+' 절약 내역',TX.filter(x=>x.status==='done'&&x.cat===d.category),'재결제 완료 건의 할인·적립 합계예요. 성공 수수료를 차감하기 전 금액이며, 확인 중·놓친 혜택은 제외해요.','categories');
   else if(d.benefit)openTransactions((SRC[d.benefit]||[d.benefit])[0],TX.filter(x=>x.status==='done'&&x.srcKey===d.benefit),'이 카드 또는 멤버십으로 재결제해 받은 혜택이에요. 결제를 누르면 적용 혜택과 수수료를 확인할 수 있어요.','benefits');
-  else if(d.cardDetail!==undefined){const c=CARDS[+d.cardDetail];if(!c)return;detail(c.bank+' '+c.name,`<div class="detail-summary"><p>카드 끝번호: ${c.last}</p><p>주요 혜택: ${esc(c.perk)}</p><p>${c.need?`전월 실적: ${won(c.now)} / ${won(c.need)}원`:'실적 조건 없음'}</p><p>${esc(c.limit)}</p></div><button class="btn btn-brand btn-block" data-card-code="${d.cardDetail}">결제 바코드 열기</button><button class="collection-more" data-collection="cards">카드 전체보기</button>`)}
+  else if(d.cardDetail!==undefined){const c=CARDS[+d.cardDetail];if(!c)return;detail(c.bank+' '+c.name,`<div class="brand-heading">${bankLogo(c)}</div><div class="detail-summary"><p>카드 끝번호: ${c.last}</p><p>주요 혜택: ${esc(c.perk)}</p><p>${c.need?`전월 실적: ${won(c.now)} / ${won(c.need)}원`:'실적 조건 없음'}</p><p>${esc(c.limit)}</p></div>${cardAccountingHTML(c,+d.cardDetail)}<button class="btn btn-brand btn-block" data-card-code="${d.cardDetail}">결제 바코드 열기</button><button class="collection-more" data-collection="cards">카드 전체보기</button>`)}
+  else if(d.cardHistory!==undefined){const c=CARDS[+d.cardHistory];if(c)openTransactions(c.name+' 혜택 내역',TX.filter(x=>x.status==='done'&&x.srcKey===c.id),`이 카드로 받은 할인·적립의 ${feeRate()}가 리캐치 성공 수수료예요. 확인 중·놓친 혜택에는 성공 수수료를 부과하지 않아요.`)}
   else if(d.cardCode!==undefined)openCardCode(CARDS[+d.cardCode]);
-  else if(d.transaction){const x=TX.find(x=>x.id===+d.transaction);if(!x)return;const fee=x.status==='done'?Math.round(x.save*FEE):0;detail(x.store,`<div class="detail-summary"><p>${x.d} ${x.t} · ${STAT[x.status][0]}</p><p>결제 금액: ${won(x.amount)}원</p><p>적용 혜택: ${esc(x.src)}</p><p>할인·적립: ${won(x.save)}원</p><p>리캐치 성공 수수료: ${won(fee)}원</p><p>${x.status==='done'?`내 순절약: ${won(x.save-fee)}원`:esc(x.note||'확인 중이에요.')}</p></div><button class="btn btn-soft btn-block" data-history-id="${x.id}">결제 내역에서 보기</button>`)}
+  else if(d.transaction){const x=TX.find(x=>x.id===+d.transaction);if(!x)return;const fee=x.status==='done'?feeFor(x.save):0;detail(x.store,`<div class="detail-summary"><p>${x.d} ${x.t} · ${STAT[x.status][0]}</p><p>결제 금액: ${won(x.amount)}원</p><p>적용 혜택: ${esc(x.src)}</p><p>할인·적립: ${won(x.save)}원</p><p>리캐치 성공 수수료 ${feeRate()}: ${won(fee)}원</p><p>${x.status==='done'?`내 순절약: ${won(x.save-fee)}원`:esc(x.note||'확인 중이에요.')}</p></div><button class="btn btn-soft btn-block" data-history-id="${x.id}">결제 내역에서 보기</button>`)}
   else if(d.insight==='missed')detail('자주 놓치는 순간',`<div class="detail-summary"><p>금요일 18~22시 외식을 알림 예시로 보여주고 있어요.</p><p>61%와 6,200원은 기존 화면의 데모 안내 값으로, 현재 결제 목록에서 계산한 값은 아니에요.</p><p>외식 전 지갑에서 통신사 등급과 멤버십 바코드를 확인해주세요. 실제 적용 조건은 가맹점·혜택별로 달라요.</p></div>${transactionRows(TX.filter(x=>x.status==='missed'))}`);
   else if(d.insight==='success'){const T=totals();openTransactions('재결제 성공률',TX.filter(x=>x.status!=='pending'),`완료 ${T.count}건 ÷ (완료 ${T.count}건 + 놓침 ${T.missedN}건)으로 계산해요. 확인 중인 결제는 성공률에서 제외해요. 아래 금액은 완료·놓침 건의 혜택 합계예요.`)}
   else if(d.insight==='missedAmount')openTransactions('놓친 혜택',TX.filter(x=>x.status==='missed'),'재결제하지 못한 건에서 받을 수 있었던 혜택의 합계예요. 성공 수수료는 부과하지 않아요.');
@@ -871,6 +925,21 @@ $('#trend').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.
 $('#collectionBody').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b)openPasses(+b.dataset.m)});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-history-id]');if(!b)return;closeSheets();filt='all';go('history');const tx=$(`#histList [data-id="${b.dataset.historyId}"]`);if(tx){tx.classList.add('open');tx.querySelector('.row').setAttribute('aria-expanded','true');tx.scrollIntoView({block:'center',behavior:reduce?'auto':'smooth'})}});
 $('#homeFeed').addEventListener('click',e=>{const r=e.target.closest('[data-id]');if(!r)return;const x=TX.find(x=>x.id===+r.dataset.id);openTransactions('최근 리캐치',[x],'결제를 누르면 적용된 혜택과 처리 상태를 확인할 수 있어요.')});
+
+/* 39nhs handoff: replace example guides with dated, consented field evidence.
+   Change SVG pin positions independently; verified requires at least one source. */
+const CAMPUS_POINTS=[
+  {name:'정문 일대',guide:'학생증·멤버십 혜택을 살펴보는 대학가 거점 예시예요.',verified:false,photos:[],evidenceURLs:[]},
+  {name:'카페·식당 거리',guide:'카페·외식 혜택을 찾아보는 상권 거점 예시예요.',verified:false,photos:[],evidenceURLs:[]},
+  {name:'상권 연결 거점',guide:'주변 상권과 행사 안내를 연결하는 거점 예시예요.',verified:false,photos:[],evidenceURLs:[]}
+];
+$('#demoCampusMap').addEventListener('click',e=>{const pin=e.target.closest('[data-campus]');if(!pin)return;const point=CAMPUS_POINTS[+pin.dataset.campus];if(!point)return;
+  const verified=point.verified&&point.evidenceURLs.length>0;
+  const photos=point.photos.map(photo=>`<figure><img src="${esc(photo.src)}" alt="${esc(photo.caption)}"><figcaption>${esc(photo.caption)}</figcaption></figure>`).join('');
+  const evidence=point.evidenceURLs.map(link=>`<p><a href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">${esc(link.label)}</a></p>`).join('');
+  detail(point.name,`<div class="detail-summary"><b>${verified?'현장 확인 자료 연결됨':'예시 안내 · 현장 검증 전'}</b><p>${esc(point.guide)}</p><p>현재 표시 위치는 개념도예요. 실제 좌표·제휴 여부는 확인 자료가 필요해요.</p></div>${photos||'<p class="note">현장 사진은 준비 중이에요.</p>'}${evidence}`);
+});
+$('#demoCampusMap').addEventListener('keydown',e=>{const pin=e.target.closest('[data-campus]');if(pin&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pin.dispatchEvent(new MouseEvent('click',{bubbles:true}))}});
 
 /* ---------- editable eligibility, with honest provenance ---------- */
 const CONDITION_DEFS={
@@ -936,7 +1005,7 @@ function bindMainSwipe(el,{threshold=50}={}){
   let start=null;
   el.addEventListener('pointerdown',e=>{
     if(!e.isPrimary||e.button!==0||$('#scrim').classList.contains('on')||$('#flow').classList.contains('on'))return;
-    if(e.target.closest('input,select,textarea,[contenteditable],.rail,.btrack,.chart,#chips,#histList'))return;
+    if(e.target.closest('input,select,textarea,[contenteditable],.rail,.btrack,.chart,#chips,#historySwipe'))return;
     settleViews();start={x:e.clientX,y:e.clientY,id:e.pointerId,from:activeTab,mode:null,preview:null,offset:0};
   });
   el.addEventListener('pointermove',e=>{
@@ -984,15 +1053,15 @@ bindMainSwipe($('.views'));
 bindMainSwipe($('.tabbar'),{threshold:28});
 const HISTORY_ORDER=['all','done','pending','missed'];
 function changeHistoryFilter(next){if(!HISTORY_ORDER.includes(next)||next===filt)return;const dir=HISTORY_ORDER.indexOf(next)>HISTORY_ORDER.indexOf(filt)?1:-1;filt=next;filterAnimation?.cancel();renderHistory();if(!reduce)filterAnimation=$('#histList').animate([{transform:`translateX(${dir*50}px)`,opacity:.55},{transform:'translateX(0)',opacity:1}],{duration:240,easing:'ease-out'});$('#chips .on').scrollIntoView({block:'nearest',inline:'center',behavior:reduce?'auto':'smooth'})}
-function swipeHistory(dir){const next=HISTORY_ORDER[HISTORY_ORDER.indexOf(filt)+dir];if(next)changeHistoryFilter(next)}
+function swipeHistory(dir){const next=HISTORY_ORDER[HISTORY_ORDER.indexOf(filt)+dir];if(next)changeHistoryFilter(next);else if(dir<0&&filt==='all')go('home');else if(dir>0&&filt==='missed')go('stats')}
 bindSwipe($('#chips'),swipeHistory,{threshold:28});
-bindSwipe($('#histList'),swipeHistory);
+bindSwipe($('#historySwipe'),swipeHistory);
 $('#chips').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();swipeHistory(e.key==='ArrowRight'?1:-1);$('#chips .on').focus()}});
 $('.tabbar').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();swipeMain(e.key==='ArrowRight'?1:-1);$('.tab.on').focus()}});
 
 /* ---------- sheets: 열기·닫기·끌어내려 닫기 ---------- */
 function openSheet(id){
-  if(id==='stmt'){const T=totals(),fin=Math.max(0,T.fee-1000);$('#stRec').textContent=won(T.rec)+'원';$('#stFee').textContent=won(T.fee)+'원';$('#stFinal').textContent=won(fin)+'원';$('#stNet').textContent=won(T.rec-fin)+'원'}
+  if(id==='stmt'){const T=totals(),coupon=Math.min(1000,T.fee),fin=T.fee-coupon;$('#stRec').textContent=won(T.rec)+'원';$('#stFee').textContent=won(T.fee)+'원';$('#stCoupon').textContent='−'+won(coupon)+'원';$('#stFinal').textContent=won(fin)+'원';$('#stNet').textContent=won(T.rec-fin)+'원'}
   clearInterval(codeTimer);
   if(!$('#scrim').classList.contains('on'))sheetReturnFocus=document.activeElement;
   $$('.sheet').forEach(s=>{const on=s.id==='sh-'+id;s.classList.toggle('on',on);s.style.transform='';s.setAttribute('aria-modal',String(on))});$('#scrim').classList.add('on');$('#scrim').style.opacity='';
@@ -1089,9 +1158,9 @@ function pay(S,N){
   $('#pySkip').onclick=()=>{TX.unshift({id:nextId++,store:S.store,cat:S.cat,amount:S.amount,save:S.save,src:S.src,srcKey:S.srcKey,status:'missed',d:N.d,t:N.t,note:'재결제를 건너뛰었어요'});endFlow();RENDER[curTab()]();toast('놓친 혜택으로 기록했어요. 수수료는 없어요')};
   $('#pyOk').onclick=()=>{clearInterval(tick);done(S,N)};
 }
-function done(S,N){const fee=Math.round(S.save*FEE);
+function done(S,N){const fee=feeFor(S.save);
   flow.insertAdjacentHTML('beforeend',`<div class="success"><canvas id="cf"></canvas><div class="ok"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><h3>${S.store}에서</h3><div class="big"><span id="bigN">0</span>원<br>되찾았어요</div>
-  <div class="slipbox"><div class="ln"><span>할인된 금액</span><span>${won(S.save)}원</span></div><div class="ln"><span>리캐치 수수료 20% · 월말 정산</span><span>${won(fee)}원</span></div><div class="ln total"><span>내 순절약</span><span class="pos">${won(S.save-fee)}원</span></div></div>
+  <div class="slipbox"><div class="ln"><span>할인된 금액</span><span>${won(S.save)}원</span></div><div class="ln"><span>리캐치 수수료 ${feeRate()} · 월말 정산</span><span>${won(fee)}원</span></div><div class="ln total"><span>내 순절약</span><span class="pos">${won(S.save-fee)}원</span></div></div>
   <button class="btn btn-brand btn-block" id="dnOk">확인</button></div>`);
   const el=$('#bigN');shown.set(el,0);countTo(el,S.save);confetti($('#cf'));
   const id=nextId++;TX.unshift({id,store:S.store,cat:S.cat,amount:S.amount,save:S.save,src:S.src,srcKey:S.srcKey,status:'done',d:N.d,t:N.t});
