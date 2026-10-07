@@ -5,11 +5,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 const http = require('node:http');
 const root = path.resolve(__dirname, '..');
-assert.equal(fs.readFileSync(path.join(root, 'index_V5.html'), 'utf8'), fs.readFileSync(path.join(root, 'index.html'), 'utf8'), 'Default page and V5 must stay in sync');
+assert.equal(fs.readFileSync(path.join(root, 'index_V6.html'), 'utf8'), fs.readFileSync(path.join(root, 'index.html'), 'utf8'), 'Default page and V6 must stay in sync');
 const errors = [];
 const server = http.createServer((req, res) => {
   const requestPath = req.url.split('?')[0];
-  const file = /^\/assets\/brands\/(kb-logo\.png|sh-logo\.png|hd-logo\.svg)$/.test(requestPath) ? requestPath.slice(1) : requestPath === '/wallet-validation.js' ? 'wallet-validation.js' : requestPath === '/index_V5.html' ? 'index_V5.html' : 'index.html';
+  const file = /^\/assets\/brands\/(kb-logo\.png|sh-logo\.png|hd-logo\.svg)$/.test(requestPath) ? requestPath.slice(1) : requestPath === '/wallet-validation.js' ? 'wallet-validation.js' : requestPath === '/index_V6.html' ? 'index_V6.html' : 'index.html';
   res.setHeader('Content-Type', file.endsWith('.js') ? 'text/javascript; charset=utf-8' : file.endsWith('.png') ? 'image/png' : file.endsWith('.svg') ? 'image/svg+xml' : 'text/html; charset=utf-8');
   res.end(fs.readFileSync(path.join(root, file)));
 });
@@ -168,7 +168,7 @@ async function add(page, name, number, type = 'membership') {
     const animated = await animatedContext.newPage();
     animated.on('pageerror', e => errors.push(e.message));
     await animated.route('https://fonts.googleapis.com/**', route => route.abort());
-    await animated.goto(`${url}index_V5.html`);
+    await animated.goto(`${url}index_V6.html`);
     const viewBox = await animated.locator('.views').boundingBox(), y = viewBox.y + 100;
     await animated.mouse.move(300, y); await animated.mouse.down(); await animated.mouse.move(220, y, { steps: 5 });
     const drag = await animated.evaluate(() => {

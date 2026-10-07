@@ -47,7 +47,7 @@ window.RecatchMembershipAPI = {
 
 ## 버전 파일
 
-`index_V4.html`과 이전 파일은 보존합니다. V5 결과를 `index_V5.html`에 남기고, GitHub Pages 기본 진입점인 `index.html`에도 같은 내용을 제공합니다. 두 파일의 변경 사항은 함께 반영합니다.
+`index_V5.html`과 이전 파일은 보존합니다. 최신 버전은 `index_V6.html`이며, GitHub Pages 기본 진입점인 `index.html`에도 같은 내용을 제공합니다. 이후 수정은 기본 진입점과 V6에 함께 반영합니다. 두 최신 파일의 `app-version` 메타데이터는 `6`입니다.
 
 ## 홈 금액, 카드사 로고와 현장 안내
 

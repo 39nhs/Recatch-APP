@@ -1,6 +1,6 @@
 # 39nhs 공동 수정 인계
 
-`index.html`이 기본 데모이며 `index_V5.html`에 같은 내용을 유지합니다. 두 파일을 함께 수정하세요. V4와 이전 버전은 보존합니다. `fix/mobile-interactions` 브랜치에 커밋하면 원본 저장소 PR #1에 이어서 반영됩니다.
+`index.html`이 기본 데모이며 최신 버전 `index_V6.html`에 같은 내용을 유지합니다. 두 파일을 함께 수정하세요. `index_V5.html`과 이전 버전은 보존합니다. 최신 파일의 `app-version` 메타데이터는 `6`입니다. `fix/mobile-interactions` 브랜치에 커밋하면 원본 저장소 PR #1에 이어서 반영됩니다.
 
 ## 현장 지도와 사진이 필요한 위치
 
@@ -66,4 +66,4 @@ HTML과 데이터 정의 바로 위에 교체 주석을 남겼습니다. 현재 
 
 ## 확인 방법
 
-`node --test tests/wallet-validation.test.cjs`와 Playwright가 준비된 환경에서 `node tests/browser.test.cjs`를 실행합니다. 기본 화면과 V5의 일치, 작은 탭 및 큰 탭 스와이프, 빈 내역 영역, 수수료·카드별 집계, 큰 금액 배치, 로고 로딩과 기존 재결제 기능을 확인합니다.
+`node --test tests/wallet-validation.test.cjs`와 Playwright가 준비된 환경에서 `node tests/browser.test.cjs`를 실행합니다. 기본 화면과 V6의 일치, 작은 탭 및 큰 탭 스와이프, 빈 내역 영역, 수수료·카드별 집계, 큰 금액 배치, 로고 로딩과 기존 재결제 기능을 확인합니다.
