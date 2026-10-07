@@ -229,6 +229,23 @@ svg{display:block}
 .facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .facts span{padding:7px 11px;border-radius:10px;background:var(--well);font-size:13.5px;font-weight:500}
 .facts small{color:var(--ink-3);margin-left:4px}
+.facts button{padding:7px 11px;border-radius:10px;background:var(--well);font-size:13.5px;font-weight:500;min-height:40px}
+.collection-more{display:block;width:100%;text-align:center;padding:12px 8px;margin-top:8px;border-radius:12px;background:var(--well);font-size:13.5px;color:var(--ink-2)}
+.cat,.rank{width:100%;text-align:left;border-radius:8px}
+.cat:active,.rank:active{background:var(--press)}
+.view,.tabbar,.chips{touch-action:pan-y pinch-zoom}
+.tabbar{user-select:none}
+.rail,.btrack{overscroll-behavior-x:contain;touch-action:pan-y pinch-zoom}
+.chart{overscroll-behavior-x:contain}
+.detect-card .go{min-height:44px;margin-bottom:-4px}
+.expanded-sheet{height:88%}
+.detail-summary{background:var(--well);border-radius:14px;padding:14px;margin:12px 0}
+.detail-summary p{margin:4px 0;color:var(--ink-2);font-size:14px}
+.field select{min-height:50px;border-radius:13px;border:1px solid var(--line);background:var(--well);padding:0 12px;font:inherit;color:var(--ink);width:100%}
+.form-error{color:var(--miss);font-size:13.5px;margin:8px 0;min-height:20px}
+[aria-invalid="true"]{border-color:var(--miss)!important}
+.btn:disabled{opacity:.6;cursor:wait}
+@media(prefers-reduced-motion:reduce){.view.enter,.detect i{animation:none}.sheet{transition:none}}
 
 /* ---------- tab bar ---------- */
 .tabbar{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:5}
@@ -396,17 +413,17 @@ svg{display:block}
         </div>
       </div>
 
-      <button class="sec detect-card" id="simCard">
+      <div class="sec detect-card">
         <div>
           <h3>결제하고 2분 안에<br>놓친 할인을 알려드려요</h3>
           <p>예시 결제로 알림부터 재결제까지 직접 해보세요.</p>
-          <span class="go">재결제 체험하기 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></span>
+          <button class="go" id="simCard">재결제 체험하기 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>
         </div>
         <div class="mphone" aria-hidden="true">
           <div class="mnoti"><i></i><div>방금 결제한 13,000원<br><b>2,600원</b> 돌려받기</div></div>
           <div class="mreceipt">STARBUCKS<br>아메리카노 ×2<br>치즈케이크 ×1<br><b>13,000</b></div>
         </div>
-      </button>
+      </div>
 
       <div class="banner" aria-roledescription="carousel"><div class="btrack" id="btrack"></div><span class="bcount" id="bcount">1 / 3</span></div>
 
@@ -432,6 +449,7 @@ svg{display:block}
         <div><small>놓친 혜택</small><b style="color:var(--miss)" id="hsMissed">0</b></div>
       </div>
       <div class="chips" id="chips" role="tablist"></div>
+      <p class="note">내역을 좌우로 밀면 필터가 바뀌어요. 하단 메뉴를 밀면 화면이 바뀌어요.</p>
       <div class="sec" style="padding-block:10px" id="histList"></div>
     </section>
 
@@ -439,15 +457,15 @@ svg{display:block}
     <section class="view" id="v-stats" data-view="stats" hidden>
       <div class="page-h"><h1>소비 분석</h1><p>10월 1일부터 오늘까지</p></div>
       <div class="kpis">
-        <div class="sec kpi"><small>재결제 성공률</small><b id="rateVal">0%</b><span id="rateSub"></span><div class="meter"><i id="rateBar"></i></div></div>
-        <div class="sec kpi"><small>놓친 혜택</small><b id="missVal" style="color:var(--miss)">0원</b><span id="missSub"></span></div>
+        <button class="sec kpi" data-insight="success"><small>재결제 성공률</small><b id="rateVal">0%</b><span id="rateSub"></span><span class="meter"><i id="rateBar"></i></span></button>
+        <button class="sec kpi" data-insight="missedAmount"><small>놓친 혜택</small><b id="missVal" style="color:var(--miss)">0원</b><span id="missSub"></span></button>
       </div>
       <div class="sec"><div class="sec-h"><h2>월별 되찾은 돈</h2></div><div class="chart" id="trend"></div></div>
-      <div class="sec"><div class="sec-h"><h2>어디서 아꼈나요</h2><span class="more" id="catTotal"></span></div><div class="cats" id="cats"></div></div>
-      <div class="sec"><div class="sec-h"><h2>많이 아껴준 혜택</h2></div><div id="rank"></div></div>
+      <div class="sec"><div class="sec-h"><h2>어디서 아꼈나요</h2><span class="more" id="catTotal"></span></div><div class="cats" id="cats"></div><button class="more collection-more" id="catsMore" data-collection="categories" hidden></button></div>
+      <div class="sec"><div class="sec-h"><h2>많이 아껴준 혜택</h2></div><div id="rank"></div><button class="more collection-more" id="rankMore" data-collection="benefits" hidden></button></div>
       <div class="sec">
         <div class="sec-h"><h2>자주 놓치는 순간</h2></div>
-        <div class="todo" style="padding-top:6px"><div><b>금요일 18~22시 외식</b><small>최근 3개월 놓친 혜택의 61% · 빕스·아웃백은 SKT VIP 15%</small></div><em>+6,200원</em></div>
+        <button class="todo" data-insight="missed" style="padding-top:6px"><div><b>금요일 18~22시 외식</b><small>최근 3개월 놓친 혜택의 61% · 빕스·아웃백은 SKT VIP 15%</small></div><em>+6,200원</em></button>
       </div>
     </section>
 
@@ -459,15 +477,17 @@ svg{display:block}
           <button class="nav prev" id="cardPrev" aria-label="이전 카드"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m15 6-6 6 6 6"/></svg></button>
           <button class="nav next" id="cardNext" aria-label="다음 카드"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button></div>
         <div class="dots" id="cardDots"></div>
+        <button class="more collection-more" id="cardsMore" data-collection="cards" hidden></button>
       </div>
       <div class="sec meta" id="cardMeta"></div>
       <div class="sec">
         <div class="sec-h"><h2>멤버십·바코드</h2><button class="more" data-open="add">+ 추가</button></div>
         <div id="memList"></div>
+        <button class="more collection-more" id="memMore" data-collection="memberships" hidden></button>
       </div>
       <div class="sec">
         <div class="sec-h"><h2>나에게 해당하는 조건</h2></div>
-        <div class="facts"><span>대학생<small>청년 우대</small></span><span>SKT<small>VIP</small></span><span>경산시<small>주 활동 지역</small></span><span>20대<small>연령 우대</small></span></div>
+        <div class="facts" id="facts"></div>
       </div>
     </section>
   </main>
@@ -530,11 +550,36 @@ svg{display:block}
     <div class="grab-zone" aria-hidden="true"><div class="grab"></div></div>
     <h3>혜택 지갑에 추가</h3>
     <p class="lead">등록할수록 결제 직후 찾아드리는 혜택이 정확해져요.</p>
-    <form id="addForm">
+    <form id="addForm" novalidate>
       <div class="field"><label>종류</label><div class="seg" id="addSeg"><button type="button" class="on" data-v="membership">멤버십</button><button type="button" data-v="card">카드</button><button type="button" data-v="telecom">통신사</button></div></div>
-      <div class="field"><label for="addName">이름</label><input id="addName" placeholder="예: 해피포인트, 투썸 멤버십" required autocomplete="off"></div>
-      <div class="field"><label for="addCode">바코드 번호</label><input id="addCode" inputmode="numeric" placeholder="숫자만 입력" autocomplete="off"></div>
+      <div class="field"><label for="addName">이름</label><input id="addName" placeholder="예: 해피포인트, 투썸 멤버십" required maxlength="40" autocomplete="off"></div>
+      <div class="field"><label for="addFormat">바코드 형식</label><select id="addFormat" aria-describedby="addHelp"></select></div>
+      <div class="field"><label for="addCode">바코드 번호</label><input id="addCode" inputmode="numeric" placeholder="앱에 표시된 바코드 번호" required maxlength="48" autocomplete="off" aria-describedby="addHelp addError"></div>
+      <p class="lead" id="addHelp">앱에 표시된 번호를 입력해주세요. 공백·하이픈은 자동으로 정리해요. 멤버십 번호에는 상품용 바코드의 검증 규칙을 적용하지 않아요.</p>
+      <p class="form-error" id="addError" role="alert"></p>
       <button class="btn btn-brand btn-block" type="submit">지갑에 추가</button>
+    </form>
+  </div>
+
+  <div class="sheet expanded-sheet" id="sh-details" role="dialog" aria-labelledby="detailTitle">
+    <div class="grab-zone" aria-hidden="true"><div class="grab"></div></div>
+    <div class="sec-h"><h3 id="detailTitle"></h3><button class="btn btn-soft" data-close>닫기</button></div>
+    <div id="detailBody"></div>
+  </div>
+  <div class="sheet expanded-sheet" id="sh-collection" role="dialog" aria-labelledby="collectionTitle">
+    <div class="grab-zone" aria-hidden="true"><div class="grab"></div></div>
+    <div class="sec-h"><h3 id="collectionTitle"></h3><button class="btn btn-soft" data-close>닫기</button></div>
+    <p class="lead">항목을 누르면 자세히 확인할 수 있어요.</p>
+    <div id="collectionBody"></div>
+  </div>
+  <div class="sheet" id="sh-condition" role="dialog" aria-labelledby="conditionTitle">
+    <div class="grab-zone" aria-hidden="true"><div class="grab"></div></div>
+    <div class="sec-h"><h3 id="conditionTitle"></h3><button class="btn btn-soft" data-close>닫기</button></div>
+    <p class="lead" id="conditionReason"></p>
+    <p class="lead" id="conditionGuide"></p>
+    <form id="conditionForm">
+      <div class="field"><label for="conditionValue">조건 변경</label><select id="conditionValue"></select></div>
+      <button class="btn btn-brand btn-block" type="submit">변경 저장</button>
     </form>
   </div>
 
@@ -542,12 +587,15 @@ svg{display:block}
   <div class="toast" id="toast" role="status"></div>
 </div>
 
+<script src="wallet-validation.js"></script>
 <script>
 (function(){
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const won=n=>Math.round(n).toLocaleString('ko-KR');
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FEE=0.2;
+const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PREVIEW={categories:4,benefits:3,cards:3,memberships:3};
 
 /* 가맹점 표시: 로고 대신 이니셜 원 */
 const MARK={'스타벅스':['S','#0B7A55'],'빕스':['V','#A8232B'],'CGV':['C','#D7262E'],'GS25':['GS','#1D6FD8'],'올리브영':['O','#6FA334'],'맘스터치':['M','#E3651D'],'파리바게뜨':['P','#1E3F8F']};
@@ -596,7 +644,7 @@ function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clea
 
 /* ---------- 공통: 좌우로 넘기는 레일 (터치 스와이프 · 마우스 드래그 · 화살표 · 점 · 키보드) ---------- */
 function makeRail(rail,{prev,next,dots,onChange,onTap}){
-  const st={cur:0,on:false,x:0,sl:0,moved:0,t:null,force:false};
+  const st={cur:0,on:false,x:0,y:0,pid:null,sl:0,moved:0,t:null,force:false};
   const items=()=>[...rail.children];
   function nearest(){const mid=rail.scrollLeft+rail.clientWidth/2;let b=0,bd=1e9;items().forEach((c,i)=>{const d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(d<bd){bd=d;b=i}});return b}
   function set(i){const ch=i!==st.cur;st.cur=i;items().forEach((c,k)=>c.classList.toggle('cur',k===i));
@@ -610,10 +658,11 @@ function makeRail(rail,{prev,next,dots,onChange,onTap}){
   prev&&(prev.onclick=()=>go(Math.max(0,st.cur-1)));
   next&&(next.onclick=()=>go(Math.min(items().length-1,st.cur+1)));
   dots&&dots.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(b)go(+b.dataset.k)});
-  rail.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||e.button!==0)return;st.on=true;st.x=e.clientX;st.sl=rail.scrollLeft;st.moved=0;e.stopPropagation()});
-  window.addEventListener('pointermove',e=>{if(!st.on)return;const dx=e.clientX-st.x;st.moved=Math.max(st.moved,Math.abs(dx));if(st.moved>6){rail.classList.add('dragging');rail.scrollLeft=st.sl-dx}});
-  window.addEventListener('pointerup',e=>{if(!st.on)return;st.on=false;rail.classList.remove('dragging');
+  rail.addEventListener('pointerdown',e=>{if(!e.isPrimary||e.button!==0)return;st.on=true;st.pid=e.pointerId;st.x=e.clientX;st.y=e.clientY;st.sl=rail.scrollLeft;st.moved=0;e.stopPropagation()});
+  window.addEventListener('pointermove',e=>{if(!st.on||e.pointerId!==st.pid)return;const dx=e.clientX-st.x,dy=e.clientY-st.y;if(Math.abs(dy)>12&&Math.abs(dy)>Math.abs(dx)){st.on=false;rail.classList.remove('dragging');return}st.moved=Math.max(st.moved,Math.abs(dx));if(st.moved>6){rail.classList.add('dragging');rail.scrollLeft=st.sl-dx}});
+  window.addEventListener('pointerup',e=>{if(!st.on||e.pointerId!==st.pid)return;st.on=false;rail.classList.remove('dragging');
     if(st.moved>6){const dx=e.clientX-st.x;let i=nearest();if(i===st.cur&&Math.abs(dx)>40)i=Math.max(0,Math.min(items().length-1,st.cur+(dx<0?1:-1)));go(i)}});
+  window.addEventListener('pointercancel',e=>{if(e.pointerId===st.pid){st.on=false;rail.classList.remove('dragging')}});
   rail.addEventListener('click',e=>{const c=[...rail.children].find(k=>k.contains(e.target));if(!c)return;if(st.moved>6){st.moved=0;return}
     const i=items().indexOf(c);if(i!==st.cur){go(i);return}onTap&&onTap(i)});
   rail.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();go(Math.min(items().length-1,st.cur+1))}else if(e.key==='ArrowLeft'){e.preventDefault();go(Math.max(0,st.cur-1))}
@@ -624,7 +673,7 @@ function makeRail(rail,{prev,next,dots,onChange,onTap}){
 /* ---------- home ---------- */
 function rowHTML(x){
   const r=x.status==='missed'?`<b class="muted">${won(x.save)}원</b><small>놓침</small>`:x.status==='pending'?`<b>+${won(x.save)}원</b><small>확인 중</small>`:`<b class="pos">+${won(x.save)}원</b><small>${won(x.amount)}원 결제</small>`;
-  return `<div class="row" data-id="${x.id}">${mark(x.store)}<div class="row-main"><b>${x.store}</b><small>${x.src}</small></div><div class="row-amt">${r}</div></div>`}
+  return `<button class="row" data-id="${x.id}">${mark(x.store)}<span class="row-main"><b>${x.store}</b><small>${x.src}</small></span><span class="row-amt">${r}</span></button>`}
 function renderHome(flashId){
   const T=totals(),last=PREV[PREV.length-1].v;
   countTo($('#heroTotal'),T.rec);countTo($('#lgRec'),T.rec);countTo($('#lgFee'),T.fee);countTo($('#lgNet'),T.net);
@@ -682,17 +731,20 @@ function renderStats(){
   let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:290px" role="img" aria-label="월별 되찾은 돈 막대 차트">`;
   for(let v=0;v<=top;v+=step)s+=`<line x1="0" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" ${v?'stroke-dasharray="3 4"':''}/>`;
   data.forEach((d,i)=>{const w=bw*.5,x=i*bw+(bw-w)/2,yy=y(d.v),hh=H-pb-yy;
+    s+=`<g role="button" tabindex="0" data-month="${i}" aria-label="${d.m} ${won(d.v)}원 상세 보기" style="cursor:pointer"><rect x="${i*bw}" y="0" width="${bw}" height="${H}" fill="transparent"/>`;
     s+=`<rect x="${x}" y="${yy}" width="${w}" height="${hh}" rx="6" fill="${d.cur?'var(--brand)':'var(--well)'}"><animate attributeName="height" from="0" to="${hh}" dur="${reduce?.01:.7}s" fill="freeze"/><animate attributeName="y" from="${H-pb}" to="${yy}" dur="${reduce?.01:.7}s" fill="freeze"/></rect>`;
     s+=`<text x="${x+w/2}" y="${H-8}" text-anchor="middle" ${d.cur?'style="fill:var(--ink);font-weight:700"':''}>${d.m}</text>`;
-    if(d.cur||i===data.length-2)s+=`<text class="v" x="${x+w/2}" y="${yy-7}" text-anchor="middle">${won(d.v)}</text>`});
+    if(d.cur||i===data.length-2)s+=`<text class="v" x="${x+w/2}" y="${yy-7}" text-anchor="middle">${won(d.v)}</text>`;s+='</g>'});
   $('#trend').innerHTML=s+'</svg>';
   const by={};TX.filter(x=>x.status==='done').forEach(x=>by[x.cat]=(by[x.cat]||0)+x.save);
   const cats=Object.entries(by).sort((a,b)=>b[1]-a[1]);const mx=cats[0]?cats[0][1]:1;
   $('#catTotal').textContent='합계 '+won(T.rec)+'원';
-  $('#cats').innerHTML=cats.map(([k,v])=>`<div class="cat" style="--c:${CAT[k][1]}"><span class="nm">${CAT[k][0]}<small>${Math.round(v/T.rec*100)}%</small></span><b>${won(v)}원</b><div class="tr"><i data-w="${v/mx*100}"></i></div></div>`).join('');
+  $('#cats').innerHTML=cats.slice(0,PREVIEW.categories).map(([k,v])=>`<button class="cat" data-category="${k}" aria-label="${CAT[k][0]} 절약 내역 보기" style="--c:${CAT[k][1]}"><span class="nm">${CAT[k][0]}<small>${Math.round(v/T.rec*100)}%</small></span><b>${won(v)}원</b><span class="tr"><i data-w="${v/mx*100}"></i></span></button>`).join('');
+  showMore('catsMore',cats.length,PREVIEW.categories);
   requestAnimationFrame(()=>$$('#cats i').forEach(i=>i.style.width=i.dataset.w+'%'));
   const bs={};TX.filter(x=>x.status==='done').forEach(x=>{bs[x.srcKey]=bs[x.srcKey]||{v:0,n:0};bs[x.srcKey].v+=x.save;bs[x.srcKey].n++});
-  $('#rank').innerHTML=Object.entries(bs).sort((a,b)=>b[1].v-a[1].v).slice(0,3).map(([k,o],i)=>`<div class="rank"><span class="no">${i+1}</span><span class="mcard ${SRC[k][1]}"></span><div class="row-main"><b>${SRC[k][0]}</b><small>${o.n}번 재결제</small></div><b class="pos">+${won(o.v)}원</b></div>`).join('');
+  $('#rank').innerHTML=Object.entries(bs).sort((a,b)=>b[1].v-a[1].v).slice(0,PREVIEW.benefits).map(([k,o],i)=>`<button class="rank" data-benefit="${k}"><span class="no">${i+1}</span><span class="mcard ${(SRC[k]||['','art-new'])[1]}"></span><div class="row-main"><b>${esc((SRC[k]||[k])[0])}</b><small>${o.n}번 재결제</small></div><b class="pos">+${won(o.v)}원</b></button>`).join('');
+  showMore('rankMore',Object.keys(bs).length,PREVIEW.benefits);
 }
 
 /* ---------- wallet ---------- */
@@ -702,13 +754,16 @@ function pat(id){
   return `<svg class="pat" viewBox="0 0 300 190" preserveAspectRatio="xMaxYMax slice" aria-hidden="true"><text x="292" y="186" text-anchor="end" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="120" fill="#fff" fill-opacity=".07">0</text></svg>`}
 const cardRail=makeRail($('#cardRail'),{prev:$('#cardPrev'),next:$('#cardNext'),dots:$('#cardDots'),onChange:i=>renderCardMeta(i),onTap:i=>openCardCode(CARDS[i])});
 function renderWallet(){
-  $('#cardRail').innerHTML=CARDS.map(c=>`<div class="ccard ${c.art}" role="button" tabindex="0" aria-label="${c.bank} ${c.name}, 누르면 결제 바코드">${pat(c.id)}<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="bank">${c.bank}</div><div class="cname">${c.name}</div></div><span class="ic"></span></div><div style="display:flex;justify-content:space-between;align-items:flex-end"><span class="cno">•••• ${c.last}</span><span style="font-size:12px;font-weight:600;opacity:.85">누르면 결제 바코드</span></div></div>`).join('');
+  $('#cardRail').innerHTML=CARDS.slice(0,PREVIEW.cards).map(c=>`<div class="ccard ${c.art}" role="button" tabindex="0" aria-label="${esc(c.bank+' '+c.name)}, 누르면 결제 바코드">${pat(c.id)}<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="bank">${esc(c.bank)}</div><div class="cname">${esc(c.name)}</div></div><span class="ic"></span></div><div style="display:flex;justify-content:space-between;align-items:flex-end"><span class="cno">•••• ${c.last}</span><span style="font-size:12px;font-weight:600;opacity:.85">누르면 결제 바코드</span></div></div>`).join('');
   cardRail.refresh();
-  $('#memList').innerHTML=MEMS.map((m,i)=>`<button class="mem" data-m="${i}"><span class="mark" style="--m:${m.m[1]}">${m.m[0]}</span><div class="row-main"><b>${m.name}</b><small>${m.sub}</small></div><span class="open">바코드</span></button>`).join('');
+  $('#memList').innerHTML=MEMS.slice(0,PREVIEW.memberships).map((m,i)=>membershipRow(m,i)).join('');
+  showMore('memMore',MEMS.length,PREVIEW.memberships);
+  showMore('cardsMore',CARDS.length,PREVIEW.cards);
+  renderFacts();
 }
 function renderCardMeta(i){const c=CARDS[i];if(!c)return;const p=c.need?Math.min(1,c.now/c.need):1;
-  $('#cardMeta').innerHTML=`<div class="sec-h" style="margin-bottom:2px"><h2>${c.name}</h2><span class="more">${i+1} / ${CARDS.length}</span></div>
-  <div class="ln"><span>주요 혜택</span><b style="text-align:right">${c.perk}</b></div>
+  $('#cardMeta').innerHTML=`<div class="sec-h" style="margin-bottom:2px"><h2>${esc(c.name)}</h2><button class="more" data-card-detail="${i}">상세 ${i+1} / ${CARDS.length}</button></div>
+  <div class="ln"><span>주요 혜택</span><b style="text-align:right">${esc(c.perk)}</b></div>
   ${c.need?`<div class="ln"><span>전월 실적</span><span>${won(c.now)} / ${won(c.need)}원</span></div><div class="bar"><i class="${p>=1?'full':''}"></i></div>`:''}
   <div class="ln"><span>${c.need&&p<1?'남은 조건':'상태'}</span><span style="color:${p>=1?'var(--save)':'var(--warn)'};font-weight:600;text-align:right">${c.limit}</span></div>`;
   requestAnimationFrame(()=>{const b=$('#cardMeta .bar i');if(b)b.style.width=p*100+'%'})}
@@ -722,9 +777,69 @@ function openCardCode(c){
 /* 멤버십 패스: 좌우로 넘기기 */
 const passRail=makeRail($('#passRail'),{prev:$('#passPrev'),next:$('#passNext'),dots:$('#passDots'),onChange:i=>$('#passIdx').textContent=`${i+1} / ${MEMS.length}`});
 function openPasses(i){
-  $('#passRail').innerHTML=MEMS.map(m=>`<div class="pass" tabindex="0" style="--pc:${m.m[1]}"><div class="pass-top"><div><div class="pn">${m.name}</div><div class="ps">${m.sub}</div></div><span class="pt">${m.tier}</span></div><div class="pass-body">${barcode(m.code,80)}<div class="mono">${m.code}</div><p>${m.extra} · 직원에게 보여주면 바로 적용돼요</p></div></div>`).join('');
+  $('#passRail').innerHTML=MEMS.map(m=>`<div class="pass" tabindex="0" style="--pc:${m.m[1]}"><div class="pass-top"><div><div class="pn">${esc(m.name)}</div><div class="ps">${esc(m.sub)}</div></div><span class="pt">${esc(m.tier)}</span></div><div class="pass-body">${barcode(m.code,80)}<div class="mono">${m.code}</div><p>${esc(m.extra)} · 직원에게 보여주면 바로 적용돼요</p></div></div>`).join('');
   openSheet('pass');passRail.refresh(i)}
 $('#memList').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b)openPasses(+b.dataset.m)});
+
+/* ---------- expanded lists and explanations ---------- */
+function showMore(id,count,limit){const b=$('#'+id);b.hidden=count<=limit;b.textContent=`전체보기 ${count}개 · +${Math.max(0,count-limit)}개`}
+function membershipRow(m,i){return `<button class="mem" data-m="${i}"><span class="mark" style="--m:${m.m[1]}">${esc(m.m[0])}</span><span class="row-main"><b>${esc(m.name)}</b><small>${esc(m.sub)}</small></span><span class="open">바코드</span></button>`}
+function transactionRows(list){return list.length?list.map(x=>`<button class="row" data-transaction="${x.id}">${mark(x.store)}<span class="row-main"><b>${esc(x.store)}</b><small>${x.d} ${x.t} · ${esc(x.src)}</small></span><span class="row-amt"><b class="${x.status==='done'?'pos':'muted'}">${won(x.save)}원</b><small>${STAT[x.status][0]}</small></span></button>`).join(''):'<p class="note">해당하는 결제 내역이 없어요.</p>'}
+function detail(title,body){$('#detailTitle').textContent=title;$('#detailBody').innerHTML=body;openSheet('details')}
+function grouped(kind){const by={};TX.filter(x=>x.status==='done').forEach(x=>{const k=x[kind];by[k]=(by[k]||0)+x.save});return Object.entries(by).sort((a,b)=>b[1]-a[1])}
+function openCollection(kind){
+  const title={categories:'절약한 업종 전체',benefits:'많이 아껴준 혜택 전체',cards:'등록한 카드 전체',memberships:'멤버십·바코드 전체'};
+  let body='';
+  if(kind==='categories'||kind==='benefits')body=grouped(kind==='categories'?'cat':'srcKey').map(([k,v])=>`<button class="todo" data-${kind==='categories'?'category':'benefit'}="${esc(k)}"><span><b>${esc(kind==='categories'?CAT[k][0]:(SRC[k]||[k])[0])}</b><small>집계에 포함된 결제 보기</small></span><em>${won(v)}원</em></button>`).join('');
+  if(kind==='cards')body=CARDS.map((c,i)=>`<button class="todo" data-card-detail="${i}"><span><b>${esc(c.bank+' '+c.name)}</b><small>•••• ${c.last} · ${esc(c.perk)}</small></span><span class="open">상세 ›</span></button>`).join('');
+  if(kind==='memberships')body=MEMS.map(membershipRow).join('');
+  $('#collectionTitle').textContent=title[kind];$('#collectionBody').innerHTML=body||'<p class="note">아직 항목이 없어요.</p>';openSheet('collection');
+}
+function openTransactions(title,list,explanation,collectionKind){
+  const total=list.reduce((n,x)=>n+x.save,0);
+  const back=collectionKind&&$('#sh-collection').classList.contains('on')?`<button class="collection-more" data-collection="${collectionKind}">전체 목록으로</button>`:'';
+  detail(title,`<div class="detail-summary"><b>${list.length}건 · ${won(total)}원</b><p>${esc(explanation)}</p></div>${transactionRows(list)}${back}`);
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-collection],[data-category],[data-benefit],[data-card-detail],[data-card-code],[data-transaction],[data-insight]');if(!b)return;
+  const d=b.dataset;
+  if(d.collection)openCollection(d.collection);
+  else if(d.category)openTransactions(CAT[d.category][0]+' 절약 내역',TX.filter(x=>x.status==='done'&&x.cat===d.category),'재결제 완료 건의 할인·적립 합계예요. 성공 수수료를 차감하기 전 금액이며, 확인 중·놓친 혜택은 제외해요.','categories');
+  else if(d.benefit)openTransactions((SRC[d.benefit]||[d.benefit])[0],TX.filter(x=>x.status==='done'&&x.srcKey===d.benefit),'이 카드 또는 멤버십으로 재결제해 받은 혜택이에요. 결제를 누르면 적용 혜택과 수수료를 확인할 수 있어요.','benefits');
+  else if(d.cardDetail!==undefined){const c=CARDS[+d.cardDetail];if(!c)return;detail(c.bank+' '+c.name,`<div class="detail-summary"><p>카드 끝번호: ${c.last}</p><p>주요 혜택: ${esc(c.perk)}</p><p>${c.need?`전월 실적: ${won(c.now)} / ${won(c.need)}원`:'실적 조건 없음'}</p><p>${esc(c.limit)}</p></div><button class="btn btn-brand btn-block" data-card-code="${d.cardDetail}">결제 바코드 열기</button><button class="collection-more" data-collection="cards">카드 전체보기</button>`)}
+  else if(d.cardCode!==undefined)openCardCode(CARDS[+d.cardCode]);
+  else if(d.transaction){const x=TX.find(x=>x.id===+d.transaction);if(!x)return;const fee=x.status==='done'?Math.round(x.save*FEE):0;detail(x.store,`<div class="detail-summary"><p>${x.d} ${x.t} · ${STAT[x.status][0]}</p><p>결제 금액: ${won(x.amount)}원</p><p>적용 혜택: ${esc(x.src)}</p><p>할인·적립: ${won(x.save)}원</p><p>리캐치 성공 수수료: ${won(fee)}원</p><p>${x.status==='done'?`내 순절약: ${won(x.save-fee)}원`:esc(x.note||'확인 중이에요.')}</p></div><button class="btn btn-soft btn-block" data-history-id="${x.id}">결제 내역에서 보기</button>`)}
+  else if(d.insight==='missed')detail('자주 놓치는 순간',`<div class="detail-summary"><p>금요일 18~22시 외식을 알림 예시로 보여주고 있어요.</p><p>61%와 6,200원은 기존 화면의 데모 안내 값으로, 현재 결제 목록에서 계산한 값은 아니에요.</p><p>외식 전 지갑에서 통신사 등급과 멤버십 바코드를 확인해주세요. 실제 적용 조건은 가맹점·혜택별로 달라요.</p></div>${transactionRows(TX.filter(x=>x.status==='missed'))}`);
+  else if(d.insight==='success'){const T=totals();openTransactions('재결제 성공률',TX.filter(x=>x.status!=='pending'),`완료 ${T.count}건 ÷ (완료 ${T.count}건 + 놓침 ${T.missedN}건)으로 계산해요. 확인 중인 결제는 성공률에서 제외해요. 아래 금액은 완료·놓침 건의 혜택 합계예요.`)}
+  else if(d.insight==='missedAmount')openTransactions('놓친 혜택',TX.filter(x=>x.status==='missed'),'재결제하지 못한 건에서 받을 수 있었던 혜택의 합계예요. 성공 수수료는 부과하지 않아요.');
+});
+$('#trend').addEventListener('click',e=>{const b=e.target.closest('[data-month]');if(!b)return;const i=+b.dataset.month;if(i===PREV.length)openTransactions('10월 되찾은 돈',TX.filter(x=>x.status==='done'),'이번 달 재결제 완료 건의 할인·적립 합계예요. 성공 수수료 차감 전 금액이에요.');else{const m=PREV[i];detail(m.m+' 되찾은 돈',`<div class="detail-summary"><b>${won(m.v)}원</b><p>월별 추이를 보여주기 위한 기존 데모 집계 값이에요. 이 달의 개별 결제 데이터는 현재 데모에 포함되어 있지 않아요.</p></div>`)}});
+$('#trend').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest('[data-month]')){e.preventDefault();e.target.closest('[data-month]').dispatchEvent(new MouseEvent('click',{bubbles:true}))}});
+$('#collectionBody').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b)openPasses(+b.dataset.m)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-history-id]');if(!b)return;closeSheets();filt='all';go('history');const tx=$(`#histList [data-id="${b.dataset.historyId}"]`);if(tx){tx.classList.add('open');tx.querySelector('.row').setAttribute('aria-expanded','true');tx.scrollIntoView({block:'center',behavior:reduce?'auto':'smooth'})}});
+$('#homeFeed').addEventListener('click',e=>{const r=e.target.closest('[data-id]');if(!r)return;const x=TX.find(x=>x.id===+r.dataset.id);openTransactions('최근 리캐치',[x],'결제를 누르면 적용된 혜택과 처리 상태를 확인할 수 있어요.')});
+
+/* ---------- editable eligibility, with honest provenance ---------- */
+const CONDITION_DEFS={
+  student:{label:'학생 상태',value:'대학생',sub:'청년 우대',options:['대학생','대학원생','해당 없음'],reason:'기존 HTML의 예시 프로필에 대학생으로 설정되어 추가됐어요. 학생증이나 학교 정보를 자동으로 조회한 결과는 아니에요.',guide:'현재 재학 상태를 선택해 저장하세요. 실제 학생 할인은 제휴사에서 학생증·재학 인증이 필요할 수 있어요.'},
+  telecom:{label:'통신사·등급',value:'SKT VIP',sub:'통신사 우대',options:['SKT VIP','SKT GOLD','SKT SILVER','KT VVIP','KT VIP','KT 일반','LG U+ VVIP','LG U+ VIP','LG U+ 일반','해당 없음'],reason:'기존 데모의 SKT T멤버십 VIP 예시와 함께 설정된 조건이에요. 통신사에 조회해서 확인한 등급은 아니에요.',guide:'가입한 통신사 앱에서 등급을 확인한 후 선택하세요. 조건 변경은 등록된 바코드나 과거 결제 기록을 바꾸지 않아요.'},
+  region:{label:'주 활동 지역',value:'경산시',sub:'주 활동 지역',options:['경산시','대구시','서울시','부산시','기타 지역','해당 없음'],reason:'기존 HTML의 경산·영남대 주변 가맹점 예시에 맞춰 추가됐어요. 현재 위치를 추적해서 추가한 조건은 아니에요.',guide:'주로 이용하는 지역으로 변경하세요. 기타 지역을 선택하면 원하는 지역을 직접 입력할 수 있어요.'},
+  age:{label:'연령대',value:'20대',sub:'연령 우대',options:['10대','20대','30대','40대','50대','60대 이상','해당 없음'],reason:'기존 데모의 예시 프로필에 20대로 설정되어 추가됐어요. 생년월일을 조회한 결과는 아니에요.',guide:'현재 연령대를 선택하세요. 이 데모의 조건 편집은 추천용 프로필을 바꾸며, 실제 제휴 자격 인증을 대신하지 않아요.'}
+};
+let profile={},editingCondition=null;
+try{profile=JSON.parse(localStorage.getItem('rc-conditions-v1')||'{}')||{}}catch(_){}
+if(typeof profile!=='object'||Array.isArray(profile))profile={};
+function renderFacts(){
+  $('#facts').innerHTML=Object.entries(CONDITION_DEFS).map(([key,def])=>{const item=profile[key],v=typeof item?.value==='string'?item.value:def.value;return `<button data-condition="${key}">${esc(v)}<small>${v==='SKT VIP'?'VIP':def.sub}</small></button>`}).join('');
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-condition]');if(!b)return;editingCondition=b.dataset.condition;const def=CONDITION_DEFS[editingCondition],saved=profile[editingCondition];$('#conditionTitle').textContent=def.label;$('#conditionReason').textContent=saved?`직접 저장한 조건이에요 (${saved.date||'저장 날짜 없음'}). ${def.reason}`:def.reason;$('#conditionGuide').textContent=def.guide;
+  const v=saved?.value||def.value,options=def.options.includes(v)?def.options:[v,...def.options];$('#conditionValue').innerHTML=options.map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('');
+  $('#conditionCustom')?.remove();if(editingCondition==='region')$('#conditionValue').insertAdjacentHTML('afterend','<input id="conditionCustom" maxlength="30" placeholder="지역 이름" aria-label="기타 지역 이름" hidden>');openSheet('condition');
+});
+$('#conditionValue').addEventListener('change',()=>{const custom=$('#conditionCustom');if(custom){custom.hidden=$('#conditionValue').value!=='기타 지역';custom.required=!custom.hidden}});
+$('#conditionForm').addEventListener('submit',e=>{e.preventDefault();let value=$('#conditionValue').value;if(editingCondition==='region'&&value==='기타 지역'){value=$('#conditionCustom').value.trim();if(!value){$('#conditionCustom').focus();return}}
+  profile[editingCondition]={value,date:new Date().toLocaleDateString('ko-KR')};try{localStorage.setItem('rc-conditions-v1',JSON.stringify(profile))}catch(_){}renderFacts();closeSheets();toast('조건을 변경했어요');
+});
 
 /* ---------- tabs ---------- */
 const RENDER={home:renderHome,history:renderHistory,stats:renderStats,wallet:renderWallet};
@@ -733,12 +848,45 @@ function go(tab){$$('.view').forEach(v=>{const on=v.dataset.view===tab;if(on&&v.
   $$('.tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===tab));RENDER[tab]();try{localStorage.setItem('rc-tab',tab)}catch(e){}}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-tab]');if(t){e.preventDefault();go(t.dataset.tab)}});
 
+/* Horizontal gestures preserve vertical scrolling and nested card/banner rails. */
+let suppressClickUntil=0;
+function bindSwipe(el,onSwipe,{nested=false}={}){
+  let start=null;
+  el.addEventListener('pointerdown',e=>{
+    if(!e.isPrimary||e.button!==0||$('#scrim').classList.contains('on')||$('#flow').classList.contains('on'))return;
+    if(e.target.closest('input,select,textarea,.rail,.btrack,.chart')||(!nested&&e.target.closest('#histList,#chips')))return;
+    start={x:e.clientX,y:e.clientY,id:e.pointerId,time:performance.now(),vertical:false};
+    if(nested)e.stopPropagation();
+  });
+  el.addEventListener('pointermove',e=>{if(!start||e.pointerId!==start.id)return;const dx=e.clientX-start.x,dy=e.clientY-start.y;if(Math.abs(dy)>12&&Math.abs(dy)>Math.abs(dx))start.vertical=true;});
+  window.addEventListener('pointerup',e=>{
+    if(!start||e.pointerId!==start.id)return;const st=start;start=null;
+    const dx=e.clientX-st.x,dy=e.clientY-st.y;
+    if(st.vertical||performance.now()-st.time>1200||Math.abs(dx)<50||Math.abs(dx)<Math.abs(dy)*1.5)return;
+    suppressClickUntil=Date.now()+400;onSwipe(dx<0?1:-1);
+  });
+  window.addEventListener('pointercancel',()=>start=null);
+}
+document.addEventListener('click',e=>{if(Date.now()<suppressClickUntil){e.preventDefault();e.stopImmediatePropagation()}},true);
+const TAB_ORDER=['home','history','stats','wallet'];
+function swipeMain(dir){const i=TAB_ORDER.indexOf(curTab()),next=TAB_ORDER[i+dir];if(next)go(next)}
+bindSwipe($('.views'),swipeMain);
+bindSwipe($('.tabbar'),swipeMain);
+function swipeHistory(dir){const order=['all','done','pending','missed'],next=order[order.indexOf(filt)+dir];if(!next)return;filt=next;renderHistory();$('#chips .on').scrollIntoView({block:'nearest',inline:'center',behavior:reduce?'auto':'smooth'})}
+bindSwipe($('#histList'),swipeHistory,{nested:true});bindSwipe($('#chips'),swipeHistory,{nested:true});
+$('#chips').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();swipeHistory(e.key==='ArrowRight'?1:-1);$('#chips .on').focus()}});
+$('.tabbar').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();swipeMain(e.key==='ArrowRight'?1:-1);$('.tab.on').focus()}});
+
 /* ---------- sheets: 열기·닫기·끌어내려 닫기 ---------- */
 function openSheet(id){
   if(id==='stmt'){const T=totals(),fin=Math.max(0,T.fee-1000);$('#stRec').textContent=won(T.rec)+'원';$('#stFee').textContent=won(T.fee)+'원';$('#stFinal').textContent=won(fin)+'원';$('#stNet').textContent=won(T.rec-fin)+'원'}
   clearInterval(codeTimer);
-  $$('.sheet').forEach(s=>{s.classList.toggle('on',s.id==='sh-'+id);s.style.transform=''});$('#scrim').classList.add('on');$('#scrim').style.opacity=''}
-function closeSheets(){$('#scrim').classList.remove('on');$('#scrim').style.opacity='';$$('.sheet').forEach(s=>{s.classList.remove('on');s.style.transform=''});clearInterval(codeTimer)}
+  if(!$('#scrim').classList.contains('on'))sheetReturnFocus=document.activeElement;
+  $$('.sheet').forEach(s=>{const on=s.id==='sh-'+id;s.classList.toggle('on',on);s.style.transform='';s.setAttribute('aria-modal',String(on))});$('#scrim').classList.add('on');$('#scrim').style.opacity='';
+  const sh=$('#sh-'+id);sh.scrollTop=0;sh.tabIndex=-1;sh.focus({preventScroll:true});}
+let sheetReturnFocus=null;
+function closeSheets(){$('#scrim').classList.remove('on');$('#scrim').style.opacity='';$$('.sheet').forEach(s=>{s.classList.remove('on');s.style.transform='';s.setAttribute('aria-modal','false')});clearInterval(codeTimer);if(sheetReturnFocus?.isConnected)sheetReturnFocus.focus({preventScroll:true})}
+document.addEventListener('keydown',e=>{const sh=$('.sheet.on');if(e.key!=='Tab'||!sh)return;const items=[...sh.querySelectorAll('button,input,select,a[href],[tabindex="0"]')].filter(x=>!x.disabled&&x.getClientRects().length);if(!items.length){e.preventDefault();return}if(e.shiftKey&&(document.activeElement===items[0]||document.activeElement===sh)){e.preventDefault();items.at(-1).focus()}else if(!e.shiftKey&&(document.activeElement===items.at(-1)||document.activeElement===sh)){e.preventDefault();items[0].focus()}});
 document.addEventListener('click',e=>{const o=e.target.closest('[data-open]');if(o)openSheet(o.dataset.open);if(e.target.closest('[data-close]'))closeSheets()});
 $('#scrim').onclick=closeSheets;$('#profileBtn').onclick=()=>openSheet('profile');
 $$('.sheet').forEach(sh=>{
@@ -746,7 +894,7 @@ $$('.sheet').forEach(sh=>{
   sh.addEventListener('pointerdown',e=>{
     const zone=e.target.closest('.grab-zone');
     // 손잡이 영역은 터치·마우스 모두, 그 밖의 빈 곳은 마우스로만 (버튼·입력·카드 레일 제외)
-    const free=e.pointerType==='mouse'&&e.button===0&&!e.target.closest('button,input,label,a,.rail,.seg')&&sh.scrollTop<=0;
+    const free=e.pointerType==='mouse'&&e.button===0&&!e.target.closest('button,input,select,textarea,label,a,.rail,.seg')&&sh.scrollTop<=0;
     if(!zone&&!free)return;
     y0=e.clientY;dy=0;t0=performance.now();pid=e.pointerId;
     if(zone){try{sh.setPointerCapture(pid)}catch(_){}}
@@ -761,13 +909,42 @@ $$('.sheet').forEach(sh=>{
 });
 $$('.sw').forEach(s=>s.onclick=()=>s.setAttribute('aria-checked',s.getAttribute('aria-checked')!=='true'));
 let addType='membership';
-const setSeg=v=>{addType=v;$$('#addSeg button').forEach(x=>x.classList.toggle('on',x.dataset.v===v))};
+const validation=window.RecatchValidation;
+$('#addFormat').innerHTML=Object.entries(validation.FORMATS).map(([key,rule])=>`<option value="${key}">${rule.label}</option>`).join('');
+let cacheStorage;try{cacheStorage=localStorage}catch(_){}
+const failureCache=validation.createFailureCache({storage:cacheStorage,crypto:window.crypto});
+const failureText={INVALID_BARCODE:'등록할 수 없는 바코드예요.',NOT_FOUND:'해당 바코드를 찾을 수 없어요.',REVOKED:'사용이 중지된 바코드예요.'};
+function clearAddError(){$('#addError').textContent='';$$('#addForm [aria-invalid]').forEach(x=>x.removeAttribute('aria-invalid'))}
+function addError(message,field='addCode'){$('#addError').textContent=message;const input=$('#'+field);input.setAttribute('aria-invalid','true');input.focus()}
+const setSeg=v=>{addType=v;$$('#addSeg button').forEach(x=>x.classList.toggle('on',x.dataset.v===v));clearAddError();$('#addHelp').textContent=v==='card'?'카드사 앱의 결제용 바코드 번호를 입력해주세요. 형식 확인 후 데모 지갑에 추가돼요.':'앱에 표시된 번호를 입력해주세요. 공백·하이픈은 자동으로 정리해요. 멤버십 번호에는 상품용 바코드의 검증 규칙을 적용하지 않아요.'};
 $('#addSeg').onclick=e=>{const b=e.target.closest('button');if(b)setSeg(b.dataset.v)};
-$('#addForm').addEventListener('submit',e=>{e.preventDefault();const n=$('#addName').value.trim();if(!n)return;
-  const raw=$('#addCode').value.replace(/\D/g,'')||String(Date.now()).slice(-12);const code=raw.replace(/(\d{4})(?=\d)/g,'$1 ');
-  if(addType==='card')CARDS.push({id:'new',bank:'새로 등록한 카드',name:n,last:raw.slice(-4).padStart(4,'0'),art:'art-new',need:0,now:0,perk:'혜택 조건을 불러오는 중이에요',limit:'등록 완료'});
-  else MEMS.push({name:n,tier:addType==='telecom'?'통신사':'등록됨',sub:'결제 직후 혜택 대조에 포함돼요',code,m:[n[0],'#4E5260'],extra:'방금 등록함'});
-  $('#addForm').reset();setSeg('membership');closeSheets();renderWallet();toast(`${n}을(를) 지갑에 추가했어요`)});
+$('#addForm').addEventListener('input',clearAddError);
+$('#addForm').addEventListener('change',clearAddError);
+let adding=false;
+$('#addForm').addEventListener('submit',async e=>{e.preventDefault();if(adding)return;clearAddError();
+  const n=$('#addName').value.trim(),format=$('#addFormat').value,type=addType;
+  const checked=validation.validate({name:n,number:$('#addCode').value,format});
+  if(checked.error){addError(checked.error,{name:'addName',number:'addCode',format:'addFormat'}[checked.field]);return}
+  const raw=checked.raw,code=raw.replace(/(\d{4})(?=\d)/g,'$1 ');
+  if([...MEMS,...CARDS].some(x=>x.code&&validation.normalize(x.code)===raw)){addError('이미 지갑에 등록된 번호예요. 기존 바코드를 사용해주세요.');return}
+  adding=true;const controls=$$('#addForm input,#addForm select,#addForm button');controls.forEach(x=>x.disabled=true);const submit=$('#addForm [type="submit"]');submit.textContent='확인 중…';
+  try{
+    const cached=await failureCache.get(type,format,raw);
+    if(cached){addError(`${failureText[cached.code]} 이전 확인에서 실패한 번호여서 다시 요청하지 않았어요. 번호를 확인해주세요.`);return}
+    // Future integration: an adapter must return {ok:true} or {ok:false,code,...}.
+    // No adapter means format-only demo registration; transport failures are never cached.
+    let result=null;
+    if(typeof window.RecatchMembershipAPI?.validate==='function'){
+      const abort=new AbortController();let timeout;
+      try{result=await Promise.race([window.RecatchMembershipAPI.validate({type,name:n,number:raw,format,signal:abort.signal}),new Promise((_,reject)=>{timeout=setTimeout(()=>{abort.abort();reject(new Error('timeout'))},10000)})])}finally{clearTimeout(timeout)}
+      if(result?.ok!==true){await failureCache.record(type,format,raw,result);addError(failureText[result?.code]||'확인을 완료하지 못했어요. 잠시 후 다시 시도해주세요.');return}
+    }
+    if(type==='card')CARDS.push({id:'new',bank:'새로 등록한 카드',name:n,last:raw.slice(-4),code,art:'art-new',need:0,now:0,perk:'혜택 조건을 불러오는 중이에요',limit:result?'등록 완료':'형식 확인 · 데모 등록'});
+    else MEMS.push({name:n,tier:result?'등록됨':'형식 확인',sub:result?'결제 직후 혜택 대조에 포함돼요':'형식만 확인한 데모 바코드예요',code,m:[n[0],'#4E5260'],extra:result?'방금 등록함':'서버 등록 여부는 아직 확인하지 않았어요'});
+    $('#addForm').reset();setSeg('membership');if($('#sh-add').classList.contains('on'))closeSheets();renderWallet();toast(`${n}을(를) 지갑에 추가했어요`);
+  }catch(_){addError('연결 문제로 확인하지 못했어요. 잠시 후 다시 시도해주세요.');}
+  finally{adding=false;controls.forEach(x=>x.disabled=false);submit.textContent='지갑에 추가';const invalid=$('#addForm [aria-invalid="true"]');if(invalid&&$('#sh-add').classList.contains('on'))invalid.focus()}
+});
 $('#themeBtn').onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark'};
 
 /* ---------- 재결제 체험 ---------- */
