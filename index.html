@@ -1,0 +1,821 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Recatch 리캐치</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: 회색 바탕 위 흰 섹션을 쌓는 국내 금융앱 문법. 브랜드는 영수증 도장 같은 주황 한 색, 절약은 초록. 영수증 절취선이 반복 모티프. */
+:root{
+  --bg:#F2F3F6; --card:#FFFFFF; --well:#F5F6F8; --press:#EEF0F3;
+  --ink:#191A1F; --ink-2:#4E5260; --ink-3:#8B8F9C; --line:#ECEDF1;
+  --brand:#FF5A1F; --brand-ink:#FFFFFF; --brand-soft:#FFEEE6; --brand-deep:#D9420C;
+  --save:#0E9F6E; --save-soft:#E3F6EE; --warn:#C97A00; --warn-soft:#FFF3DC; --miss:#E5484D; --miss-soft:#FDECEC;
+  --scrim:rgba(10,11,14,.48);
+  --f-body:"IBM Plex Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-logo:"Bricolage Grotesque","IBM Plex Sans KR",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E0F12; --card:#1A1B20; --well:#24262C; --press:#2A2C33;
+  --ink:#F1F2F5; --ink-2:#B6B9C3; --ink-3:#7D818D; --line:#2A2C33;
+  --brand:#FF7440; --brand-ink:#1A0A03; --brand-soft:#3A2118; --brand-deep:#FF9568;
+  --save:#38D39B; --save-soft:#12332A; --warn:#F2A63B; --warn-soft:#3A2A10; --miss:#FF6E74; --miss-soft:#3B1A1D;
+  --scrim:rgba(0,0,0,.62); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E0F12; --card:#1A1B20; --well:#24262C; --press:#2A2C33;
+  --ink:#F1F2F5; --ink-2:#B6B9C3; --ink-3:#7D818D; --line:#2A2C33;
+  --brand:#FF7440; --brand-ink:#1A0A03; --brand-soft:#3A2118; --brand-deep:#FF9568;
+  --save:#38D39B; --save-soft:#12332A; --warn:#F2A63B; --warn-soft:#3A2A10; --miss:#FF6E74; --miss-soft:#3B1A1D;
+  --scrim:rgba(0,0,0,.62); color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow:hidden;word-break:keep-all;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0;text-align:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:8px}
+svg{display:block}
+.mono{font-family:var(--f-mono)}
+.pos{color:var(--save)}
+
+/* ---------- frame ---------- */
+.app{position:relative;height:100%;max-width:430px;margin:0 auto;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;overflow:clip}
+@media (min-width:640px) and (min-height:760px){
+  body{padding-block:28px;background:color-mix(in srgb,var(--bg) 92%,var(--ink))}
+  .app{height:min(900px,100%);border-radius:36px;box-shadow:0 0 0 1px var(--line),0 30px 70px rgba(10,11,14,.18)}
+}
+.topbar{display:flex;align-items:center;gap:8px;padding:14px 20px 8px}
+.logo{font-family:var(--f-logo);font-weight:800;font-size:23px;letter-spacing:-.04em;color:var(--ink)}
+.logo b{color:var(--brand)}
+.detect{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--ink-3);margin-left:6px}
+.detect i{width:6px;height:6px;border-radius:50%;background:var(--save);animation:blink 2.4s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+.topbar .sp{flex:1}
+.ibtn{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--ink-2)}
+.ibtn:active{background:var(--press)}
+
+.views{flex:1;position:relative;overflow:hidden;overflow:clip}
+.view{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:4px 12px calc(88px + env(safe-area-inset-bottom,0px));scrollbar-width:none;display:flex;flex-direction:column;gap:10px}
+.view::-webkit-scrollbar{display:none}
+.view>*{flex-shrink:0}
+.view.enter{animation:vin .28s ease-out}
+@keyframes vin{from{transform:translateY(6px)}}
+
+.sec{background:var(--card);border-radius:20px;padding:20px}
+.sec-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.sec-h h2{font-size:18px;font-weight:700;margin:0;letter-spacing:-.02em}
+.sec-h .more{font-size:13.5px;color:var(--ink-3);display:inline-flex;align-items:center;gap:2px}
+.page-h{padding:10px 8px 4px}
+.page-h h1{font-size:24px;font-weight:700;letter-spacing:-.03em;margin:0}
+.page-h p{margin:2px 0 0;color:var(--ink-3);font-size:13.5px}
+.note{font-size:12px;color:var(--ink-3);text-align:center;padding:4px 0;margin:0}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:48px;padding:0 18px;border-radius:14px;font-weight:600;font-size:15px;transition:transform .12s,filter .2s;text-align:center}
+.btn:active{transform:scale(.98);filter:brightness(.95)}
+.btn-brand{background:var(--brand);color:var(--brand-ink)}
+.btn-soft{background:var(--well);color:var(--ink)}
+.btn-block{width:100%;height:54px;font-size:16px;border-radius:16px}
+
+/* ---------- hero (receipt) ---------- */
+.hero{position:relative;padding-bottom:28px;border-radius:20px 20px 0 0;
+  -webkit-mask:radial-gradient(circle 7px at 50% 100%,transparent 6.5px,#000 7px) 0 0/18px 100% repeat-x;
+          mask:radial-gradient(circle 7px at 50% 100%,transparent 6.5px,#000 7px) 0 0/18px 100% repeat-x}
+.hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.hero-label{font-size:15px;font-weight:500;color:var(--ink-2)}
+.hero-amt{font-size:36px;font-weight:700;letter-spacing:-.035em;line-height:1.15;margin:4px 0 2px;display:flex;align-items:baseline;gap:2px}
+.hero-amt small{font-size:26px;font-weight:600}
+.hero-sub{font-size:13.5px;color:var(--ink-3)}
+.hero-sub b{color:var(--save);font-weight:600}
+.stamp{flex:none;margin-top:4px;border:2px solid var(--brand);color:var(--brand);border-radius:10px;padding:4px 9px;font-size:11.5px;font-weight:700;transform:rotate(-7deg);line-height:1.25;text-align:center}
+.stamp span{display:block;font-size:20px;font-family:var(--f-logo);font-weight:800;letter-spacing:-.02em}
+.ledger{margin-top:18px;display:grid;gap:8px;font-size:14px}
+.ledger .ln{display:flex;justify-content:space-between;gap:12px}
+.ledger .ln span:first-child{color:var(--ink-2)}
+.ledger .ln.total{border-top:1.5px dashed var(--line);padding-top:10px;margin-top:2px;font-weight:700;font-size:15.5px}
+.ledger .ln.total span:first-child{color:var(--ink)}
+.hero-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
+.hero-btns .btn{height:46px;font-size:14.5px}
+
+/* ---------- detect banner ---------- */
+.detect-card{display:grid;grid-template-columns:minmax(0,1fr) 108px;gap:14px;align-items:center;width:100%;text-align:left}
+.detect-card h3{margin:0 0 4px;font-size:17px;letter-spacing:-.02em;line-height:1.4}
+.detect-card p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.detect-card .go{margin-top:12px;display:inline-flex;align-items:center;gap:2px;height:36px;padding:0 13px;border-radius:10px;background:var(--brand-soft);color:var(--brand-deep);font-weight:700;font-size:13.5px}
+.mphone{width:108px;height:128px;border-radius:18px;background:var(--well);position:relative;overflow:hidden}
+.mreceipt{position:absolute;left:14px;right:14px;top:34px;background:var(--card);border-radius:4px 4px 0 0;padding:8px 8px 12px;font-family:var(--f-mono);font-size:8px;color:var(--ink-3);line-height:1.6}
+.mreceipt b{color:var(--ink);font-size:10px}
+.mreceipt::after{content:"";position:absolute;left:0;right:0;bottom:-5px;height:5px;background:radial-gradient(circle at 3px 0,transparent 3px,var(--card) 3.5px) 0 0/6px 5px repeat-x}
+.mnoti{position:absolute;left:6px;right:6px;top:7px;background:var(--card);border-radius:10px;padding:6px 7px;font-size:8.5px;line-height:1.35;box-shadow:0 6px 16px rgba(10,11,14,.16);display:flex;gap:5px;animation:mn 4.4s cubic-bezier(.2,.8,.2,1) infinite}
+.mnoti i{flex:none;width:14px;height:14px;border-radius:4px;background:var(--brand)}
+.mnoti b{color:var(--save)}
+@keyframes mn{0%,10%{transform:translateY(-60px)}20%,80%{transform:none}92%,100%{transform:translateY(-60px)}}
+
+/* ---------- banner ---------- */
+.banner{position:relative;border-radius:20px;overflow:hidden}
+.btrack{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;cursor:grab;user-select:none;-webkit-user-select:none;overscroll-behavior-x:contain}
+.btrack::-webkit-scrollbar{display:none}
+.btrack>*{scroll-snap-align:center;scroll-snap-stop:always}
+.btrack.dragging{scroll-snap-type:none;cursor:grabbing}
+.bslide{flex:0 0 100%;min-width:0;display:grid;grid-template-columns:minmax(0,1fr) 84px;align-items:center;gap:8px;padding:18px 20px 22px;background:var(--bs)}
+.bslide>div{min-width:0}
+.bslide b{display:block;font-size:15.5px;line-height:1.4;letter-spacing:-.02em;color:var(--ink)}
+.bslide span{font-size:12.5px;color:var(--ink-2)}
+.bcount{position:absolute;right:12px;bottom:10px;font-size:11px;font-weight:600;color:var(--ink-2);background:color-mix(in srgb,var(--card) 70%,transparent);padding:1px 8px;border-radius:99px}
+.b-orange{--bs:#FFEEE6}.b-blue{--bs:#E6F0FF}.b-green{--bs:#E3F6EE}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .b-orange{--bs:#3A2118}:root:not([data-theme="light"]) .b-blue{--bs:#16243D}:root:not([data-theme="light"]) .b-green{--bs:#12332A}}
+:root[data-theme="dark"] .b-orange{--bs:#3A2118}:root[data-theme="dark"] .b-blue{--bs:#16243D}:root[data-theme="dark"] .b-green{--bs:#12332A}
+
+/* ---------- list rows ---------- */
+.row{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;width:100%}
+.mark{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;letter-spacing:-.03em;background:var(--m);flex:none}
+.row-main{min-width:0}
+.row-main b{display:block;font-size:15.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-main small{display:block;font-size:13px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-amt{text-align:right}
+.row-amt b{display:block;font-size:15.5px;font-weight:700}
+.row-amt small{font-size:12.5px;color:var(--ink-3)}
+.muted{color:var(--ink-3)}
+.tag{display:inline-block;font-size:11.5px;font-weight:600;padding:1px 6px;border-radius:6px;vertical-align:1px}
+.tag.ok{background:var(--save-soft);color:var(--save)}
+.tag.wait{background:var(--warn-soft);color:var(--warn)}
+.tag.miss{background:var(--miss-soft);color:var(--miss)}
+.flash{animation:fl 1.8s ease;border-radius:12px}
+@keyframes fl{0%,30%{background:var(--brand-soft)}100%{background:transparent}}
+.todo{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding:14px 0;width:100%}
+.todo+.todo{border-top:1px solid var(--line)}
+.todo b{display:block;font-size:15px;font-weight:600}
+.todo small{font-size:13px;color:var(--ink-3)}
+.todo em{font-style:normal;font-weight:700;color:var(--save);font-size:14px}
+.chev{color:var(--ink-3)}
+
+/* ---------- history ---------- */
+.sumrow{display:grid;grid-template-columns:repeat(3,1fr);text-align:center}
+.sumrow>div+div{border-left:1px solid var(--line)}
+.sumrow small{display:block;font-size:12.5px;color:var(--ink-3)}
+.sumrow b{font-size:16px;font-weight:700}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:0 4px;flex:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:36px;padding:0 14px;border-radius:99px;background:var(--card);font-size:14px;font-weight:600;color:var(--ink-2)}
+.chip.on{background:var(--ink);color:var(--card)}
+.day{font-size:13px;font-weight:600;color:var(--ink-3);padding-top:8px}
+.tx{border-top:1px solid var(--line)}
+.day+.tx{border-top:0}
+.tx-d{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease}
+.tx.open .tx-d{grid-template-rows:1fr}
+.tx-d>div{overflow:hidden}
+.slip{margin:0 0 12px 54px;padding:12px 14px;background:var(--well);border-radius:12px;font-size:13.5px;display:grid;gap:5px}
+.slip .ln{display:flex;justify-content:space-between;gap:10px}
+.slip .ln span:first-child{color:var(--ink-2)}
+.slip .ln.total{border-top:1.5px dashed var(--line);padding-top:7px;font-weight:700}
+.slip p{margin:0;font-size:12.5px;color:var(--ink-3)}
+
+/* ---------- stats ---------- */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi small{display:block;font-size:13px;color:var(--ink-3)}
+.kpi b{display:block;font-size:24px;font-weight:700;letter-spacing:-.03em;margin:2px 0}
+.kpi span{display:block;font-size:12.5px;color:var(--ink-2)}
+.meter{height:6px;border-radius:9px;background:var(--well);margin-top:8px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--save);border-radius:9px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.chart{overflow-x:auto;margin-top:6px}
+.chart text{font-family:var(--f-body);font-size:11.5px;fill:var(--ink-3)}
+.chart .v{fill:var(--ink);font-weight:700}
+.cats{display:grid;gap:14px;margin-top:8px}
+.cat{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.cat .nm{font-size:14.5px;font-weight:500}
+.cat .nm small{color:var(--ink-3);margin-left:5px;font-weight:400}
+.cat b{font-weight:700;font-size:14.5px}
+.cat .tr{grid-column:1/-1;height:8px;border-radius:9px;background:var(--well);overflow:hidden}
+.cat .tr i{display:block;height:100%;border-radius:9px;background:var(--c);width:0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.rank{display:grid;grid-template-columns:20px 40px minmax(0,1fr) auto;gap:12px;align-items:center;padding:11px 0}
+.rank+.rank{border-top:1px solid var(--line)}
+.rank .no{font-weight:700;color:var(--ink-3)}
+.mcard{width:40px;height:26px;border-radius:5px}
+
+/* ---------- rails (cards, passes) ---------- */
+.rail-wrap{position:relative}
+.rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 8%;margin:0 -12px;cursor:grab;user-select:none;-webkit-user-select:none}
+.rail::-webkit-scrollbar{display:none}
+.rail.dragging{scroll-snap-type:none;cursor:grabbing}
+.rail>*{scroll-snap-align:center;scroll-snap-stop:always;flex:0 0 84%;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.rail>*:not(.cur){transform:scale(.94)}
+.nav{position:absolute;top:50%;margin-top:-18px;width:36px;height:36px;border-radius:50%;background:var(--card);box-shadow:0 2px 10px rgba(10,11,14,.14);display:grid;place-items:center;color:var(--ink);z-index:2;transition:opacity .2s}
+.nav.prev{left:-4px}.nav.next{right:-4px}
+.nav:disabled{opacity:0;pointer-events:none}
+@media (hover:none){.nav{display:none}}
+.dots{display:flex;justify-content:center;gap:5px;padding-top:10px}
+.dots button{width:6px;height:6px;border-radius:9px;background:var(--line);transition:width .3s,background .3s}
+.dots button.on{width:18px;background:var(--ink-2)}
+
+.ccard{aspect-ratio:1.586;max-width:100%;border-radius:18px;padding:18px;position:relative;overflow:hidden;color:#fff;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer}
+.ccard .bank{font-size:12px;font-weight:600;opacity:.85}
+.ccard .cname{font-size:18px;font-weight:700;letter-spacing:-.02em}
+.ccard .ic{width:34px;height:26px;border-radius:6px;background:linear-gradient(135deg,#F1D9A0,#C5A35A)}
+.ccard .cno{font-family:var(--f-mono);font-size:13px;letter-spacing:.12em;opacity:.9}
+.ccard svg.pat{position:absolute;inset:0;width:100%;height:100%}
+.ccard>*:not(svg){position:relative}
+.art-kb{background:#F6A623;color:#2A1606}
+.art-sh{background:#1F3FA8}
+.art-hd{background:#26282F}
+.art-new{background:#3D4352}
+.meta{display:grid;gap:9px;font-size:14px}
+.meta .ln{display:flex;justify-content:space-between;gap:12px}
+.meta .ln span:first-child{color:var(--ink-2);flex:none}
+.bar{height:8px;border-radius:9px;background:var(--well);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:9px;background:var(--brand);width:0;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.bar i.full{background:var(--save)}
+.mem{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;width:100%}
+.mem+.mem{border-top:1px solid var(--line)}
+.mem .open{font-size:13px;font-weight:600;color:var(--ink-2);background:var(--well);padding:7px 11px;border-radius:9px}
+.facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.facts span{padding:7px 11px;border-radius:10px;background:var(--well);font-size:13.5px;font-weight:500}
+.facts small{color:var(--ink-3);margin-left:4px}
+
+/* ---------- tab bar ---------- */
+.tabbar{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:5}
+.tab{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--ink-3);padding:4px 0;text-align:center}
+.tab.on{color:var(--ink)}
+.tab .f{display:none}.tab.on .f{display:block}.tab.on .o{display:none}
+
+/* ---------- sheets (끌어내려 닫기) ---------- */
+.scrim{position:absolute;inset:0;background:var(--scrim);z-index:20;opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:21;background:var(--card);border-radius:24px 24px 0 0;padding:0 20px calc(20px + env(safe-area-inset-bottom,0px));transform:translateY(105%);visibility:hidden;transition:transform .38s cubic-bezier(.2,.8,.2,1),visibility 0s .38s;max-height:90%;overflow-y:auto;overscroll-behavior:contain}
+.sheet.on{transform:none;visibility:visible;transition:transform .38s cubic-bezier(.2,.8,.2,1),visibility 0s}
+.sheet.dragging{transition:none;visibility:visible}
+.grab-zone{margin:0 -20px 4px;padding:12px 0 14px;touch-action:none;cursor:grab}
+.grab-zone:active{cursor:grabbing}
+.grab{width:40px;height:5px;border-radius:9px;background:var(--line);margin:0 auto;transition:background .2s,width .2s}
+.grab-zone:hover .grab{background:var(--ink-3);width:48px}
+.sheet h3{margin:0 0 4px;font-size:20px;letter-spacing:-.03em}
+.sheet .lead{margin:0 0 16px;color:var(--ink-2);font-size:14px}
+.slipbox{background:var(--well);border-radius:16px;padding:16px;display:grid;gap:9px;font-size:14.5px;margin-bottom:12px}
+.slipbox .ln{display:flex;justify-content:space-between;gap:10px}
+.slipbox .ln span:first-child{color:var(--ink-2)}
+.slipbox .ln.total{border-top:1.5px dashed var(--line);padding-top:11px;font-weight:700;font-size:16px}
+.slipbox .ln.total span:first-child{color:var(--ink)}
+.okline{font-size:13.5px;color:var(--ink-2);margin:0 0 16px;padding:0 2px}
+.okline b{color:var(--save)}
+.trow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0}
+.trow+.trow{border-top:1px solid var(--line)}
+.trow b{display:block;font-size:15px;font-weight:600}
+.trow small{color:var(--ink-3);font-size:13px}
+.sw{width:50px;height:30px;border-radius:99px;background:var(--line);position:relative;flex:none;transition:background .2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .22s cubic-bezier(.2,.8,.2,1)}
+.sw[aria-checked="true"]{background:var(--save)}
+.sw[aria-checked="true"]::after{transform:translateX(20px)}
+.field{display:grid;gap:6px;margin-bottom:12px}
+.field label{font-size:13.5px;font-weight:600;color:var(--ink-2)}
+.field input{height:50px;border-radius:13px;border:1px solid var(--line);background:var(--well);padding:0 14px;font:inherit;color:var(--ink);width:100%}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--well);padding:4px;border-radius:13px}
+.seg button{height:40px;border-radius:10px;font-size:14px;font-weight:600;color:var(--ink-3);text-align:center}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(10,11,14,.1)}
+
+/* ---------- membership pass ---------- */
+.pass-sheet{padding-left:0;padding-right:0}
+.pass-sheet .grab-zone{margin:0 0 4px}
+.pass-head{display:flex;justify-content:space-between;align-items:center;padding:0 20px 12px}
+.pass-head b{font-size:18px;letter-spacing:-.02em}
+.pass-head small{color:var(--ink-3);font-size:13px}
+.pass-rail{margin:0;padding:4px 7% 8px}
+.pass-rail>*{flex:0 0 86%}
+.pass{border-radius:20px;overflow:hidden;background:#fff;color:#191A1F;box-shadow:0 0 0 1px var(--line),0 8px 22px rgba(10,11,14,.1)}
+.pass-top{background:var(--pc);color:#fff;padding:14px 16px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;position:relative}
+.pass-top::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:12px;background:radial-gradient(circle 6px at 9px 6px,#fff 5.5px,transparent 6px) 0 0/18px 12px repeat-x}
+.pass-top .pn{font-size:16px;font-weight:700;letter-spacing:-.02em}
+.pass-top .ps{font-size:12px;opacity:.85}
+.pass-top .pt{font-size:12px;font-weight:700;background:rgba(255,255,255,.22);padding:3px 8px;border-radius:7px;white-space:nowrap}
+.pass-body{padding:20px 16px 14px;text-align:center}
+.pass-body svg{width:100%;height:auto}
+.pass-body .mono{font-size:14px;letter-spacing:.14em;margin-top:6px}
+.pass-body p{margin:10px 0 0;font-size:12.5px;color:#6A6F7D}
+.pass-ctl{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 20px 2px}
+.pass-ctl .dots{padding:0}
+.sbtn{width:34px;height:34px;border-radius:50%;background:var(--well);display:grid;place-items:center;color:var(--ink)}
+.sbtn:disabled{opacity:.3;cursor:default}
+.pass-sheet .foot{padding:12px 20px 0}
+.code-pass{margin-bottom:14px}
+
+/* ---------- 재결제 체험 ---------- */
+.flow{position:absolute;inset:0;z-index:30;display:none;overflow:hidden;overflow:clip}
+.flow.on{display:block}
+.lock{position:absolute;inset:0;background:linear-gradient(180deg,#2B2E38 0%,#15161B 55%,#0B0C0F 100%);color:#fff;display:flex;flex-direction:column;align-items:center;padding:60px 14px 24px;animation:fi .3s ease}
+@keyframes fi{from{opacity:0}}
+.lock .clock{font-weight:600;font-size:76px;line-height:1;letter-spacing:-.04em}
+.lock .date{font-size:15px;opacity:.7;margin-top:8px}
+.lstack{width:100%;margin-top:34px;display:grid;gap:8px}
+.ln-noti{background:rgba(255,255,255,.13);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:20px;padding:12px 14px;display:grid;grid-template-columns:36px minmax(0,1fr);gap:10px;color:#fff;width:100%;animation:dr .5s cubic-bezier(.2,1.1,.3,1) both}
+@keyframes dr{from{transform:translateY(-24px) scale(.97);opacity:0}}
+.ln-noti .ic{width:36px;height:36px;border-radius:9px;display:grid;place-items:center}
+.ln-noti .hd{display:flex;justify-content:space-between;font-size:12.5px;opacity:.7}
+.ln-noti .bd{font-size:14px;line-height:1.45}
+.ln-noti.rc{background:rgba(255,255,255,.96);color:#191A1F;cursor:pointer;box-shadow:0 20px 50px rgba(0,0,0,.45);animation:dr .5s cubic-bezier(.2,1.1,.3,1) both,nudge 2.4s 1.2s ease-in-out infinite}
+.ln-noti.rc .save{color:#0E9F6E}
+.ln-noti.rc .tap{display:block;margin-top:5px;font-size:12.5px;font-weight:700;color:#D9420C}
+@keyframes nudge{0%,80%,100%{transform:none}86%{transform:translateY(-3px)}92%{transform:translateY(1px)}}
+.check-box{background:rgba(255,255,255,.07);border-radius:18px;padding:14px 16px;font-size:13.5px;display:grid;gap:10px;animation:dr .4s ease both}
+.check-box .tt{display:flex;align-items:center;gap:8px;font-weight:600}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ck{display:flex;align-items:center;gap:9px;opacity:.35;transition:opacity .3s}
+.ck.ok{opacity:1}
+.ck i{width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);flex:none;transition:all .25s}
+.ck.ok i{background:#38D39B;border-color:#38D39B}
+.ck em{font-style:normal;opacity:.6;margin-left:4px}
+.lock .hint{margin-top:auto;font-size:12.5px;opacity:.5}
+.lock .x{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.12);display:grid;place-items:center;color:#fff}
+
+.pay{position:absolute;inset:0;background:#fff;color:#191A1F;display:flex;flex-direction:column;padding:18px 20px calc(20px + env(safe-area-inset-bottom,0px));animation:pin .45s cubic-bezier(.2,.8,.2,1);overflow-y:auto}
+@keyframes pin{from{transform:translateY(100%)}}
+.pay .hd{display:flex;align-items:center;gap:10px}
+.pay .hd b{display:block;font-size:15.5px}
+.pay .hd small{font-size:13px;color:#6A6F7D}
+.pay .bdg{margin:24px 0 6px;align-self:flex-start;font-size:13px;font-weight:700;color:#0E9F6E;background:#E3F6EE;padding:5px 10px;border-radius:8px}
+.pay .tt{font-size:26px;font-weight:700;letter-spacing:-.035em;line-height:1.35;margin:0}
+.pay .tt span{color:#0E9F6E}
+.pay .bc{margin:20px 0 6px;padding:18px 14px 10px;border:1px solid #ECEDF1;border-radius:18px;position:relative;overflow:hidden}
+.pay .bc svg{width:100%}
+.pay .bc::after{content:"";position:absolute;left:8%;right:8%;height:2px;background:#FF5A1F;opacity:.7;top:14%;animation:scan 2.2s ease-in-out infinite}
+@keyframes scan{50%{top:70%}}
+.pay .bc .mono{text-align:center;font-size:14px;letter-spacing:.16em;margin-top:6px}
+.pay .bright{font-size:12px;color:#8B8F9C;text-align:center}
+.pay .guide{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 14px;border-radius:14px;background:#F5F6F8;font-size:13.5px;color:#3A3D47}
+.timer{position:relative;width:46px;height:46px;flex:none}
+.timer svg{transform:rotate(-90deg)}
+.timer span{position:absolute;inset:0;display:grid;place-items:center;font-weight:700;font-size:12.5px}
+.pay .acts{margin-top:auto;display:grid;gap:8px;padding-top:14px}
+.pay .acts .btn-brand{background:#FF5A1F;color:#fff}
+.pay .acts .btn-soft{background:#F2F3F6;color:#3A3D47;height:48px}
+.pay .ibtn{color:#6A6F7D}
+
+.success{position:absolute;inset:0;background:var(--card);display:flex;flex-direction:column;align-items:center;text-align:center;padding:76px 22px calc(20px + env(safe-area-inset-bottom,0px));animation:fi .25s ease}
+.success canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.success>*:not(canvas){position:relative;z-index:1}
+.success .ok{width:72px;height:72px;border-radius:50%;background:var(--save);display:grid;place-items:center;color:#fff;animation:pop .5s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{transform:scale(.3)}}
+.success h3{font-size:16px;color:var(--ink-2);font-weight:500;margin:22px 0 2px}
+.success .big{font-size:34px;font-weight:700;letter-spacing:-.04em;color:var(--ink);line-height:1.25}
+.success .big span{color:var(--save)}
+.success .slipbox{width:100%;text-align:left;margin-top:22px}
+.success .btn{margin-top:auto}
+
+.toast{position:absolute;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;background:var(--ink);color:var(--card);padding:11px 16px;border-radius:12px;font-size:14px;font-weight:500;z-index:40;transition:all .3s cubic-bezier(.2,.8,.2,1);white-space:nowrap;max-width:calc(100% - 32px);overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+</style>
+
+<div class="app" id="app">
+  <header class="topbar">
+    <span class="logo">recatch<b>.</b></span>
+    <span class="detect" title="결제 문자와 카드 알림을 확인하고 있어요"><i></i>결제 감지 중</span>
+    <span class="sp"></span>
+    <button class="ibtn" id="themeBtn" aria-label="화면 테마 바꾸기"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+    <button class="ibtn" id="profileBtn" aria-label="설정"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
+  </header>
+
+  <main class="views">
+    <!-- HOME -->
+    <section class="view" id="v-home" data-view="home">
+      <div class="sec hero">
+        <div class="hero-top">
+          <div>
+            <div class="hero-label">10월에 되찾은 돈</div>
+            <div class="hero-amt"><span id="heroTotal">0</span><small>원</small></div>
+            <div class="hero-sub" id="heroSub"></div>
+          </div>
+          <div class="stamp" aria-label="이번 달 재결제 횟수">재결제<span id="heroCount">0</span>회</div>
+        </div>
+        <div class="ledger">
+          <div class="ln"><span>할인·적립으로 되찾은 돈</span><span><span id="lgRec">0</span>원</span></div>
+          <div class="ln"><span>리캐치 성공 수수료 20%</span><span>−<span id="lgFee">0</span>원</span></div>
+          <div class="ln total"><span>내 통장에 남은 돈</span><span class="pos"><span id="lgNet">0</span>원</span></div>
+        </div>
+        <div class="hero-btns">
+          <button class="btn btn-soft" data-open="stmt">정산 명세서</button>
+          <button class="btn btn-soft" data-tab="history">내역 전체</button>
+        </div>
+      </div>
+
+      <button class="sec detect-card" id="simCard">
+        <div>
+          <h3>결제하고 2분 안에<br>놓친 할인을 알려드려요</h3>
+          <p>예시 결제로 알림부터 재결제까지 직접 해보세요.</p>
+          <span class="go">재결제 체험하기 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></span>
+        </div>
+        <div class="mphone" aria-hidden="true">
+          <div class="mnoti"><i></i><div>방금 결제한 13,000원<br><b>2,600원</b> 돌려받기</div></div>
+          <div class="mreceipt">STARBUCKS<br>아메리카노 ×2<br>치즈케이크 ×1<br><b>13,000</b></div>
+        </div>
+      </button>
+
+      <div class="banner" aria-roledescription="carousel"><div class="btrack" id="btrack"></div><span class="bcount" id="bcount">1 / 3</span></div>
+
+      <div class="sec">
+        <div class="sec-h"><h2>최근 리캐치</h2><button class="more" data-tab="history">전체 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button></div>
+        <div id="homeFeed"></div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-h"><h2>이번 주 챙길 혜택</h2></div>
+        <button class="todo" data-tab="wallet"><div><b>신한 Mr.Life 실적 32,000원 남음</b><small>채우면 11월 편의점 10% 할인이 다시 적용돼요</small></div><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>
+        <button class="todo" data-tab="stats"><div><b>금요일 저녁 외식은 SKT VIP 먼저</b><small>최근 놓친 혜택의 61%가 금요일 18~22시였어요</small></div><em>+6,200원</em></button>
+      </div>
+      <p class="note">예시 데이터로 보여드리는 화면이에요. 실제 금융 내역이 아니에요.</p>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="view" id="v-history" data-view="history" hidden>
+      <div class="page-h"><h1>혜택·결제 내역</h1><p>결제 알림으로 감지한 결제와 재결제 결과예요.</p></div>
+      <div class="sec sumrow" style="padding:16px 8px">
+        <div><small>재결제 완료</small><b class="pos" id="hsDone">0</b></div>
+        <div><small>확인 중</small><b style="color:var(--warn)" id="hsPending">0</b></div>
+        <div><small>놓친 혜택</small><b style="color:var(--miss)" id="hsMissed">0</b></div>
+      </div>
+      <div class="chips" id="chips" role="tablist"></div>
+      <div class="sec" style="padding-block:10px" id="histList"></div>
+    </section>
+
+    <!-- STATS -->
+    <section class="view" id="v-stats" data-view="stats" hidden>
+      <div class="page-h"><h1>소비 분석</h1><p>10월 1일부터 오늘까지</p></div>
+      <div class="kpis">
+        <div class="sec kpi"><small>재결제 성공률</small><b id="rateVal">0%</b><span id="rateSub"></span><div class="meter"><i id="rateBar"></i></div></div>
+        <div class="sec kpi"><small>놓친 혜택</small><b id="missVal" style="color:var(--miss)">0원</b><span id="missSub"></span></div>
+      </div>
+      <div class="sec"><div class="sec-h"><h2>월별 되찾은 돈</h2></div><div class="chart" id="trend"></div></div>
+      <div class="sec"><div class="sec-h"><h2>어디서 아꼈나요</h2><span class="more" id="catTotal"></span></div><div class="cats" id="cats"></div></div>
+      <div class="sec"><div class="sec-h"><h2>많이 아껴준 혜택</h2></div><div id="rank"></div></div>
+      <div class="sec">
+        <div class="sec-h"><h2>자주 놓치는 순간</h2></div>
+        <div class="todo" style="padding-top:6px"><div><b>금요일 18~22시 외식</b><small>최근 3개월 놓친 혜택의 61% · 빕스·아웃백은 SKT VIP 15%</small></div><em>+6,200원</em></div>
+      </div>
+    </section>
+
+    <!-- WALLET -->
+    <section class="view" id="v-wallet" data-view="wallet" hidden>
+      <div class="page-h"><h1>내 혜택 지갑</h1><p>등록한 카드·멤버십 안에서만 혜택을 골라요.</p></div>
+      <div>
+        <div class="rail-wrap"><div class="rail" id="cardRail" aria-label="등록한 카드"></div>
+          <button class="nav prev" id="cardPrev" aria-label="이전 카드"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m15 6-6 6 6 6"/></svg></button>
+          <button class="nav next" id="cardNext" aria-label="다음 카드"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button></div>
+        <div class="dots" id="cardDots"></div>
+      </div>
+      <div class="sec meta" id="cardMeta"></div>
+      <div class="sec">
+        <div class="sec-h"><h2>멤버십·바코드</h2><button class="more" data-open="add">+ 추가</button></div>
+        <div id="memList"></div>
+      </div>
+      <div class="sec">
+        <div class="sec-h"><h2>나에게 해당하는 조건</h2></div>
+        <div class="facts"><span>대학생<small>청년 우대</small></span><span>SKT<small>VIP</small></span><span>경산시<small>주 활동 지역</small></span><span>20대<small>연령 우대</small></span></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar" aria-label="주요 메뉴">
+    <button class="tab on" data-tab="home"><svg class="o" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z"/></svg><svg class="f" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z"/></svg>홈</button>
+    <button class="tab" data-tab="history"><svg class="o" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></svg><svg class="f" width="24" height="24" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z" fill="currentColor"/><path d="M9 8h6M9 12h6" stroke="var(--card)" stroke-width="1.9" stroke-linecap="round"/></svg>내역</button>
+    <button class="tab" data-tab="stats"><svg class="o" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 20V11M12 20V4M19 20v-6"/></svg><svg class="f" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>분석</button>
+    <button class="tab" data-tab="wallet"><svg class="o" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg><svg class="f" width="24" height="24" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="3" fill="currentColor"/><path d="M3 10.5h18" stroke="var(--card)" stroke-width="1.9"/></svg>지갑</button>
+  </nav>
+
+  <div class="scrim" id="scrim"></div>
+
+  <div class="sheet" id="sh-stmt" role="dialog" aria-label="정산 명세서">
+    <div class="grab-zone" aria-hidden="true"><div class="grab"></div></div>
+    <h3>10월 정산 명세서</h3>
+    <p class="lead">재결제로 실제 아낀 금액에서만 20%를 받아요. 아낀 게 없으면 수수료도 0원이에요.</p>
+    <div class="slipbox">
+      <div class="ln"><span>되찾은 돈</span><span id="stRec"></span></div>
+      <div class="ln"><span>성공 수수료 20%</span><span id="stFee"></span></div>
+      <div class="ln"><span>첫 달 할인 쿠폰</span><span class="pos">−1,000원</span></div>
+      <div class="ln total"><span>10월 31일 청구 예정</span><span id="stFinal"></span></div>
+    </div>
+    <p class="okline">수수료를 내고도 <b id="stNet"></b>이 남아요. 누적 수수료가 1만 원을 넘으면 그때 한 번에 청구해요.</p>
+    <button class="btn btn-brand btn-block" data-close>확인</button>
+  </div>
+
+  <div class="sheet" id="sh-profile" role="dialog" aria-label="설정">
+    <div class="grab-zone" aria-hidden="true"><div class="grab"></div></div>
+    <h3>김리캐 님</h3>
+    <p class="lead">예시 계정이에요.</p>
+    <div class="trow"><div><b>결제 알림 실시간 감지</b><small>카드 승인 문자·앱 알림을 읽어요</small></div><button class="sw" role="switch" aria-checked="true" aria-label="결제 알림 실시간 감지"></button></div>
+    <div class="trow"><div><b>재결제 가능 시간에만 알림</b><small>결제 후 2분 안에만 알려드려요</small></div><button class="sw" role="switch" aria-checked="true" aria-label="재결제 가능 시간에만 알림"></button></div>
+    <div class="trow"><div><b>바코드 열 때 화면 최대 밝기</b><small>스캐너가 한 번에 읽도록</small></div><button class="sw" role="switch" aria-checked="true" aria-label="바코드 화면 최대 밝기"></button></div>
+    <div class="trow"><div><b>정산일 미리 알림</b><small>청구 3일 전에 알려드려요</small></div><button class="sw" role="switch" aria-checked="false" aria-label="정산일 미리 알림"></button></div>
+    <button class="btn btn-soft btn-block" data-close style="margin-top:12px">닫기</button>
+  </div>
+
+  <div class="sheet" id="sh-code" role="dialog" aria-label="카드 결제 바코드">
+    <div class="grab-zone" aria-hidden="true"><div class="grab"></div></div>
+    <h3 id="cdTitle"></h3>
+    <p class="lead" id="cdLead"></p>
+    <div class="pass code-pass"><div class="pass-body"><div id="cdSvg"></div><div class="mono" id="cdCode"></div><p>직원에게 보여주면 이 카드로 결제돼요</p></div></div>
+    <button class="btn btn-soft btn-block" data-close>닫기</button>
+  </div>
+
+  <div class="sheet pass-sheet" id="sh-pass" role="dialog" aria-label="멤버십 바코드">
+    <div class="grab-zone" aria-hidden="true"><div class="grab"></div></div>
+    <div class="pass-head"><b>멤버십 바코드</b><small id="passIdx"></small></div>
+    <div class="rail pass-rail" id="passRail"></div>
+    <div class="pass-ctl">
+      <button class="sbtn" id="passPrev" aria-label="이전 멤버십"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m15 6-6 6 6 6"/></svg></button>
+      <div class="dots" id="passDots"></div>
+      <button class="sbtn" id="passNext" aria-label="다음 멤버십"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>
+    </div>
+    <div class="foot"><button class="btn btn-soft btn-block" data-close>닫기</button></div>
+  </div>
+
+  <div class="sheet" id="sh-add" role="dialog" aria-label="혜택 지갑에 추가">
+    <div class="grab-zone" aria-hidden="true"><div class="grab"></div></div>
+    <h3>혜택 지갑에 추가</h3>
+    <p class="lead">등록할수록 결제 직후 찾아드리는 혜택이 정확해져요.</p>
+    <form id="addForm">
+      <div class="field"><label>종류</label><div class="seg" id="addSeg"><button type="button" class="on" data-v="membership">멤버십</button><button type="button" data-v="card">카드</button><button type="button" data-v="telecom">통신사</button></div></div>
+      <div class="field"><label for="addName">이름</label><input id="addName" placeholder="예: 해피포인트, 투썸 멤버십" required autocomplete="off"></div>
+      <div class="field"><label for="addCode">바코드 번호</label><input id="addCode" inputmode="numeric" placeholder="숫자만 입력" autocomplete="off"></div>
+      <button class="btn btn-brand btn-block" type="submit">지갑에 추가</button>
+    </form>
+  </div>
+
+  <div class="flow" id="flow"></div>
+  <div class="toast" id="toast" role="status"></div>
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const won=n=>Math.round(n).toLocaleString('ko-KR');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const FEE=0.2;
+
+/* 가맹점 표시: 로고 대신 이니셜 원 */
+const MARK={'스타벅스':['S','#0B7A55'],'빕스':['V','#A8232B'],'CGV':['C','#D7262E'],'GS25':['GS','#1D6FD8'],'올리브영':['O','#6FA334'],'맘스터치':['M','#E3651D'],'파리바게뜨':['P','#1E3F8F']};
+const mark=store=>{const k=Object.keys(MARK).find(k=>store.startsWith(k));const [t,c]=k?MARK[k]:[store[0],'#6A6F7D'];return `<span class="mark" style="--m:${c}">${t}</span>`};
+const CAT={cafe:['카페','#0B7A55'],film:['영화·문화','#D7262E'],dine:['외식','#E3651D'],cvs:['편의점','#1D6FD8'],beauty:['뷰티','#B04595'],bake:['베이커리','#C39222']};
+
+let TX=[
+ {id:1,store:'올리브영 경산중앙점',cat:'beauty',amount:45600,save:4560,src:'CJ ONE 10% 적립',srcKey:'cj',status:'pending',d:'10.07',t:'12:30',note:'카드사 매출전표가 확정되면 반영돼요 (D-1)'},
+ {id:2,store:'GS25 영남대정문점',cat:'cvs',amount:6500,save:650,src:'신한 Mr.Life 10%',srcKey:'sh',status:'done',d:'10.06',t:'22:41'},
+ {id:3,store:'스타벅스 영남대정문점',cat:'cafe',amount:13000,save:2600,src:'KB 톡톡D 20% 캐시백',srcKey:'kb',status:'done',d:'10.06',t:'10:12'},
+ {id:4,store:'빕스 대구반월당점',cat:'dine',amount:74000,save:11100,src:'SKT VIP 15% 할인',srcKey:'skt',status:'done',d:'10.05',t:'19:44'},
+ {id:5,store:'CGV 대구한일',cat:'film',amount:30000,save:6000,src:'KB 톡톡D 영화 20%',srcKey:'kb',status:'done',d:'10.04',t:'14:15'},
+ {id:6,store:'맘스터치 영남대점',cat:'dine',amount:9800,save:1960,src:'SKT VIP 20% 할인',srcKey:'skt',status:'missed',d:'10.03',t:'12:20',note:'알림 후 2분이 지나 매장을 떠났어요'}
+];
+const SRC={kb:['KB국민 톡톡D 체크','art-kb'],sh:['신한 Mr.Life 신용','art-sh'],skt:['SKT T멤버십 VIP','art-hd'],cj:['CJ ONE 멤버십','art-hd']};
+const PREV=[{m:'5월',v:9800},{m:'6월',v:13200},{m:'7월',v:15600},{m:'8월',v:18400},{m:'9월',v:22900}];
+const SCEN=[
+ {store:'스타벅스 영남대정문점',short:'스타벅스영남대',cat:'cafe',amount:13000,save:2600,src:'KB 톡톡D 20% 캐시백',srcKey:'kb',card:'KB국민체크(9421)',how:'KB 톡톡D 체크카드로 다시 결제',code:'9421 7730 0815 2604'},
+ {store:'파리바게뜨 경산영대점',short:'파리바게뜨경산',cat:'bake',amount:18000,save:1800,src:'SKT VIP 10% 할인',srcKey:'skt',card:'현대카드(5530)',how:'T멤버십 바코드를 보여준 뒤 다시 결제',code:'7700 1923 8832 1049'},
+ {store:'빕스 동대구역점',short:'빕스동대구',cat:'dine',amount:74000,save:11100,src:'SKT VIP 15% 할인',srcKey:'skt',card:'현대카드(5530)',how:'T멤버십 바코드를 보여준 뒤 다시 결제',code:'7700 1923 8832 1049'}
+];
+let scenIdx=0,nextId=100;
+const CARDS=[
+ {id:'kb',bank:'KB국민카드',name:'톡톡D 체크카드',last:'9421',art:'art-kb',need:300000,now:412000,perk:'스타벅스·영화 20% 캐시백',limit:'월 한도 20,000원 중 8,600원 사용'},
+ {id:'sh',bank:'신한카드',name:'Mr.Life 신용카드',last:'1083',art:'art-sh',need:300000,now:268000,perk:'편의점·마트 10% 할인',limit:'실적 32,000원 남음 · 채우면 다음 달 적용'},
+ {id:'hd',bank:'현대카드',name:'ZERO Edition2',last:'5530',art:'art-hd',need:0,now:0,perk:'국내 전 가맹점 0.7% 할인',limit:'실적 조건 없음'}
+];
+let MEMS=[
+ {name:'SKT T멤버십',tier:'VIP',sub:'외식·영화·베이커리 최대 20%',code:'7700 1923 8832 1049',m:['T','#E4002B'],extra:'올해 VIP 혜택 무제한'},
+ {name:'CJ ONE',tier:'14,250P',sub:'올리브영·CGV·뚜레쥬르 적립',code:'8806 4410 2275 0193',m:['CJ','#6E3FA3'],extra:'보유 포인트 14,250P'},
+ {name:'영남대 모바일 학생증',tier:'인증됨',sub:'대학가 제휴 가맹점 학생 할인',code:'2611 0420 5578',m:['YU','#1B4F9C'],extra:'2026년 2학기 재학 인증'}
+];
+
+/* ---------- utils ---------- */
+const shown=new WeakMap();
+function countTo(el,to){const from=shown.get(el)??0;shown.set(el,to);if(reduce||from===to){el.textContent=won(to);return}
+  const t0=performance.now(),dur=800;(function f(n){const p=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-p,3);el.textContent=won(from+(to-from)*e);if(p<1)requestAnimationFrame(f)})(t0)}
+function totals(){const done=TX.filter(x=>x.status==='done');const rec=done.reduce((a,x)=>a+x.save,0);const fee=Math.round(rec*FEE);
+  return{rec,fee,net:rec-fee,count:done.length,pending:TX.filter(x=>x.status==='pending').reduce((a,x)=>a+x.save,0),
+    missed:TX.filter(x=>x.status==='missed').reduce((a,x)=>a+x.save,0),missedN:TX.filter(x=>x.status==='missed').length}}
+function barcode(code,h=84){const d=code.replace(/\D/g,'');let x=6,bars='';const seq=[2,1,1,2];
+  d.split('').forEach((c,i)=>{const n=+c;seq.push(1+(n%3),1+((n+i)%2),1+((n*7+i)%4>1?1:0),1+((n+3)%3))});seq.push(2,1,1,2);
+  seq.forEach((w,i)=>{if(i%2===0)bars+=`<rect x="${x}" y="0" width="${w*1.6}" height="${h}" fill="#191A1F"/>`;x+=w*1.6});
+  return `<svg viewBox="0 0 ${x+6} ${h}" preserveAspectRatio="none" style="height:${h}px" role="img" aria-label="바코드 ${code}">${bars}</svg>`}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2400)}
+
+/* ---------- 공통: 좌우로 넘기는 레일 (터치 스와이프 · 마우스 드래그 · 화살표 · 점 · 키보드) ---------- */
+function makeRail(rail,{prev,next,dots,onChange,onTap}){
+  const st={cur:0,on:false,x:0,sl:0,moved:0,t:null,force:false};
+  const items=()=>[...rail.children];
+  function nearest(){const mid=rail.scrollLeft+rail.clientWidth/2;let b=0,bd=1e9;items().forEach((c,i)=>{const d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(d<bd){bd=d;b=i}});return b}
+  function set(i){const ch=i!==st.cur;st.cur=i;items().forEach((c,k)=>c.classList.toggle('cur',k===i));
+    if(dots)[...dots.children].forEach((d,k)=>d.classList.toggle('on',k===i));
+    if(prev)prev.disabled=i===0;if(next)next.disabled=i===items().length-1;
+    if(ch||st.force){st.force=false;onChange&&onChange(i)}}
+  function go(i,smooth=true){const c=items()[i];if(!c)return;rail.scrollTo({left:c.offsetLeft+c.offsetWidth/2-rail.clientWidth/2,behavior:smooth&&!reduce?'smooth':'auto'});set(i)}
+  function refresh(i=st.cur){if(dots)dots.innerHTML=items().map((_,k)=>`<button aria-label="${k+1}번째로 이동" data-k="${k}"></button>`).join('');
+    st.cur=Math.max(0,Math.min(i,items().length-1));st.force=true;set(st.cur);requestAnimationFrame(()=>go(st.cur,false))}
+  rail.addEventListener('scroll',()=>{if(st.on)return;clearTimeout(st.t);st.t=setTimeout(()=>set(nearest()),60)},{passive:true});
+  prev&&(prev.onclick=()=>go(Math.max(0,st.cur-1)));
+  next&&(next.onclick=()=>go(Math.min(items().length-1,st.cur+1)));
+  dots&&dots.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(b)go(+b.dataset.k)});
+  rail.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||e.button!==0)return;st.on=true;st.x=e.clientX;st.sl=rail.scrollLeft;st.moved=0;e.stopPropagation()});
+  window.addEventListener('pointermove',e=>{if(!st.on)return;const dx=e.clientX-st.x;st.moved=Math.max(st.moved,Math.abs(dx));if(st.moved>6){rail.classList.add('dragging');rail.scrollLeft=st.sl-dx}});
+  window.addEventListener('pointerup',e=>{if(!st.on)return;st.on=false;rail.classList.remove('dragging');
+    if(st.moved>6){const dx=e.clientX-st.x;let i=nearest();if(i===st.cur&&Math.abs(dx)>40)i=Math.max(0,Math.min(items().length-1,st.cur+(dx<0?1:-1)));go(i)}});
+  rail.addEventListener('click',e=>{const c=[...rail.children].find(k=>k.contains(e.target));if(!c)return;if(st.moved>6){st.moved=0;return}
+    const i=items().indexOf(c);if(i!==st.cur){go(i);return}onTap&&onTap(i)});
+  rail.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();go(Math.min(items().length-1,st.cur+1))}else if(e.key==='ArrowLeft'){e.preventDefault();go(Math.max(0,st.cur-1))}
+    else if((e.key==='Enter'||e.key===' ')&&onTap){e.preventDefault();onTap(st.cur)}});
+  return{go,refresh,get cur(){return st.cur}};
+}
+
+/* ---------- home ---------- */
+function rowHTML(x){
+  const r=x.status==='missed'?`<b class="muted">${won(x.save)}원</b><small>놓침</small>`:x.status==='pending'?`<b>+${won(x.save)}원</b><small>확인 중</small>`:`<b class="pos">+${won(x.save)}원</b><small>${won(x.amount)}원 결제</small>`;
+  return `<div class="row" data-id="${x.id}">${mark(x.store)}<div class="row-main"><b>${x.store}</b><small>${x.src}</small></div><div class="row-amt">${r}</div></div>`}
+function renderHome(flashId){
+  const T=totals(),last=PREV[PREV.length-1].v;
+  countTo($('#heroTotal'),T.rec);countTo($('#lgRec'),T.rec);countTo($('#lgFee'),T.fee);countTo($('#lgNet'),T.net);
+  $('#heroCount').textContent=T.count;
+  $('#heroSub').innerHTML=T.rec>=last?`9월보다 <b>${won(T.rec-last)}원</b> 더 되찾았어요`:`확인 중인 ${won(T.pending)}원이 곧 더해져요`;
+  $('#homeFeed').innerHTML=TX.slice(0,4).map(rowHTML).join('');
+  if(flashId){const r=$(`#homeFeed [data-id="${flashId}"]`);r&&r.classList.add('flash')}
+}
+const BAN=[
+ {cls:'b-orange',b:'친구가 가입하면 30일간 수수료&nbsp;0원',s:'아낀 돈을 그대로 가져가세요',art:'gift',c:'#FF5A1F'},
+ {cls:'b-blue',b:'영남대 앞 SKT VIP 가맹점 12곳 추가',s:'오렌지거리 카페·식당 포함',art:'pin',c:'#2F6BE0'},
+ {cls:'b-green',b:'결제 후 2분 안이면 대부분 취소돼요',s:'영수증 버리기 전에 알림을 확인하세요',art:'clock',c:'#0E9F6E'}
+];
+function bart(k,c){
+  if(k==='gift')return `<svg viewBox="0 0 84 72" width="84" height="72" aria-hidden="true"><rect x="14" y="30" width="56" height="38" rx="6" fill="${c}" opacity=".22"/><rect x="10" y="22" width="64" height="13" rx="5" fill="${c}" opacity=".45"/><rect x="38" y="22" width="8" height="46" fill="${c}"/><path d="M42 22c-6-13-20-11-16-2 3 5 16 2 16 2zm0 0c6-13 20-11 16-2-3 5-16 2-16 2z" fill="none" stroke="${c}" stroke-width="3"/></svg>`;
+  if(k==='pin')return `<svg viewBox="0 0 84 72" width="84" height="72" aria-hidden="true"><path d="M4 56 26 46l28 10 26-10v16L54 72 26 62 4 72z" fill="${c}" opacity=".18"/><path d="M42 6c-10 0-17 7-17 16 0 13 17 29 17 29s17-16 17-29c0-9-7-16-17-16z" fill="${c}"/><circle cx="42" cy="22" r="6" fill="#fff"/></svg>`;
+  return `<svg viewBox="0 0 84 72" width="84" height="72" aria-hidden="true"><circle cx="42" cy="38" r="28" fill="${c}" opacity=".16"/><circle cx="42" cy="38" r="20" fill="none" stroke="${c}" stroke-width="5" stroke-dasharray="94 126" stroke-linecap="round" transform="rotate(-90 42 38)"/><path d="M42 27v11l7 5" stroke="${c}" stroke-width="4" stroke-linecap="round" fill="none"/></svg>`}
+$('#btrack').innerHTML=BAN.map(b=>`<div class="bslide ${b.cls}"><div><b>${b.b}</b><span>${b.s}</span></div>${bart(b.art,b.c)}</div>`).join('');
+/* 배너: 손으로 넘기기 + 자동 넘김 (손댄 뒤 6초는 멈춤) */
+const banRail=makeRail($('#btrack'),{onChange:i=>$('#bcount').textContent=`${i+1} / ${BAN.length}`});
+banRail.refresh(0);
+let banTouched=0;['pointerdown','touchstart','wheel'].forEach(ev=>$('#btrack').addEventListener(ev,()=>banTouched=Date.now(),{passive:true}));
+setInterval(()=>{if(document.hidden||$('#v-home').hidden||Date.now()-banTouched<6000)return;banRail.go((banRail.cur+1)%BAN.length)},4800);
+
+/* ---------- history ---------- */
+let filt='all';
+const STAT={done:['재결제 완료','ok'],pending:['확인 중','wait'],missed:['놓친 혜택','miss']};
+function renderHistory(){
+  const T=totals();
+  $('#hsDone').textContent=won(T.rec)+'원';$('#hsPending').textContent=won(T.pending)+'원';$('#hsMissed').textContent=won(T.missed)+'원';
+  const F=[['all','전체'],['done','재결제 완료'],['pending','확인 중'],['missed','놓친 혜택']];
+  $('#chips').innerHTML=F.map(([k,n])=>`<button class="chip ${filt===k?'on':''}" data-f="${k}" role="tab" aria-selected="${filt===k}">${n} ${k==='all'?TX.length:TX.filter(x=>x.status===k).length}</button>`).join('');
+  const list=TX.filter(x=>filt==='all'||x.status===filt);let h='',ld='';
+  list.forEach(x=>{
+    if(x.d!==ld){const [m,d]=x.d.split('.');h+=`<div class="day">${+m}월 ${+d}일</div>`;ld=x.d}
+    const fee=Math.round(x.save*FEE);
+    const det=x.status==='done'?`<div class="ln"><span>결제 금액</span><span>${won(x.amount)}원</span></div><div class="ln"><span>${x.src}</span><span class="pos">−${won(x.save)}원</span></div><div class="ln"><span>리캐치 수수료 20%</span><span>${won(fee)}원</span></div><div class="ln total"><span>내 순절약</span><span class="pos">${won(x.save-fee)}원</span></div>`
+      :x.status==='pending'?`<div class="ln"><span>결제 금액</span><span>${won(x.amount)}원</span></div><div class="ln"><span>예정 혜택</span><span>${won(x.save)}원</span></div><p>${x.note}</p>`
+      :`<div class="ln"><span>받을 수 있었던 혜택</span><span>${won(x.save)}원</span></div><p>${x.note}. 놓친 혜택에는 수수료가 없어요.</p>`;
+    const amt=x.status==='missed'?`<b class="muted">${won(x.save)}원</b>`:`<b class="${x.status==='done'?'pos':''}">+${won(x.save)}원</b>`;
+    h+=`<div class="tx" data-id="${x.id}"><button class="row" aria-expanded="false">${mark(x.store)}<div class="row-main"><b>${x.store}</b><small>${x.t} · <span class="tag ${STAT[x.status][1]}">${STAT[x.status][0]}</span></small></div><div class="row-amt">${amt}<small>${won(x.amount)}원</small></div></button><div class="tx-d"><div><div class="slip">${det}</div></div></div></div>`});
+  $('#histList').innerHTML=h||'<p class="note" style="padding:20px 0">해당하는 내역이 없어요.</p>';
+}
+$('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;filt=b.dataset.f;renderHistory()});
+$('#histList').addEventListener('click',e=>{const t=e.target.closest('.tx');if(!t)return;const o=t.classList.toggle('open');t.querySelector('.row').setAttribute('aria-expanded',o)});
+
+/* ---------- stats ---------- */
+function renderStats(){
+  const T=totals(),n=T.count+T.missedN,rate=n?T.count/n:0;
+  $('#rateVal').textContent=Math.round(rate*100)+'%';$('#rateSub').textContent=`알림 ${n}번 중 ${T.count}번 재결제`;
+  requestAnimationFrame(()=>$('#rateBar').style.width=rate*100+'%');
+  $('#missVal').textContent=won(T.missed)+'원';$('#missSub').textContent=`${T.missedN}건 · 수수료 없음`;
+  const data=[...PREV,{m:'10월',v:T.rec,cur:true}];const W=340,H=170,pt=24,pb=26,step=10000;
+  const top=Math.ceil(Math.max(...data.map(d=>d.v))*1.12/step)*step;const y=v=>pt+(H-pt-pb)*(1-v/top);const bw=W/data.length;
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:290px" role="img" aria-label="월별 되찾은 돈 막대 차트">`;
+  for(let v=0;v<=top;v+=step)s+=`<line x1="0" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" ${v?'stroke-dasharray="3 4"':''}/>`;
+  data.forEach((d,i)=>{const w=bw*.5,x=i*bw+(bw-w)/2,yy=y(d.v),hh=H-pb-yy;
+    s+=`<rect x="${x}" y="${yy}" width="${w}" height="${hh}" rx="6" fill="${d.cur?'var(--brand)':'var(--well)'}"><animate attributeName="height" from="0" to="${hh}" dur="${reduce?.01:.7}s" fill="freeze"/><animate attributeName="y" from="${H-pb}" to="${yy}" dur="${reduce?.01:.7}s" fill="freeze"/></rect>`;
+    s+=`<text x="${x+w/2}" y="${H-8}" text-anchor="middle" ${d.cur?'style="fill:var(--ink);font-weight:700"':''}>${d.m}</text>`;
+    if(d.cur||i===data.length-2)s+=`<text class="v" x="${x+w/2}" y="${yy-7}" text-anchor="middle">${won(d.v)}</text>`});
+  $('#trend').innerHTML=s+'</svg>';
+  const by={};TX.filter(x=>x.status==='done').forEach(x=>by[x.cat]=(by[x.cat]||0)+x.save);
+  const cats=Object.entries(by).sort((a,b)=>b[1]-a[1]);const mx=cats[0]?cats[0][1]:1;
+  $('#catTotal').textContent='합계 '+won(T.rec)+'원';
+  $('#cats').innerHTML=cats.map(([k,v])=>`<div class="cat" style="--c:${CAT[k][1]}"><span class="nm">${CAT[k][0]}<small>${Math.round(v/T.rec*100)}%</small></span><b>${won(v)}원</b><div class="tr"><i data-w="${v/mx*100}"></i></div></div>`).join('');
+  requestAnimationFrame(()=>$$('#cats i').forEach(i=>i.style.width=i.dataset.w+'%'));
+  const bs={};TX.filter(x=>x.status==='done').forEach(x=>{bs[x.srcKey]=bs[x.srcKey]||{v:0,n:0};bs[x.srcKey].v+=x.save;bs[x.srcKey].n++});
+  $('#rank').innerHTML=Object.entries(bs).sort((a,b)=>b[1].v-a[1].v).slice(0,3).map(([k,o],i)=>`<div class="rank"><span class="no">${i+1}</span><span class="mcard ${SRC[k][1]}"></span><div class="row-main"><b>${SRC[k][0]}</b><small>${o.n}번 재결제</small></div><b class="pos">+${won(o.v)}원</b></div>`).join('');
+}
+
+/* ---------- wallet ---------- */
+function pat(id){
+  if(id==='kb')return `<svg class="pat" viewBox="0 0 300 190" preserveAspectRatio="xMaxYMin slice" aria-hidden="true"><circle cx="262" cy="18" r="92" fill="none" stroke="#fff" stroke-opacity=".4"/><circle cx="262" cy="18" r="62" fill="none" stroke="#fff" stroke-opacity=".4"/><circle cx="262" cy="18" r="32" fill="#fff" fill-opacity=".3"/></svg>`;
+  if(id==='sh')return `<svg class="pat" viewBox="0 0 300 190" preserveAspectRatio="none" aria-hidden="true">${Array.from({length:7},(_,i)=>`<path d="M-10 ${118+i*11} C 80 ${78+i*11}, 200 ${168+i*11}, 320 ${98+i*11}" fill="none" stroke="#fff" stroke-opacity=".18"/>`).join('')}</svg>`;
+  return `<svg class="pat" viewBox="0 0 300 190" preserveAspectRatio="xMaxYMax slice" aria-hidden="true"><text x="292" y="186" text-anchor="end" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="120" fill="#fff" fill-opacity=".07">0</text></svg>`}
+const cardRail=makeRail($('#cardRail'),{prev:$('#cardPrev'),next:$('#cardNext'),dots:$('#cardDots'),onChange:i=>renderCardMeta(i),onTap:i=>openCardCode(CARDS[i])});
+function renderWallet(){
+  $('#cardRail').innerHTML=CARDS.map(c=>`<div class="ccard ${c.art}" role="button" tabindex="0" aria-label="${c.bank} ${c.name}, 누르면 결제 바코드">${pat(c.id)}<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="bank">${c.bank}</div><div class="cname">${c.name}</div></div><span class="ic"></span></div><div style="display:flex;justify-content:space-between;align-items:flex-end"><span class="cno">•••• ${c.last}</span><span style="font-size:12px;font-weight:600;opacity:.85">누르면 결제 바코드</span></div></div>`).join('');
+  cardRail.refresh();
+  $('#memList').innerHTML=MEMS.map((m,i)=>`<button class="mem" data-m="${i}"><span class="mark" style="--m:${m.m[1]}">${m.m[0]}</span><div class="row-main"><b>${m.name}</b><small>${m.sub}</small></div><span class="open">바코드</span></button>`).join('');
+}
+function renderCardMeta(i){const c=CARDS[i];if(!c)return;const p=c.need?Math.min(1,c.now/c.need):1;
+  $('#cardMeta').innerHTML=`<div class="sec-h" style="margin-bottom:2px"><h2>${c.name}</h2><span class="more">${i+1} / ${CARDS.length}</span></div>
+  <div class="ln"><span>주요 혜택</span><b style="text-align:right">${c.perk}</b></div>
+  ${c.need?`<div class="ln"><span>전월 실적</span><span>${won(c.now)} / ${won(c.need)}원</span></div><div class="bar"><i class="${p>=1?'full':''}"></i></div>`:''}
+  <div class="ln"><span>${c.need&&p<1?'남은 조건':'상태'}</span><span style="color:${p>=1?'var(--save)':'var(--warn)'};font-weight:600;text-align:right">${c.limit}</span></div>`;
+  requestAnimationFrame(()=>{const b=$('#cardMeta .bar i');if(b)b.style.width=p*100+'%'})}
+let codeTimer=null;
+function openCardCode(c){
+  const code=(c.last+Array.from({length:12},()=>Math.random()*10|0).join('')).replace(/(\d{4})(?=\d)/g,'$1 ');
+  $('#cdTitle').textContent=c.bank+' '+c.name;$('#cdSvg').innerHTML=barcode(code);$('#cdCode').textContent=code;
+  let left=180;const upd=()=>$('#cdLead').textContent=`결제용 일회성 바코드 · ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')} 후 새로 발급돼요`;upd();
+  openSheet('code');
+  codeTimer=setInterval(()=>{if(!$('#sh-code').classList.contains('on')){clearInterval(codeTimer);return}left--;if(left<=0){clearInterval(codeTimer);openCardCode(c);return}upd()},1000)}
+/* 멤버십 패스: 좌우로 넘기기 */
+const passRail=makeRail($('#passRail'),{prev:$('#passPrev'),next:$('#passNext'),dots:$('#passDots'),onChange:i=>$('#passIdx').textContent=`${i+1} / ${MEMS.length}`});
+function openPasses(i){
+  $('#passRail').innerHTML=MEMS.map(m=>`<div class="pass" tabindex="0" style="--pc:${m.m[1]}"><div class="pass-top"><div><div class="pn">${m.name}</div><div class="ps">${m.sub}</div></div><span class="pt">${m.tier}</span></div><div class="pass-body">${barcode(m.code,80)}<div class="mono">${m.code}</div><p>${m.extra} · 직원에게 보여주면 바로 적용돼요</p></div></div>`).join('');
+  openSheet('pass');passRail.refresh(i)}
+$('#memList').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b)openPasses(+b.dataset.m)});
+
+/* ---------- tabs ---------- */
+const RENDER={home:renderHome,history:renderHistory,stats:renderStats,wallet:renderWallet};
+const curTab=()=>$$('.view').find(v=>!v.hidden).dataset.view;
+function go(tab){$$('.view').forEach(v=>{const on=v.dataset.view===tab;if(on&&v.hidden){v.hidden=false;v.classList.remove('enter');void v.offsetWidth;v.classList.add('enter');v.scrollTop=0}else if(!on)v.hidden=true});
+  $$('.tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===tab));RENDER[tab]();try{localStorage.setItem('rc-tab',tab)}catch(e){}}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tab]');if(t){e.preventDefault();go(t.dataset.tab)}});
+
+/* ---------- sheets: 열기·닫기·끌어내려 닫기 ---------- */
+function openSheet(id){
+  if(id==='stmt'){const T=totals(),fin=Math.max(0,T.fee-1000);$('#stRec').textContent=won(T.rec)+'원';$('#stFee').textContent=won(T.fee)+'원';$('#stFinal').textContent=won(fin)+'원';$('#stNet').textContent=won(T.rec-fin)+'원'}
+  clearInterval(codeTimer);
+  $$('.sheet').forEach(s=>{s.classList.toggle('on',s.id==='sh-'+id);s.style.transform=''});$('#scrim').classList.add('on');$('#scrim').style.opacity=''}
+function closeSheets(){$('#scrim').classList.remove('on');$('#scrim').style.opacity='';$$('.sheet').forEach(s=>{s.classList.remove('on');s.style.transform=''});clearInterval(codeTimer)}
+document.addEventListener('click',e=>{const o=e.target.closest('[data-open]');if(o)openSheet(o.dataset.open);if(e.target.closest('[data-close]'))closeSheets()});
+$('#scrim').onclick=closeSheets;$('#profileBtn').onclick=()=>openSheet('profile');
+$$('.sheet').forEach(sh=>{
+  let y0=null,dy=0,t0=0,pid=null;
+  sh.addEventListener('pointerdown',e=>{
+    const zone=e.target.closest('.grab-zone');
+    // 손잡이 영역은 터치·마우스 모두, 그 밖의 빈 곳은 마우스로만 (버튼·입력·카드 레일 제외)
+    const free=e.pointerType==='mouse'&&e.button===0&&!e.target.closest('button,input,label,a,.rail,.seg')&&sh.scrollTop<=0;
+    if(!zone&&!free)return;
+    y0=e.clientY;dy=0;t0=performance.now();pid=e.pointerId;
+    if(zone){try{sh.setPointerCapture(pid)}catch(_){}}
+  });
+  sh.addEventListener('pointermove',e=>{if(y0===null||e.pointerId!==pid)return;dy=Math.max(0,e.clientY-y0);
+    if(dy>3){sh.classList.add('dragging');sh.style.transform=`translateY(${dy}px)`;$('#scrim').style.opacity=String(Math.max(0,1-dy/sh.offsetHeight))}});
+  const end=e=>{if(y0===null||(e&&e.pointerId!==pid))return;const v=dy/Math.max(1,performance.now()-t0);sh.classList.remove('dragging');
+    if(dy>sh.offsetHeight*.28||(v>.5&&dy>40))closeSheets();else{sh.style.transform='';$('#scrim').style.opacity=''}
+    y0=null;pid=null};
+  sh.addEventListener('pointerup',end);sh.addEventListener('pointercancel',end);
+  window.addEventListener('pointerup',end);
+});
+$$('.sw').forEach(s=>s.onclick=()=>s.setAttribute('aria-checked',s.getAttribute('aria-checked')!=='true'));
+let addType='membership';
+const setSeg=v=>{addType=v;$$('#addSeg button').forEach(x=>x.classList.toggle('on',x.dataset.v===v))};
+$('#addSeg').onclick=e=>{const b=e.target.closest('button');if(b)setSeg(b.dataset.v)};
+$('#addForm').addEventListener('submit',e=>{e.preventDefault();const n=$('#addName').value.trim();if(!n)return;
+  const raw=$('#addCode').value.replace(/\D/g,'')||String(Date.now()).slice(-12);const code=raw.replace(/(\d{4})(?=\d)/g,'$1 ');
+  if(addType==='card')CARDS.push({id:'new',bank:'새로 등록한 카드',name:n,last:raw.slice(-4).padStart(4,'0'),art:'art-new',need:0,now:0,perk:'혜택 조건을 불러오는 중이에요',limit:'등록 완료'});
+  else MEMS.push({name:n,tier:addType==='telecom'?'통신사':'등록됨',sub:'결제 직후 혜택 대조에 포함돼요',code,m:[n[0],'#4E5260'],extra:'방금 등록함'});
+  $('#addForm').reset();setSeg('membership');closeSheets();renderWallet();toast(`${n}을(를) 지갑에 추가했어요`)});
+$('#themeBtn').onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark'};
+
+/* ---------- 재결제 체험 ---------- */
+const flow=$('#flow');let timers=[],tick=null;
+const later=(f,ms)=>timers.push(setTimeout(f,reduce?Math.min(ms,120):ms));
+function endFlow(){timers.forEach(clearTimeout);timers=[];clearInterval(tick);flow.classList.remove('on');flow.innerHTML=''}
+function now(){const d=new Date(),p=n=>String(n).padStart(2,'0');return{hm:d.getHours()+':'+p(d.getMinutes()),md:`${d.getMonth()+1}/${d.getDate()}`,d:`${p(d.getMonth()+1)}.${p(d.getDate())}`,t:`${p(d.getHours())}:${p(d.getMinutes())}`,full:d.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'})}}
+const RC='<span style="font-family:var(--f-logo);font-weight:800;color:#fff;font-size:15px">r.</span>';
+function startFlow(){
+  closeSheets();
+  const S=SCEN[scenIdx++%SCEN.length],N=now();
+  flow.innerHTML=`<div class="lock"><button class="x" id="flX" aria-label="체험 닫기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button><div class="clock">${N.hm}</div><div class="date">${N.full}</div><div class="lstack" id="ls"></div><div class="hint">예시 결제로 동작 과정을 보여드려요</div></div>`;
+  flow.classList.add('on');$('#flX').onclick=endFlow;const ls=$('#ls');
+  later(()=>ls.insertAdjacentHTML('beforeend',`<div class="ln-noti"><span class="ic" style="background:#3A3D47"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 5h16v11H8l-4 4z"/></svg></span><div><div class="hd"><span>메시지 · 1588-9999</span><span>지금</span></div><div class="bd" style="font-family:var(--f-mono);font-size:12.5px">[Web발신] ${S.card} 승인 김*캐 <b>${won(S.amount)}원</b> 일시불 ${N.md} ${N.hm} ${S.short}</div></div></div>`),500);
+  later(()=>ls.insertAdjacentHTML('beforeend',`<div class="check-box" id="cb"><div class="tt"><span class="spin"></span>결제를 확인하고 있어요</div><div class="ck"><i></i><span>가맹점 확인<em>${S.store}</em></span></div><div class="ck"><i></i><span>내 혜택과 대조<em>카드 ${CARDS.length} · 멤버십 ${MEMS.length}</em></span></div><div class="ck"><i></i><span>가장 큰 혜택<em>${S.src}</em></span></div></div>`),1300);
+  [1900,2400,2900].forEach((ms,i)=>later(()=>{const c=$$('#cb .ck')[i];c&&c.classList.add('ok')},ms));
+  later(()=>{const c=$('#cb');c&&c.remove();
+    ls.insertAdjacentHTML('afterbegin',`<button class="ln-noti rc" id="rcNoti"><span class="ic" style="background:#FF5A1F">${RC}</span><div><div class="hd"><span>리캐치</span><span>지금</span></div><div class="bd">방금 결제한 ${won(S.amount)}원, <b class="save">${won(S.save)}원</b> 돌려받을 수 있어요</div><div class="bd" style="font-size:13px;opacity:.65">${S.src} · ${S.store}</div><span class="tap">탭하면 재결제 바코드가 열려요</span></div></button>`);
+    $('#rcNoti').onclick=()=>pay(S,N)},3400);
+}
+function pay(S,N){
+  flow.insertAdjacentHTML('beforeend',`<div class="pay"><div class="hd">${mark(S.store)}<div style="flex:1;min-width:0"><b>${S.store}</b><small>${N.hm} 결제 · ${won(S.amount)}원</small></div><button class="ibtn" id="pyX" aria-label="닫기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <span class="bdg">${S.src}</span><p class="tt">다시 결제하면<br><span>${won(S.save)}원</span> 아낄 수 있어요</p>
+    <div class="bc">${barcode(S.code,90)}<div class="mono">${S.code}</div></div><div class="bright">화면 밝기를 최대로 올렸어요</div>
+    <div class="guide"><div class="timer"><svg width="46" height="46" viewBox="0 0 46 46"><circle cx="23" cy="23" r="19" fill="none" stroke="#ECEDF1" stroke-width="4"/><circle id="tR" cx="23" cy="23" r="19" fill="none" stroke="#FF5A1F" stroke-width="4" stroke-linecap="round" stroke-dasharray="119.4" stroke-dashoffset="0" style="transition:stroke-dashoffset 1s linear"/></svg><span id="tT">2:00</span></div><span>직원에게 <b>"방금 결제 취소하고 다시 할게요"</b>라고 말한 뒤, ${S.how}하세요.</span></div>
+    <div class="acts"><button class="btn btn-brand btn-block" id="pyOk">다시 결제했어요</button><button class="btn btn-soft btn-block" id="pySkip">이번엔 넘어갈게요</button></div></div>`);
+  let left=120;tick=setInterval(()=>{left--;if(left<0){clearInterval(tick);return}$('#tT').textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');$('#tR').style.strokeDashoffset=119.4*(1-left/120)},1000);
+  $('#pyX').onclick=endFlow;
+  $('#pySkip').onclick=()=>{TX.unshift({id:nextId++,store:S.store,cat:S.cat,amount:S.amount,save:S.save,src:S.src,srcKey:S.srcKey,status:'missed',d:N.d,t:N.t,note:'재결제를 건너뛰었어요'});endFlow();RENDER[curTab()]();toast('놓친 혜택으로 기록했어요. 수수료는 없어요')};
+  $('#pyOk').onclick=()=>{clearInterval(tick);done(S,N)};
+}
+function done(S,N){const fee=Math.round(S.save*FEE);
+  flow.insertAdjacentHTML('beforeend',`<div class="success"><canvas id="cf"></canvas><div class="ok"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><h3>${S.store}에서</h3><div class="big"><span id="bigN">0</span>원<br>되찾았어요</div>
+  <div class="slipbox"><div class="ln"><span>할인된 금액</span><span>${won(S.save)}원</span></div><div class="ln"><span>리캐치 수수료 20% · 월말 정산</span><span>${won(fee)}원</span></div><div class="ln total"><span>내 순절약</span><span class="pos">${won(S.save-fee)}원</span></div></div>
+  <button class="btn btn-brand btn-block" id="dnOk">확인</button></div>`);
+  const el=$('#bigN');shown.set(el,0);countTo(el,S.save);confetti($('#cf'));
+  const id=nextId++;TX.unshift({id,store:S.store,cat:S.cat,amount:S.amount,save:S.save,src:S.src,srcKey:S.srcKey,status:'done',d:N.d,t:N.t});
+  $('#dnOk').onclick=()=>{endFlow();go('home');renderHome(id);toast(`이번 달 되찾은 돈 ${won(totals().rec)}원`)}}
+function confetti(cv){if(reduce)return;const ctx=cv.getContext('2d'),r=cv.getBoundingClientRect(),dpr=devicePixelRatio||1;cv.width=r.width*dpr;cv.height=r.height*dpr;ctx.scale(dpr,dpr);
+  const cols=['#FF5A1F','#0E9F6E','#F2A63B','#2F6BE0'];const P=Array.from({length:60},()=>({x:r.width/2,y:150,vx:(Math.random()-.5)*8,vy:-Math.random()*8-3,s:Math.random()*5+4,r:Math.random()*6,vr:(Math.random()-.5)*.3,c:cols[Math.random()*4|0]}));
+  let f=0;(function l(){ctx.clearRect(0,0,r.width,r.height);P.forEach(p=>{p.vy+=.26;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);ctx.restore()});if(++f<140&&cv.isConnected)requestAnimationFrame(l);else ctx.clearRect(0,0,r.width,r.height)})()}
+$('#simCard').onclick=startFlow;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(flow.classList.contains('on'))endFlow();else closeSheets()}});
+
+/* ---------- boot ---------- */
+let start='home';try{const s=localStorage.getItem('rc-tab');if(s&&RENDER[s])start=s}catch(e){}
+go(start);
+})();
+</script>
+
+</body></html>
