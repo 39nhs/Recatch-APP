@@ -5,9 +5,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 const http = require('node:http');
 const root = path.resolve(__dirname, '..');
+assert.equal(fs.readFileSync(path.join(root, 'index_V5.html'), 'utf8'), fs.readFileSync(path.join(root, 'index.html'), 'utf8'), 'Default page and V5 must stay in sync');
 const errors = [];
 const server = http.createServer((req, res) => {
-  const file = req.url.split('?')[0] === '/wallet-validation.js' ? 'wallet-validation.js' : 'index.html';
+  const requestPath = req.url.split('?')[0];
+  const file = requestPath === '/wallet-validation.js' ? 'wallet-validation.js' : requestPath === '/index_V5.html' ? 'index_V5.html' : 'index.html';
   res.setHeader('Content-Type', file.endsWith('.js') ? 'text/javascript; charset=utf-8' : 'text/html; charset=utf-8');
   res.end(fs.readFileSync(path.join(root, file)));
 });
@@ -29,7 +31,7 @@ async function swipe(page, selector, dir = 1, touch = false) {
   await page.waitForTimeout(450);
 }
 async function add(page, name, number, type = 'membership') {
-  await page.locator('[data-open="add"]').click();
+  await page.locator('.view:not([hidden]) [data-open="add"]').click();
   await page.locator(`#addSeg [data-v="${type}"]`).click();
   await page.locator('#addName').fill(name); await page.locator('#addCode').fill(number);
   await page.locator('#addForm [type="submit"]').click();
@@ -46,17 +48,28 @@ async function add(page, name, number, type = 'membership') {
       await page.route('https://fonts.googleapis.com/**', route => route.abort());
       await page.goto(url);
       await visible(page, '#v-home');
+      assert.ok(await page.locator('.tabbar').evaluate(el => parseFloat(getComputedStyle(el, '::before').transitionDuration) < .001));
+      assert.equal(await page.locator('#homeCardRail .home-card').count(), 3);
+      assert.equal(await page.locator('#homeMembers .home-member').count(), 3);
+      assert.equal(await page.locator('#homeRate').innerText(), '80%');
+      assert.equal(await page.locator('#homeMissed').innerText(), '1,960원');
+      await page.locator('#homeCardRail .home-card').nth(1).click(); await visible(page, '#sh-code'); assert.match(await page.locator('#cdTitle').innerText(), /Mr.Life/); await close(page); await visible(page, '#v-home');
+      await page.locator('#homeMembers [data-m="0"]').click(); await visible(page, '#sh-pass'); await close(page); await visible(page, '#v-home');
+      await page.locator('#homeCategories [data-category="dine"]').click(); assert.match(await page.locator('#detailBody').innerText(), /11,100/); await close(page); await visible(page, '#v-home');
+      await page.locator('#homeBest').click(); assert.match(await page.locator('#detailTitle').innerText(), /SKT/); await close(page);
+      if (width === 390 && process.env.QA_OUTPUT) { fs.mkdirSync(process.env.QA_OUTPUT, { recursive: true }); await page.locator('.home-analysis').scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(process.env.QA_OUTPUT, 'home-analysis-dark.png') }); await page.locator('.home-wallet').scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(process.env.QA_OUTPUT, 'home-wallet-dark.png') }); }
       await page.locator('.detect-card h3').click();
       assert.equal(await page.locator('#flow').evaluate(el => el.classList.contains('on')), false);
       await page.locator('#btrack').scrollIntoViewIfNeeded(); await swipe(page, '#btrack', 1, true);
       assert.match(await page.locator('#bcount').innerText(), /2 \/ 3/); await visible(page, '#v-home');
+      await page.locator('#v-home').evaluate(el => el.scrollTop = 0);
       await swipe(page, '.views', 1, true); await visible(page, '#v-history');
-      await swipe(page, '#histList', 1, true);
+      await swipe(page, '#chips', 1, true);
       assert.equal(await page.locator('#chips .on').getAttribute('data-f'), 'done');
       assert.equal(await page.locator('#histList .tx').count(), 4);
       await swipe(page, '#chips', 1); assert.equal(await page.locator('#chips .on').getAttribute('data-f'), 'pending');
-      await swipe(page, '#histList', 1, true); assert.equal(await page.locator('#histList .tx').count(), 1);
-      await swipe(page, '#histList', 1, true); assert.equal(await page.locator('#chips .on').getAttribute('data-f'), 'missed');
+      await swipe(page, '#chips', 1, true); assert.equal(await page.locator('#histList .tx').count(), 1);
+      await swipe(page, '#chips', 1, true); assert.equal(await page.locator('#chips .on').getAttribute('data-f'), 'missed');
       await swipe(page, '.tabbar', 1, true); await visible(page, '#v-stats');
       await page.locator('#cats [data-category="dine"]').click();
       assert.match(await page.locator('#detailBody').innerText(), /빕스.*|11,100/); await close(page);
@@ -64,7 +77,7 @@ async function add(page, name, number, type = 'membership') {
       assert.equal(await page.locator('#detailBody [data-transaction]').count(), 2);
       await page.locator('#detailBody [data-transaction]').first().click();
       assert.match(await page.locator('#detailBody').innerText(), /리캐치 성공 수수료/); await close(page);
-      await page.locator('[data-insight="success"]').click(); assert.match(await page.locator('#detailBody').innerText(), /완료 4건/); await close(page);
+      await page.locator('#v-stats [data-insight="success"]').click(); assert.match(await page.locator('#detailBody').innerText(), /완료 4건/); await close(page);
       await page.locator('#trend [data-month="0"]').click(); assert.match(await page.locator('#detailBody').innerText(), /개별 결제 데이터/); await close(page);
       await swipe(page, '.tabbar', 1); await visible(page, '#v-wallet');
       assert.equal(await page.locator('#memList .mem').count(), 3);
@@ -120,6 +133,7 @@ async function add(page, name, number, type = 'membership') {
       await page.locator('.tabbar [data-tab="home"]').click(); await page.locator('#simCard').click();
       await page.locator('#rcNoti').click(); await page.locator('#pyOk').click(); await page.locator('#dnOk').click();
       assert.equal(await page.locator('#heroCount').innerText(), '5');
+      assert.equal(await page.locator('#homeAnalysisCount').innerText(), '완료 5건');
       await page.locator('#simCard').click(); await page.locator('#rcNoti').click(); await page.locator('#pySkip').click();
       await page.locator('.tabbar [data-tab="history"]').click(); await page.locator('#chips [data-f="missed"]').click(); assert.equal(await page.locator('#histList .tx').count(), 2);
       await page.locator('.tabbar [data-tab="wallet"]').click();
@@ -131,6 +145,53 @@ async function add(page, name, number, type = 'membership') {
       await context.close();
       console.log(`PASS: ${width}px, touch/mouse gestures, details, overflow, validation/cache, conditions, demo regression`);
     }
+    // Normal motion: the outgoing and incoming pages follow a drag, then settle.
+    const animatedContext = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, reducedMotion: 'no-preference', colorScheme: 'dark' });
+    const animated = await animatedContext.newPage();
+    animated.on('pageerror', e => errors.push(e.message));
+    await animated.route('https://fonts.googleapis.com/**', route => route.abort());
+    await animated.goto(`${url}index_V5.html`);
+    const viewBox = await animated.locator('.views').boundingBox(), y = viewBox.y + 100;
+    await animated.mouse.move(300, y); await animated.mouse.down(); await animated.mouse.move(220, y, { steps: 5 });
+    const drag = await animated.evaluate(() => {
+      const current = document.querySelector('#v-home'), next = document.querySelector('#v-history');
+      return { currentX: new DOMMatrix(getComputedStyle(current).transform).m41, nextX: new DOMMatrix(getComputedStyle(next).transform).m41, preview: !next.hidden, inert: next.inert };
+    });
+    assert.ok(drag.currentX < 0 && drag.nextX > 0 && drag.preview && drag.inert);
+    if (process.env.QA_OUTPUT) await animated.screenshot({ path: path.join(process.env.QA_OUTPUT, 'tabs-during-swipe.png') });
+    await animated.mouse.up();
+    await animated.waitForFunction(() => document.querySelector('#v-history').getAnimations().length > 0);
+    assert.equal(await animated.locator('#v-home').getAttribute('aria-hidden'), 'true');
+    await animated.waitForFunction(() => document.querySelectorAll('.view:not([hidden])').length === 1 && !document.querySelector('#v-history').hidden);
+    assert.equal(await animated.locator('.tabbar').evaluate(el => el.style.getPropertyValue('--tab-index')), '1');
+    // Swiping the history body now switches the whole page; filters remain on chips.
+    await swipe(animated, '#histList', 1, true); await visible(animated, '#v-stats');
+    await swipe(animated, '.views', 1, true); await visible(animated, '#v-wallet');
+    await swipe(animated, '.tabbar', -1, true); await visible(animated, '#v-stats');
+    await swipe(animated, '.views', -1); await visible(animated, '#v-history');
+    await swipe(animated, '#chips', 1, true); assert.equal(await animated.locator('#chips .on').getAttribute('data-f'), 'done'); await visible(animated, '#v-history');
+    // A short drag within one bottom-menu button is sufficient to switch pages.
+    const tabBox = await animated.locator('.tabbar').boundingBox(), tabY = tabBox.y + tabBox.height / 2;
+    await animated.mouse.move(150, tabY); await animated.mouse.down(); await animated.mouse.move(116, tabY, { steps: 5 }); await animated.mouse.up(); await animated.waitForTimeout(450);
+    await visible(animated, '#v-stats');
+    // A sub-threshold content drag bounces back, with no accidental tap/navigation.
+    await animated.mouse.move(250, y); await animated.mouse.down(); await animated.mouse.move(225, y, { steps: 4 }); await animated.mouse.up(); await animated.waitForTimeout(450);
+    await visible(animated, '#v-stats'); assert.equal(await animated.locator('.view:not([hidden])').count(), 1);
+    assert.equal(await animated.locator('.sheet.on').count(), 0);
+    await animated.locator('.tabbar [data-tab="home"]').click(); await animated.waitForTimeout(300);
+    await swipe(animated, '.views', -1, true); await visible(animated, '#v-home'); assert.equal(await animated.locator('.view:not([hidden])').count(), 1);
+    // Rapid tab selections cancel stale animation completions and leave one active page.
+    await animated.locator('.tabbar [data-tab="wallet"]').click(); await animated.locator('.tabbar [data-tab="history"]').click(); await animated.locator('.tabbar [data-tab="stats"]').click();
+    await animated.waitForTimeout(350); await visible(animated, '#v-stats'); assert.equal(await animated.locator('.view:not([hidden])').count(), 1);
+    assert.equal(await animated.locator('.tab.on').getAttribute('data-tab'), 'stats');
+    await animated.locator('.tabbar [data-tab="home"]').click(); await animated.waitForTimeout(300);
+    await add(animated, '홈에서 추가한 멤버십', '567890123456');
+    await animated.waitForFunction(() => !document.querySelector('#sh-add').classList.contains('on'));
+    await visible(animated, '#v-home'); assert.equal(await animated.locator('#homeMembers .home-member').count(), 3);
+    await animated.locator('#homeMembersMore').click(); assert.equal(await animated.locator('#collectionBody .mem').count(), 4);
+    await animated.locator('#collectionBody [data-m="3"]').click(); assert.match(await animated.locator('#passRail').innerText(), /홈에서 추가한 멤버십/); await close(animated);
+    await animatedContext.close();
+    console.log('PASS: animated drag previews, both directions, all four pages, short menu swipe, bounce-back, boundaries, rapid navigation and home wallet refresh');
     // Extra source categories and benefits keep the original 4/3 previews and expose all items.
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
     page.on('pageerror', e => errors.push(e.message));
