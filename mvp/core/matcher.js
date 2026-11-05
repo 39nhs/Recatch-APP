@@ -8,9 +8,12 @@
 //   pending     취소 + 재승인 확인, 캐시백·적립 확정 대기 → 확정 후 done
 //   missed      시간 안에 아무 일도 없음 (수수료 없음, '놓친 혜택' 통계)
 //   abandoned   취소만 하고 재결제 알림이 없음 (수수료 없음, 사용자 확인 필요)
-//   double_paid 취소 없이 재승인만 확인 → 이중 결제 경고 (수수료 없음)
+//   double_paid 재승인 후 일정 시간이 지나도 취소가 없음 → 이중 결제 경고 (수수료 없음)
+//               이후 유효 시간 안에 취소 알림이 도착하면 pending/done으로 바로잡는다
 
-export const DEFAULT_MATCH = { graceSec: 600 }; // 안내 2분 + 매장 처리 여유
+// graceSec: 안내 2분 + 매장 처리 여유
+// repayHoldSec: 재승인 알림이 취소 알림보다 먼저 와도 되도록 이중 결제 판단을 미루는 시간
+export const DEFAULT_MATCH = { graceSec: 600, repayHoldSec: 120 };
 
 const sameMerchant = (a, b) =>
   a.brand && b.brand ? a.brand === b.brand && (!a.branch || !b.branch || a.branch === b.branch) : a.key === b.key;
@@ -19,7 +22,7 @@ const sameMerchant = (a, b) =>
  * @param rec   recommend()의 결과 (recommend:true)
  * @param events 정규화된 알림 이벤트 [{ type, last4, amount, merchant, at }]
  */
-export function matchRecapture(rec, events, { now = new Date(), graceSec = DEFAULT_MATCH.graceSec } = {}) {
+export function matchRecapture(rec, events, { now = new Date(), graceSec = DEFAULT_MATCH.graceSec, repayHoldSec = DEFAULT_MATCH.repayHoldSec } = {}) {
   const t0 = new Date(rec.payment.at).getTime();
   const deadline = t0 + graceSec * 1000;
   const inWindow = e => { const t = new Date(e.at).getTime(); return t >= t0 && t <= deadline; };
@@ -32,7 +35,10 @@ export function matchRecapture(rec, events, { now = new Date(), graceSec = DEFAU
   const over = now.getTime() > deadline;
   if (!cancel && !repay) return { status: over ? 'missed' : 'waiting' };
   if (cancel && !repay) return { status: over ? 'abandoned' : 'waiting', cancel };
-  if (!cancel && repay) return { status: 'double_paid', repay };
+  if (!cancel && repay) {
+    const held = now.getTime() > new Date(repay.at).getTime() + repayHoldSec * 1000;
+    return { status: held || over ? 'double_paid' : 'waiting', repay };
+  }
 
   // 현장 할인은 재승인 금액 차이로 직접 확인한다. 기대보다 적게 깎였으면 그만큼만 인정.
   const observedPOS = rec.payment.amount - repay.amount;

@@ -75,7 +75,8 @@ test('흐름: 아무것도 안 하면 놓친 혜택, 취소만 하면 abandoned,
   rc = app();
   rc.onNotification('[Web발신]\nKB국민체크(9421)\n홍*동님\n10/16 19:44\n74,000원\n빕스동대구역점 사용', { now: at('19:44') });
   const { updates } = rc.onNotification('현대카드 승인 62,900원 일시불 10/16 19:46 빕스동대구역점', { now: at('19:46') });
-  assert.equal(updates[0].status, 'double_paid');
+  assert.equal(updates.length, 0, '취소 알림이 뒤따를 수 있어 바로 경고하지 않는다');
+  assert.equal(rc.tick({ now: at('19:49') })[0].status, 'double_paid');
 });
 
 test('누적 금액이 있는 문자는 이번 달 실적을 갱신한다', () => {
