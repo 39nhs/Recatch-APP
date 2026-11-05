@@ -48,6 +48,7 @@ public final class CardParser {
     private static final Pattern DATETIME = Pattern.compile("(\\d{1,2})/(\\d{1,2})\\s+(\\d{1,2}):(\\d{2})");
     private static final Pattern CUMULATIVE = Pattern.compile("누적\\s*:?\\s*(\\d{1,3}(?:,\\d{3})+|\\d+)\\s*원");
     private static final Pattern INSTALLMENT = Pattern.compile("(일시불|\\d{1,2}\\s*개월)");
+    private static final Pattern AD = Pattern.compile("[(\\[]\\s*광고\\s*[)\\]]|광고\\s*:|수신\\s*거부");
     private static final Pattern BALANCE = Pattern.compile("(누적|잔액)\\s*:?\\s*[\\d,]+\\s*원");
     private static final Pattern CANCEL = Pattern.compile("승인\\s*취소|취소");
     private static final Pattern APPROVE = Pattern.compile("승인|사용|결제");
@@ -105,6 +106,9 @@ public final class CardParser {
         if (type == null || !am.find()) return null;
         String issuer = detectIssuer(text);
         if (issuer == null) return null;
+        if (AD.matcher(text).find()) return null; // "신한카드 5,000원 결제 시 할인" 같은 광고
+        // 실제 카드 알림에는 시각·끝자리·할부 중 하나는 있다. 대화나 홍보 문구를 거르는 최소 조건이다.
+        if (!DATETIME.matcher(text).find() && !LAST4.matcher(text).find() && !INSTALLMENT.matcher(text).find()) return null;
 
         Parsed p = new Parsed();
         p.type = type;

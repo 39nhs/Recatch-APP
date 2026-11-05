@@ -15,6 +15,7 @@ export const localDate = iso => {
 };
 
 const EVENT_KEEP_MS = 24 * 3600 * 1000; // 재결제 판정에 필요한 만큼만 보관
+const DUPLICATE_WINDOW_MS = 60 * 1000; // 문자·앱 푸시·알림톡이 같은 결제를 따로 알리는 간격
 
 export const emptyState = () => ({ events: [], open: [], nextId: 1 });
 
@@ -47,6 +48,7 @@ export function createReCatch({ merchants, products, wallet, state = emptyState(
       merchant: normalizeMerchant(parsed.merchantRaw, index),
       at: at ?? parsed.at ?? now.toISOString()
     };
+    if (isDuplicate(event)) return { event, recommendation: null, reason: 'duplicate', updates: tick({ now }) };
     rollMonth(localDate(event.at).slice(0, 7));
     events.push(event);
     prune(now);
@@ -70,6 +72,19 @@ export function createReCatch({ merchants, products, wallet, state = emptyState(
     }
     trackUsage(event, card);
     return { event, recommendation, reason, updates: tick({ now }) };
+  }
+
+  // 같은 결제가 문자·앱 푸시로 겹치거나 재전송된 경우. 카드·금액·가맹점이 같은 직전 이벤트만 본다.
+  // 직전 이벤트가 반대 종류면 중복이 아니다 (같은 카드로 취소 후 재결제하는 정상 흐름).
+  function isDuplicate(event) {
+    const key = m => m.brand ?? m.key;
+    const t = new Date(event.at).getTime();
+    for (let i = events.length - 1; i >= 0; i--) {
+      const e = events[i];
+      if (e.last4 !== event.last4 || e.amount !== event.amount || key(e.merchant) !== key(event.merchant)) continue;
+      return e.type === event.type && Math.abs(new Date(e.at).getTime() - t) <= DUPLICATE_WINDOW_MS;
+    }
+    return false;
   }
 
   // 달이 바뀌면 이번 달 사용액이 전월 실적이 되고, 혜택 한도 사용액은 0부터 다시 센다.
@@ -123,8 +138,11 @@ export function createReCatch({ merchants, products, wallet, state = emptyState(
   function tick({ now = new Date() } = {}) {
     const changed = [];
     for (const o of open) {
-      if (o.result.status !== 'waiting') continue;
+      const was = o.result.status;
+      if (was !== 'waiting' && was !== 'double_paid') continue;
       const r = matchRecapture(o.rec, events, { now, ...match });
+      // double_paid는 늦게 온 취소로 재결제가 확인될 때만 바꾼다 (이벤트가 정리된 뒤 missed로 뒤집히지 않게)
+      if (was === 'double_paid' && r.status !== 'done' && r.status !== 'pending') continue;
       if (r.status !== 'waiting') { o.result = r; changed.push({ id: o.id, ...r }); }
     }
     return changed;

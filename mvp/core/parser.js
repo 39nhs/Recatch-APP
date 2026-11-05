@@ -22,6 +22,7 @@ const LAST4 = /\((\d{4})\)|(\d{4})\s*\*{0,4}\s*(?=승인|취소|사용)|\*{2,}(\
 const DATETIME = /(\d{1,2})\/(\d{1,2})\s+(\d{1,2}):(\d{2})/;
 const CUMULATIVE = /누적\s*:?\s*(\d{1,3}(?:,\d{3})+|\d+)\s*원/;
 const INSTALLMENT = /(일시불|\d{1,2}\s*개월)/;
+const AD = /[(\[]\s*광고\s*[)\]]|광고\s*:|수신\s*거부/;
 
 const toNumber = s => Number(String(s).replace(/,/g, ''));
 
@@ -76,6 +77,9 @@ export function parseNotification(text, opts = {}) {
 
   const issuer = detectIssuer(text);
   if (!issuer) return null; // 카드 승인 알림이 아닌 메시지는 무시
+  if (AD.test(text)) return null; // "신한카드 5,000원 결제 시 할인" 같은 광고
+  // 실제 카드 알림에는 시각·끝자리·할부 중 하나는 있다. 대화나 홍보 문구를 거르는 최소 조건이다.
+  if (!DATETIME.test(text) && !LAST4.test(text) && !INSTALLMENT.test(text)) return null;
 
   const l4 = text.match(LAST4);
   const dt = text.match(DATETIME);

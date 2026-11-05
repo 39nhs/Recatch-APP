@@ -21,7 +21,11 @@ const handle = createApp({ store, catalog: loadCatalog(), invite: process.env.RE
 const server = createServer((req, res) => {
   const t0 = Date.now();
   res.on('finish', () => console.log(`${new Date().toLocaleTimeString('ko-KR')} ${req.method} ${req.url.split('?')[0]} ${res.statusCode} ${Date.now() - t0}ms`));
-  handle(req, res);
+  handle(req, res).catch(err => {
+    console.error(err);
+    if (!res.headersSent) res.writeHead(500, { 'content-type': 'application/json; charset=utf-8' });
+    res.end();
+  });
 });
 
 const ticker = setInterval(handle.tickAll, 10_000);

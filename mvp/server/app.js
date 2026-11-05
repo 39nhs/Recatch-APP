@@ -280,8 +280,10 @@ export function createApp({ store, catalog, clock = () => new Date(), invite = n
     }],
 
     ['GET', /^\/api\/statement$/, (req, body, user, m, url) => {
-      const month = url.searchParams.get('month') ?? localDate(clock().toISOString()).slice(0, 7);
-      if (!/^\d{4}-\d{2}$/.test(month)) throw bad('invalid_month');
+      const thisMonth = localDate(clock().toISOString()).slice(0, 7);
+      const month = url.searchParams.get('month') ?? thisMonth;
+      // 아래에서 가입한 달부터 이 달까지 반복하므로, 미래 달을 받으면 서버가 오래 멈출 수 있다.
+      if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month) || month > thisMonth) throw bad('invalid_month');
       const e = engineFor(user);
       if (e.tick({ now: clock() }).length) store.save();
       const first = localDate(user.createdAt).slice(0, 7);
@@ -303,10 +305,12 @@ export function createApp({ store, catalog, clock = () => new Date(), invite = n
   ];
 
   async function handle(req, res) {
-    const url = new URL(req.url, 'http://localhost');
     let status = 200;
     let payload;
     try {
+      // '//' 같은 요청 대상은 URL 파싱에서 예외가 난다. 여기서 막지 않으면 프로세스가 종료된다.
+      let url;
+      try { url = new URL(req.url, 'http://localhost'); } catch { throw bad('invalid_url'); }
       const route = routes.find(([method, re]) => method === req.method && re.test(url.pathname));
       if (!route) throw new HttpError(404, 'not_found');
       const [, re, fn, opts = {}] = route;
